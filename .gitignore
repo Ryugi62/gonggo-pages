@@ -5,3 +5,5 @@ dist/
 .DS_Store
 shots/
 privacy.local.json
+.vercel
+.env*
