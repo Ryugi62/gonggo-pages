@@ -74,3 +74,11 @@ describe('AC-12 검색 등록 소유확인', () => {
     expect(readFileSync('dist/index.html', 'utf8')).toContain('<meta name="naver-site-verification" content="b075ec90d3f456a4ecbac88671fff441169d5b8b"');
   });
 });
+
+describe('AC-13 알림 의향 계측', () => {
+  it('알림 버튼을 켤 때 /intent/alert/<slug> 가상 페이지뷰를 보낸다', () => {
+    const l = data.listings[0];
+    const page = readFileSync(`dist/g/${l.slug}/index.html`, 'utf8');
+    expect(page).toContain("window.va('pageview',{route:'/intent/alert',path:'/intent/alert/'+s})");
+  });
+});

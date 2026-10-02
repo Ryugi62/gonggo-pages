@@ -101,5 +101,5 @@ const jsonLd = [
   (function(){var b=document.getElementById('alert-btn');if(!b)return;var k='gk:alert-intent';var s=b.getAttribute('data-slug');
   function get(){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}}
   function paint(){if(get().indexOf(s)>=0){b.textContent='관심 표시 저장됨 (알림은 준비 중)';document.getElementById('alert-note').textContent='이 브라우저에만 저장했어요. 알림 기능이 생기면 이 공고부터 알려 드릴게요. 다시 누르면 지워져요.'}else{b.textContent='마감 알림 받기 (준비 중)'}}
-  b.addEventListener('click',function(){var a=get();var i=a.indexOf(s);if(i>=0)a.splice(i,1);else a.push(s);try{localStorage.setItem(k,JSON.stringify(a))}catch(e){}paint()});paint()})();
+  b.addEventListener('click',function(){var a=get();var i=a.indexOf(s);if(i>=0)a.splice(i,1);else{a.push(s);try{window.va&&window.va('pageview',{route:'/intent/alert',path:'/intent/alert/'+s})}catch(e){}}try{localStorage.setItem(k,JSON.stringify(a))}catch(e){}paint()});paint()})();
 </script>
