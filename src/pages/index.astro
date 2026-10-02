@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ListingList from '../components/ListingList.astro';
+import { index, listings, categories, tags, weeks, generatedAt } from '../adapters/site/data.ts';
+import { weekLabel } from '../domain/format.ts';
+import { deadlineWeek } from '../application/buildSiteIndex.ts';
+import { SITE_NAME } from '../infrastructure/config.ts';
+
+const thisWeek = deadlineWeek(generatedAt);
+const soon = index.sorted.filter((l) => l.deadline).slice(0, 10);
+const title = `${SITE_NAME} — 공모전·해커톤·지원사업 자격·마감·상금 정리`;
+const description = `지금 접수 중인 공모전·해커톤·지원사업 ${listings.length}건의 자격 조건, 마감일, 상금을 공고 원문 그대로 정리했어요. 나이·학생·지역만 고르면 낼 수 있는 공고를 골라 드려요.`;
+const site = Astro.site!.href.replace(/\/$/, '');
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE_NAME, url: `${site}/`, inLanguage: 'ko-KR' }];
+---
+<Layout title={title} description={description} path="/" jsonLd={jsonLd} bottomCta={{ href: '/check/', label: '내가 낼 수 있는 공고 찾기' }}>
+  <section class="card" style="margin-top:0">
+    <p class="sub" style="margin:0">지금 접수 중인 공고</p>
+    <div class="big">{listings.length}건</div>
+    <p style="margin:6px 0 0">공모전·해커톤·지원사업의 <strong>자격·마감·상금</strong>을 원문 그대로 정리했어요.</p>
+  </section>
+
+  <section>
+    <h2>분류별로 보기</h2>
+    <div class="grid2">
+      {categories.map((c) => <a class="tile" href={`/c/${c.slug}/`}><b>{c.name} {index.byCategory.get(c.name)!.length}</b><span>{c.blurb}</span></a>)}
+      {index.rolling.length > 0 && <a class="tile" href="/rolling/"><b>상시 모집 {index.rolling.length}</b><span>마감일 없이 수시로 받는 공고</span></a>}
+    </div>
+  </section>
+
+  <section>
+    <h2>마감 임박</h2>
+    <ListingList items={soon} />
+  </section>
+
+  <section>
+    <h2>누구를 위한 공고인가요</h2>
+    <ul class="chips">{tags.map((t) => <li><a class="chip" href={`/t/${t.slug}/`}>{t.name} {index.byTag.get(t.name)!.length}</a></li>)}</ul>
+  </section>
+
+  <section>
+    <h2>마감 주별로 보기</h2>
+    <ul class="chips">{weeks.map((w) => <li><a class={`chip${w === thisWeek ? '' : ' gray'}`} href={`/w/${w}/`}>{w === thisWeek ? '이번 주' : weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
+  </section>
+</Layout>

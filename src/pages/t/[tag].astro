@@ -1,0 +1,12 @@
+---
+import IndexPage from '../../components/IndexPage.astro';
+import { tags, index } from '../../adapters/site/data.ts';
+export function getStaticPaths() {
+  return tags.map((t) => ({ params: { tag: t.slug }, props: { t } }));
+}
+const { t } = Astro.props;
+const items = index.byTag.get(t.name)!;
+---
+<IndexPage heading={`${t.name}이 낼 수 있는 공고`.replace('누구나이', '누구나')} title={`${t.name} 대상 공모전·해커톤·지원사업 ${items.length}건 | 공고콕`}
+  description={`${t.blurb} ${items.length}건을 마감 임박순으로 모았어요. 자격 문장은 공고 원문 그대로예요.`}
+  path={`/t/${t.slug}/`} lead={`${t.blurb}. 공고 원문의 자격 문장을 보고 분류했어요.`} items={items} />

@@ -1,0 +1,105 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ListingList from '../../components/ListingList.astro';
+import { index, listings, generatedAt } from '../../adapters/site/data.ts';
+import { categorySlug, tagSlug } from '../../domain/category.ts';
+import { dDayLabel, formatDate } from '../../domain/format.ts';
+import type { PublicListing } from '../../domain/listing.ts';
+import { SITE_NAME } from '../../infrastructure/config.ts';
+
+export function getStaticPaths() {
+  return listings.map((l) => ({ params: { slug: l.slug }, props: { l } }));
+}
+interface Props { l: PublicListing }
+const { l } = Astro.props;
+const related = index.related(l);
+const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
+const title = `${l.name} 자격·마감·상금 정리`;
+const quoteShort = l.eligibilityQuote ? l.eligibilityQuote.slice(0, 70) : '';
+const description = [
+  `${l.name} — 마감 ${l.deadline ? `${l.deadline}${l.deadlineTime ? ' ' + l.deadlineTime : ''}` : '상시'}`,
+  l.prize ? `상금 ${l.prize}` : null,
+  l.organizer ? `주최 ${l.organizer}` : null,
+  quoteShort ? `자격 「${quoteShort}${l.eligibilityQuote!.length > 70 ? '…' : ''}」` : '자격은 원문 공고에서 확인',
+].filter(Boolean).join(' · ').slice(0, 158);
+const catSlug = categorySlug(l.category);
+const path = `/g/${l.slug}/`;
+const site = Astro.site!.href.replace(/\/$/, '');
+const jsonLd = [
+  {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE_NAME, item: `${site}/` },
+      { '@type': 'ListItem', position: 2, name: l.category, item: `${site}/c/${catSlug}/` },
+      { '@type': 'ListItem', position: 3, name: l.name, item: `${site}${path}` },
+    ],
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'WebPage', name: title, description, url: `${site}${path}`,
+    inLanguage: 'ko-KR', dateModified: generatedAt, isBasedOn: l.url,
+  },
+];
+---
+<Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={{ href: l.url, label: '원문 공고 보기', external: true }}>
+  <nav class="crumb" aria-label="위치"><a href="/">홈</a> › <a href={`/c/${catSlug}/`}>{l.category}</a></nav>
+  <h1>{l.name}</h1>
+  <p class="sub">자격·마감·상금 정리{l.organizer ? ` · ${l.organizer}` : ''}</p>
+
+  <section class="card" style="margin-top:20px" aria-label="마감까지 남은 날">
+    {l.deadline ? <div class="big" data-deadline={l.deadline}>{dDayLabel(l.deadline, generatedAt)}</div> : <div class="big">상시</div>}
+    <p style="margin:6px 0 0;font-size:16px">{deadlineText} 마감{l.prize ? ` · ${l.prize}` : ''}</p>
+  </section>
+
+  <section>
+    <h2>누가 낼 수 있나요</h2>
+    {l.tags.length > 0 && (
+      <ul class="chips">{l.tags.map((t) => <li><a class="chip" href={`/t/${tagSlug(t)}/`}>{t}</a></li>)}</ul>
+    )}
+    {l.eligibilityQuote ? (
+      <>
+        <blockquote>{l.eligibilityQuote}</blockquote>
+        <p class="small" style="margin:8px 0 0">공고 원문의 자격 문장을 그대로 옮겼어요.</p>
+      </>
+    ) : (
+      <p class="sub" style="margin-top:12px">이 공고는 자격 문장을 따로 정리하지 못했어요. 원문 공고에서 확인해 주세요.</p>
+    )}
+  </section>
+
+  <section>
+    <h2>한눈에 보기</h2>
+    <dl class="facts">
+      <dt>분류</dt><dd><a href={`/c/${catSlug}/`}>{l.category}</a></dd>
+      {l.organizer && (<><dt>주최</dt><dd>{l.organizer}</dd></>)}
+      <dt>마감</dt><dd>{deadlineText}</dd>
+      <dt>상금</dt><dd>{l.prize ?? '원문에서 확인'}</dd>
+      <dt>원문</dt><dd><a href={l.url} target="_blank" rel="noopener">공고 원문 열기</a></dd>
+    </dl>
+  </section>
+
+  <section>
+    <button class="btn secondary block" type="button" id="alert-btn" data-slug={l.slug}>마감 알림 받기 (준비 중)</button>
+    <p class="small" id="alert-note" style="margin:8px 0 0">아직 알림을 보내지 않아요. 누르면 이 브라우저에만 관심 표시가 남고, 어디에도 전송되지 않아요.</p>
+  </section>
+
+  <section>
+    <a class="tile" href="/check/"><b>내 조건으로 낼 수 있는 공고 찾기 →</b><span>나이·학생·지역·사업자 여부만 고르면 돼요. 입력값은 브라우저 밖으로 나가지 않아요.</span></a>
+  </section>
+
+  {related.length > 0 && (
+    <section>
+      <h2>비슷한 공고</h2>
+      <ListingList items={related} />
+    </section>
+  )}
+
+  <details>
+    <summary>이 정리는 어떻게 만들었나요</summary>
+    <p class="sub">{generatedAt} 기준으로 공개된 공고 원문을 보고 마감·상금·자격 문장을 옮겨 정리했어요. 공고는 수정될 수 있으니 지원 전 <a href={l.url} target="_blank" rel="noopener">원문 공고</a>를 꼭 확인해 주세요. <a href="/about/">정리 기준 자세히</a></p>
+  </details>
+</Layout>
+<script is:inline>
+  (function(){var b=document.getElementById('alert-btn');if(!b)return;var k='gk:alert-intent';var s=b.getAttribute('data-slug');
+  function get(){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}}
+  function paint(){if(get().indexOf(s)>=0){b.textContent='관심 표시 저장됨 (알림은 준비 중)';document.getElementById('alert-note').textContent='이 브라우저에만 저장했어요. 알림 기능이 생기면 이 공고부터 알려 드릴게요. 다시 누르면 지워져요.'}else{b.textContent='마감 알림 받기 (준비 중)'}}
+  b.addEventListener('click',function(){var a=get();var i=a.indexOf(s);if(i>=0)a.splice(i,1);else a.push(s);try{localStorage.setItem(k,JSON.stringify(a))}catch(e){}paint()});paint()})();
+</script>

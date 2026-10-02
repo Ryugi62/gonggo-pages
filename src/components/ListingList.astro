@@ -1,0 +1,7 @@
+---
+import type { PublicListing } from '../domain/listing.ts';
+import ListingItem from './ListingItem.astro';
+interface Props { items: PublicListing[] }
+const { items } = Astro.props;
+---
+<ul class="list">{items.map((l) => <ListingItem l={l} />)}</ul>

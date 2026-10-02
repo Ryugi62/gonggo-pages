@@ -1,0 +1,8 @@
+---
+import IndexPage from '../components/IndexPage.astro';
+import { index } from '../adapters/site/data.ts';
+const items = index.rolling;
+---
+<IndexPage heading="상시 모집 공고" title={`상시 모집 지원사업·공모 ${items.length}건 | 공고콕`}
+  description={`마감일 없이 수시로 신청받는 지원사업·공모 ${items.length}건. 예산이 소진되면 일찍 끝날 수 있어요.`}
+  path="/rolling/" lead="마감일 없이 수시로 받는 공고예요. 예산이 떨어지면 일찍 끝날 수 있어요." items={items} />

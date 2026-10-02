@@ -1,0 +1,14 @@
+---
+import IndexPage from '../../components/IndexPage.astro';
+import { weeks, index } from '../../adapters/site/data.ts';
+import { weekLabel } from '../../domain/format.ts';
+export function getStaticPaths() {
+  return weeks.map((w) => ({ params: { week: w }, props: { w } }));
+}
+const { w } = Astro.props;
+const items = index.byWeek.get(w)!;
+const label = weekLabel(w);
+---
+<IndexPage heading={`${label} 마감 공고`} title={`${label} 마감 공모전·해커톤·지원사업 ${items.length}건 | 공고콕`}
+  description={`${label}에 마감되는 공고 ${items.length}건의 자격·마감·상금 정리. 마감 전에 원문 공고에서 접수하세요.`}
+  path={`/w/${w}/`} lead={`${w.slice(0, 4)}년 ${label}에 접수가 끝나는 공고예요.`} items={items} />

@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ListingList from './ListingList.astro';
+import type { PublicListing } from '../domain/listing.ts';
+import { SITE_NAME } from '../infrastructure/config.ts';
+interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[] }
+const { heading, title, description, path, lead, items } = Astro.props;
+const site = Astro.site!.href.replace(/\/$/, '');
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: SITE_NAME, item: `${site}/` },
+    { '@type': 'ListItem', position: 2, name: heading, item: `${site}${path}` } ] },
+  { '@context': 'https://schema.org', '@type': 'ItemList', numberOfItems: items.length,
+    itemListElement: items.slice(0, 50).map((l, i) => ({ '@type': 'ListItem', position: i + 1, url: `${site}/g/${l.slug}/`, name: l.name })) },
+];
+---
+<Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={{ href: '/check/', label: '내가 낼 수 있는 공고 찾기' }}>
+  <nav class="crumb" aria-label="위치"><a href="/">홈</a></nav>
+  <h1>{heading}</h1>
+  <p class="sub">{lead}</p>
+  <section class="card" style="margin-top:20px">
+    <div class="big">{items.length}건</div>
+    <p style="margin:6px 0 0" class="sub">마감이 가까운 순서예요.</p>
+  </section>
+  <section><ListingList items={items} /></section>
+  <slot />
+</Layout>

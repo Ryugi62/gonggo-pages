@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { generatedAt, listings } from '../adapters/site/data.ts';
+import { SITE_NAME, REPO_URL } from '../infrastructure/config.ts';
+---
+<Layout title={`정리 기준 | ${SITE_NAME}`} description={`${SITE_NAME}가 공고의 자격·마감·상금을 어떻게 정리하는지, 무엇을 싣지 않는지 설명해요.`} path="/about/">
+  <h1>정리 기준</h1>
+  <section class="card" style="margin-top:20px">
+    <div class="big">{listings.length}건</div>
+    <p class="sub" style="margin:6px 0 0">{generatedAt} 기준 접수 중인 공고</p>
+  </section>
+  <section>
+    <h2>무엇을 싣나요</h2>
+    <p>공개된 공고 원문에서 공고명·주최·마감일·상금 문구·자격 문장만 옮겨요. 자격 문장은 고치지 않고 그대로 인용하고, 최대 300자까지만 실어요. 나머지는 원문 공고 링크로 보내 드려요.</p>
+  </section>
+  <section>
+    <h2>무엇을 싣지 않나요</h2>
+    <p>마감이 지난 공고, 마감일을 확인하지 못한 공고, 대출·금융 상품은 싣지 않아요. 공고 원문 전체를 복사하지 않아요.</p>
+  </section>
+  <section>
+    <h2>「내가 낼 수 있나?」는 어떻게 판단하나요</h2>
+    <p>자격 문장에 적힌 나이·대학생·지역·사업자 조건만 읽어서 비교해요. 문장에 없는 조건은 「확인 필요」로 보여 드려요. 입력한 값은 이 브라우저 안에서만 계산하고 저장하거나 보내지 않아요. 참고용이니 최종 판단은 원문 공고로 해 주세요.</p>
+  </section>
+  <section>
+    <h2>틀린 내용을 봤어요</h2>
+    <p><a href={`${REPO_URL}/issues`} rel="noopener">정정 요청</a>을 남겨 주시면 다음 갱신 때 고쳐요. 공고 내용 문의는 각 공고의 주최 측에 해 주세요.</p>
+  </section>
+</Layout>

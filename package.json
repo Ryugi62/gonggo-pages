@@ -1,0 +1,28 @@
+{
+  "name": "gonggo-pages",
+  "version": "1.0.0",
+  "description": "공고콕 — 공고 자격·마감·상금 정리 정적 사이트",
+  "scripts": {
+    "export": "node scripts/export.ts",
+    "build": "astro build && node scripts/postbuild.ts",
+    "dev": "astro dev --host 127.0.0.1",
+    "preview": "astro preview --host 127.0.0.1",
+    "test": "vitest run tests/*.test.ts",
+    "test:dist": "vitest run tests/dist",
+    "release": "bash scripts/release.sh"
+  },
+  "license": "UNLICENSED",
+  "type": "module",
+  "dependencies": {
+    "astro": "^7.3.5"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.63.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22.18"
+  }
+}

@@ -1,0 +1,14 @@
+---
+import type { PublicListing } from '../domain/listing.ts';
+import { dDayLabel, formatDate } from '../domain/format.ts';
+import { generatedAt } from '../adapters/site/data.ts';
+interface Props { l: PublicListing }
+const { l } = Astro.props;
+const meta = [l.category, l.deadline ? `${formatDate(l.deadline)} 마감` : '상시 모집', l.prize].filter(Boolean).join(' · ');
+---
+<li>
+  <a class="item" href={`/g/${l.slug}/`}>
+    {l.deadline ? <span class="dd" data-deadline={l.deadline}>{dDayLabel(l.deadline, generatedAt)}</span> : <span class="dd">상시</span>}
+    <span><span class="t">{l.name}</span><span class="m">{meta}</span></span>
+  </a>
+</li>
