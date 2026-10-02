@@ -32,6 +32,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
   <meta property="og:image" content={ogImage} />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="theme-color" content="#3182F6" />
+  <meta name="naver-site-verification" content="b075ec90d3f456a4ecbac88671fff441169d5b8b" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
   <script is:inline>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
