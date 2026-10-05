@@ -17,11 +17,11 @@ describe('주간 페이지 — 이번 주 낼 수 있는 창업경진대회·지
     expect(isFounderListing(L({ name: 'Startup Pitch Day' }))).toBe(true);
     expect(isFounderListing(L({ name: '전국민 사진 공모전' }))).toBe(false);
   });
-  it('오늘~13일 뒤 마감만, 마감 임박순, 상시·지난 공고 제외', () => {
+  it('오늘~6일 뒤(7일) 마감만, 마감 임박순, 상시·지난 공고 제외', () => {
     const ls = [
-      L({ name: 'A 창업경진', deadline: '2026-10-19' }),
+      L({ name: 'A 창업경진', deadline: '2026-10-12' }),
       L({ name: 'B 창업경진', deadline: '2026-10-06' }),
-      L({ name: 'C 창업경진', deadline: '2026-10-20' }),
+      L({ name: 'C 창업경진', deadline: '2026-10-13' }),
       L({ name: 'D 창업경진', deadline: '2026-10-05' }),
       L({ name: 'E 창업경진', rolling: true }),
       L({ name: 'F 사진 공모', deadline: '2026-10-07' }),
@@ -29,7 +29,7 @@ describe('주간 페이지 — 이번 주 낼 수 있는 창업경진대회·지
     const w = founderWeek(ls, TODAY);
     expect(w.items.map((l) => l.name)).toEqual(['B 창업경진', 'A 창업경진']);
     expect(w.from).toBe('2026-10-06');
-    expect(w.to).toBe('2026-10-19');
+    expect(w.to).toBe('2026-10-12');
   });
   it('AI 금지 공고 수를 센다', () => {
     const w = founderWeek([L({ name: 'A 창업', deadline: '2026-10-07', aiUse: 'FORBIDDEN' }), L({ name: 'B 창업', deadline: '2026-10-08' })], TODAY);

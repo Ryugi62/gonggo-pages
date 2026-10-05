@@ -1,9 +1,9 @@
 import type { PublicListing } from '../domain/listing.ts';
 
-// 주간 페이지 — 「이번 주 낼 수 있는 창업경진대회·지원사업」: 오늘부터 2주(14일) 안에 마감하는 창업 공고.
+// 주간 페이지 — 「이번 주 낼 수 있는 창업경진대회·지원사업」: 오늘부터 7일 안에 마감하는 창업 공고.
 
 const FOUNDER_NAME = /창업|스타트업|startup|founder|벤처|사업화|예비\s*창업/i;
-export const WINDOW_DAYS = 14;
+export const WINDOW_DAYS = 7;
 
 export function isFounderListing(l: PublicListing): boolean {
   return l.category === '지원사업' || l.tags.includes('창업자') || FOUNDER_NAME.test(l.name);
