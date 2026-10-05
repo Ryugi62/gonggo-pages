@@ -16,6 +16,12 @@ describe.runIf(existsSync(path))('AC-9 실제 내보내기 파일', () => {
     for (const l of data().listings) expect(Object.keys(l).sort()).toEqual([...PUBLIC_KEYS].sort());
     expect(Object.keys(data()).sort()).toEqual(['generatedAt', 'listings']);
   });
+  it('Pro §2-1·2 공개 ≥1,500건, 마감 미경과 중 조항 1칸 이상 ≥60%', () => {
+    const ls = data().listings;
+    expect(ls.length).toBeGreaterThanOrEqual(1500);
+    const filled = ls.filter((l: any) => l.clauses.length > 0 || l.eligibilityQuote).length;
+    expect(filled / ls.length).toBeGreaterThanOrEqual(0.6);
+  });
   it('원문 URL은 http(s)만', () => {
     for (const l of data().listings) expect(l.url).toMatch(/^https?:\/\//);
   });

@@ -8,8 +8,9 @@ const out = exportPublicListings(rows as any, TODAY).listings;
 const byName = (n: string) => out.find((l) => l.name === n);
 
 describe('UC-1 공개 내보내기', () => {
-  it('AC-1 후보·신청예정만', () => {
-    expect(byName('조건불가 공모')).toBeUndefined();
+  it('AC-1 (Pro v0.1) 조건불가도 공개, 중복은 제외', () => {
+    expect(byName('조건불가 공모')).toBeDefined();
+    expect(byName('중복 행 공모')).toBeUndefined();
     expect(byName('2026 대학생 AI 아이디어 공모전')).toBeDefined();
     expect(byName('청년 창업 지원사업 모집')).toBeDefined();
   });
@@ -36,6 +37,25 @@ describe('UC-1 공개 내보내기', () => {
       expect(findForbidden(`앞${t.toUpperCase()}뒤`).length).toBeGreaterThan(0);
     }
     expect(PRIVATE_TOKEN_HASHES.length).toBe(privateTokens()!.length);
+  });
+  it('Pro §5-3 조건불가 행: 원문 조항 인용만 나가고 gate 사유는 안 나간다', () => {
+    const l = byName('조건불가 공모')!;
+    expect(l.clauses).toEqual([{ kind: 'ELIGIBILITY', quote: '서울 거주자', source: 'https://example.org/c/5' }]);
+    expect(JSON.stringify(out)).not.toContain('만 나이 초과');
+    expect(JSON.stringify(out)).not.toContain('거주지');
+  });
+  it('Pro §5-1 서약 인용 → AI 사용 금지, 사용자 발화는 안 나간다', () => {
+    const l = byName('치과 홍보 카피 공모전')!;
+    expect(l.aiUse).toBe('FORBIDDEN');
+    expect(l.clauses.map((c) => c.kind)).toEqual(['ORIGINALITY_PLEDGE', 'TEAM']);
+    expect(JSON.stringify(out)).not.toContain('접자');
+  });
+  it('Pro §5-2 AI 문장이 없는 공고는 UNSTATED', () => {
+    expect(byName('전국민 사진 공모전')!.aiUse).toBe('UNSTATED');
+  });
+  it('자격 인용과 같은 문장은 조항 목록에 다시 넣지 않는다', () => {
+    for (const l of out) expect(l.clauses.map((c) => c.quote)).not.toContain(l.eligibilityQuote);
+    expect(byName('2026 대학생 AI 아이디어 공모전')!.clauses).toEqual([]);
   });
   it('AC-4 허용 키만', () => {
     for (const l of out) expect(Object.keys(l).sort()).toEqual([...PUBLIC_KEYS].sort());

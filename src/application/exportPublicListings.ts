@@ -4,13 +4,15 @@ import { cleanName, extractEligibility, extractOrganizer, extractPrize } from '.
 import type { PublicListing, SourceRow } from '../domain/listing.ts';
 import { findForbidden, isClean } from '../domain/privacy.ts';
 import { makeSlug } from '../domain/slug.ts';
+import { readClauses } from '../domain/clause.ts';
 
 export const PUBLIC_KEYS = [
   'slug', 'name', 'category', 'kind', 'deadline', 'deadlineTime', 'rolling', 'url',
-  'organizer', 'prize', 'eligibilityQuote', 'tags', 'constraints',
+  'organizer', 'prize', 'eligibilityQuote', 'tags', 'constraints', 'clauses', 'aiUse',
 ] as const;
 
-const PUBLIC_STATES = new Set(['후보', '신청예정']);
+// Pro v0.1: 운영자 개인 사유로 컷된 행(조건불가)·이미 낸 행도 공고 자체는 공개(상태·사유는 내보내지 않음). 중복·수혜완료만 제외.
+const PUBLIC_STATES = new Set(['후보', '신청예정', '조건불가', '제출함', '탈락']);
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const ROLLING_RE = /상시|소진|수시/;
 
@@ -55,6 +57,7 @@ export function exportPublicListings(rows: SourceRow[], today: string): ExportRe
     const timeM = deadline ? (r.due ?? '').match(/^\d{4}-\d{2}-\d{2}\s+(\d{1,2}:\d{2})/) : null;
     const eligibilityQuote = extractEligibility(note);
     const constraints = parseConstraints(eligibilityQuote ?? '', name);
+    const reading = readClauses({ name, note, gateQuote: r.gate_quote == null ? null : String(r.gate_quote), gate: r.gate == null ? null : String(r.gate), gateEvidence: r.gate_evidence == null ? null : String(r.gate_evidence), url });
 
     let slug = makeSlug(name, url);
     for (let i = 2; seenSlug.has(slug); i++) slug = `${makeSlug(name, url)}-${i}`;
@@ -74,6 +77,9 @@ export function exportPublicListings(rows: SourceRow[], today: string): ExportRe
       eligibilityQuote,
       tags: tagsFor(eligibilityQuote ?? '', name, constraints),
       constraints,
+      // 자격 인용과 같은 문장은 「누가 낼 수 있나요」에 이미 보이므로 조항 목록에서 뺀다
+      clauses: reading.clauses.filter((c) => c.quote !== eligibilityQuote),
+      aiUse: reading.aiUse,
     });
   }
 

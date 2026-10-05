@@ -6,6 +6,7 @@ import { categorySlug, tagSlug } from '../../domain/category.ts';
 import { dDayLabel, formatDate } from '../../domain/format.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import { SITE_NAME } from '../../infrastructure/config.ts';
+import { CLAUSE_LABEL } from '../../domain/clause.ts';
 
 export function getStaticPaths() {
   return listings.map((l) => ({ params: { slug: l.slug }, props: { l } }));
@@ -44,6 +45,8 @@ const jsonLd = [
   <nav class="crumb" aria-label="위치"><a href="/">홈</a> › <a href={`/c/${catSlug}/`}>{l.category}</a></nav>
   <h1>{l.name}</h1>
   <p class="sub">자격·마감·상금 정리{l.organizer ? ` · ${l.organizer}` : ''}</p>
+  {l.aiUse === 'FORBIDDEN' && <p class="badge no" style="margin-top:12px">AI 초안 사용 불가</p>}
+  {l.aiUse === 'ALLOWED' && <p class="badge ok" style="margin-top:12px">원문에 AI 활용 가능 문장이 있어요</p>}
 
   <section class="card" style="margin-top:20px" aria-label="마감까지 남은 날">
     {l.deadline ? <div class="big" data-deadline={l.deadline}>{dDayLabel(l.deadline, generatedAt)}</div> : <div class="big">상시</div>}
@@ -63,6 +66,19 @@ const jsonLd = [
     ) : (
       <p class="sub" style="margin-top:12px">이 공고는 자격 문장을 따로 정리하지 못했어요. 원문 공고에서 확인해 주세요.</p>
     )}
+  </section>
+
+  <section aria-labelledby="clauses-h">
+    <h2 id="clauses-h">조항 판독</h2>
+    <p class="sub" style="margin-bottom:8px">{l.aiUse === 'FORBIDDEN' ? '이 공고는 AI로 만든 초안을 낼 수 없어요.' : l.aiUse === 'ALLOWED' ? '원문에 AI 활용을 허용하는 문장이 있어요. 조건은 아래 원문으로 확인하세요.' : '원문에서 AI 사용 규정을 찾지 못했어요 — 원문 확인'}</p>
+    {l.clauses.length > 0 ? (
+      <ul class="clauses">
+        {l.clauses.map((c) => <li><span class="ck">{CLAUSE_LABEL[c.kind]}</span><q>{c.quote}</q></li>)}
+      </ul>
+    ) : (
+      <p class="small">중복 수혜·현장 참석·팀 구성 같은 조항 문장을 아직 정리하지 못했어요.</p>
+    )}
+    <p class="small" style="margin:8px 0 0">공고 원문 문장을 그대로 옮겼어요. 원문과 다르면 원문이 맞아요 — <a href={l.url} target="_blank" rel="noopener">원문 공고 열기</a></p>
   </section>
 
   <section>

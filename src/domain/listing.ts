@@ -1,5 +1,6 @@
 import type { Category, EligibilityTag } from './category.ts';
 import type { Constraints } from './eligibility.ts';
+import type { AiUseVerdict, Clause } from './clause.ts';
 
 /** 공개 공고 — 공개 허용 필드만. 내부 판단·식별자 없음 */
 export interface PublicListing {
@@ -16,6 +17,9 @@ export interface PublicListing {
   eligibilityQuote: string | null;
   tags: EligibilityTag[];
   constraints: Constraints;
+  /** 조항 판독 — 원문 인용만 */
+  clauses: Clause[];
+  aiUse: AiUseVerdict;
 }
 
 /** 원천 행(내부 목록 1줄). 여기 있는 대부분 필드는 공개 금지 */

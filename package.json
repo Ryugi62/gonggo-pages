@@ -4,7 +4,7 @@
   "description": "공고콕 — 공고 자격·마감·상금 정리 정적 사이트",
   "scripts": {
     "export": "node scripts/export.ts",
-    "build": "astro build && node scripts/postbuild.ts",
+    "build": "rm -rf dist && astro build && node scripts/postbuild.ts",
     "dev": "astro dev --host 127.0.0.1",
     "preview": "astro preview --host 127.0.0.1",
     "test": "vitest run tests/*.test.ts",

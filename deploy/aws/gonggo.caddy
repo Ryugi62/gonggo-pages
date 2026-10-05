@@ -1,0 +1,17 @@
+# 공고콕 엣지 라우팅 스니펫 — 이 파일이 유일한 출처(deploy/aws/deploy.sh 가 서버 ~/edge/sites/gonggo.caddy 로 동기화).
+# 규칙: 공고콕 소유 호스트 블록만. 전역 설정·뼈대는 server-ops 리포의 edge/Caddyfile 소유.
+# 호스트: 도메인 미보유(구매는 [ASK]) → sslip.io 와일드카드(IP 내장 DNS, 무료)로 Let's Encrypt 발급.
+gonggo.43-202-151-104.sslip.io {
+	encode gzip
+	log {
+		output file /data/logs/gonggo-access.log {
+			roll_size 20MiB
+			roll_keep 5
+		}
+		format json
+	}
+	reverse_proxy gonggo-web:80 {
+		lb_try_duration 15s
+		lb_try_interval 500ms
+	}
+}

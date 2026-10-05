@@ -65,6 +65,11 @@
 - AC-10: Given 빌드 결과 When 상세 페이지를 보면 Then `<title>`이 「<공고명> 자격·마감·상금 정리」, meta description·canonical·og:title·JSON-LD(BreadcrumbList)·원문 링크·면책 문구가 있다.
 - AC-11: Given 빌드 결과 When sitemap.xml을 세면 Then URL 수 = 생성된 HTML 페이지 수(404 제외) ≥ 400.
 - AC-12: Given 빌드 결과 When 루트를 보면 Then 구글(google09201ae909576b2d.html)·네이버(naver834f…html) 소유확인 파일과 홈 `naver-site-verification` 메타가 있고, 이 파일들은 sitemap 페이지 수에 넣지 않는다.
+- AC-14 (Pro v0.1, 2026-10-06): Given 상태가 조건불가·제출함·탈락인 행 When 내보내면 Then 공고는 공개되고(상태·gate 사유는 안 나감), 중복·수혜완료만 제외. **AC-1을 대체한다.**
+- AC-15 조항 판독: Given 메모의 「」 원문 인용 When 내보내면 Then 종류(자격·AI 사용·본인 창작 서약·중복수혜·중복수상·현장 참석·팀 구성·업력)로 분류된 `clauses[]`가 원문 그대로 나가고, 사용자 발화(「사용자 M/D 「…」」)·메일 회신·구어체·내부 분석 메모·제목 인용은 버린다. GU 행은 괄호 원문 인용만.
+- AC-16 AI 사용 판정: 금지 문장(같은 문장 25자 이내 「AI … 불가/금지/심사 제외/활용하지 않은」) → FORBIDDEN(상세 첫 화면 「AI 초안 사용 불가」), 허용 문장 → ALLOWED, 그 밖 → UNSTATED(「원문에서 AI 사용 규정을 찾지 못했어요 — 원문 확인」, 「허용」 단정 금지). 금지가 허용을 이긴다.
+- AC-17 주간 페이지 `/week/`: 오늘~13일 뒤 마감하는 창업 공고(지원사업·창업자 태그·이름에 창업/스타트업) 마감 임박순, sitemap·홈 링크 포함.
+- AC-18 결제 0: 어떤 페이지에도 카드 입력·결제 버튼·가격 없음(Pro 가격은 상업 허용 호스트에서 10/7 이후).
 - AC-13: Given 상세 페이지 When 「마감 알림 받기」를 켜면 Then Vercel Analytics에 가상 페이지뷰 `/intent/alert/<slug>`를 1회 보낸다(무료 플랜은 커스텀 이벤트가 없어 페이지뷰로 센다). 끌 때는 보내지 않는다.
 
 ## 7. 아키텍처 (Clean) — 의존성은 안쪽으로만
@@ -97,3 +102,4 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 
 ## 10. 변경 이력
 - v0.1 2026-10-02 최초(MVP).
+- v0.2 2026-10-06 공고콕 Pro 검증 SPEC(볼트 `projects/공고콕-Pro-2026/SPEC`) 1단계 — AC-14~18, 공개 1,698건·조항 1칸 이상 64%. 호스팅에 AWS(기존 EC2, edge-caddy 뒤 nginx 1개, `deploy/aws/`) 추가 — Vercel Hobby는 가격 페이지 금지라 `/pro`는 AWS에만. 문구 조정: SPEC의 「원문에 AI 사용 규정이 없어요」는 원문 전문을 다 읽지 않은 상태의 단정이라 「원문에서 AI 사용 규정을 찾지 못했어요」로.

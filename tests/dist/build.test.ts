@@ -82,3 +82,45 @@ describe('AC-13 알림 의향 계측', () => {
     expect(page).toContain("window.va('pageview',{route:'/intent/alert',path:'/intent/alert/'+s})");
   });
 });
+
+describe('Pro §5 조항 판독 블록', () => {
+  const pageOf = (slug: string) => readFileSync(`dist/g/${slug}/index.html`, 'utf8');
+  it('§5-1 AI 금지 공고: 첫 화면 「AI 초안 사용 불가」 배지 + 원문 인용 그대로', () => {
+    const l = data.listings.find((x: any) => x.aiUse === 'FORBIDDEN');
+    const page = pageOf(l.slug);
+    expect(page).toContain('AI 초안 사용 불가');
+    const q = l.clauses.find((c: any) => c.kind === 'ORIGINALITY_PLEDGE' || c.kind === 'AI_USE').quote;
+    expect(page).toContain(q.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;').slice(0, 20));
+    // 배지가 D-day 카드보다 앞(첫 화면)
+    expect(page.indexOf('AI 초안 사용 불가')).toBeLessThan(page.indexOf('aria-label="마감까지 남은 날"'));
+  });
+  it('§5-2 AI 문장 없는 공고: 단정하지 않는 문구, 「허용」 표시 없음', () => {
+    const l = data.listings.find((x: any) => x.aiUse === 'UNSTATED' && x.clauses.length > 0);
+    const page = pageOf(l.slug);
+    expect(page).toContain('원문에서 AI 사용 규정을 찾지 못했어요 — 원문 확인');
+    expect(page).not.toContain('AI 사용 허용');
+  });
+  it('§5-8 판독 블록 아래 원문 링크와 「원문이 맞아요」 면책', () => {
+    const l = data.listings.find((x: any) => x.clauses.length > 0);
+    const page = pageOf(l.slug);
+    expect(page).toContain('조항 판독');
+    expect(page).toContain('원문과 다르면 원문이 맞아요');
+  });
+  it('§5-6 결제 0: 어떤 페이지에도 카드 입력·결제 버튼·가격 없음', () => {
+    for (const f of html) {
+      const s = readFileSync(f, 'utf8');
+      expect(s, f).not.toMatch(/type="(?:tel|number)"[^>]*card|카드\s*번호|결제하기|19,900|49,000/);
+    }
+  }, 120_000);
+});
+
+describe('주간 페이지 — 이번 주 낼 수 있는 창업경진대회·지원사업', () => {
+  it('/week/ 가 있고 sitemap에 들어 있다', () => {
+    const page = readFileSync('dist/week/index.html', 'utf8');
+    expect(page).toContain('이번 주 낼 수 있는 창업경진대회·지원사업');
+    expect(readFileSync('dist/sitemap.xml', 'utf8')).toMatch(/<loc>https:\/\/[^<]+\/week\/<\/loc>/);
+  });
+  it('홈에서 주간 페이지로 가는 링크', () => {
+    expect(readFileSync('dist/index.html', 'utf8')).toContain('href="/week/"');
+  });
+});

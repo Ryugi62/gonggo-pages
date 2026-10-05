@@ -14,7 +14,7 @@ describe('UC-2 사이트 색인', () => {
   });
   it('분류·주·태그별로 묶고 마감 임박순(상시는 맨 뒤)', () => {
     const idx = buildSiteIndex(listings);
-    expect(idx.byCategory.get('공모전')!.map((l) => l.name)).toEqual(['2026 대학생 AI 아이디어 공모전', '전국민 사진 공모전']);
+    expect(idx.byCategory.get('공모전')!.map((l) => l.name)).toEqual(['2026 대학생 AI 아이디어 공모전', '전국민 사진 공모전', '치과 홍보 카피 공모전', '조건불가 공모']);
     expect(idx.byWeek.get('2026-09-28')!.length).toBe(1);
     expect(idx.byTag.get('대학생')!.length).toBe(1);
     expect(idx.sorted.at(-1)!.rolling).toBe(true);

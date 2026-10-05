@@ -1,0 +1,15 @@
+---
+import IndexPage from '../../components/IndexPage.astro';
+import { week } from '../../adapters/site/data.ts';
+import { formatDate } from '../../domain/format.ts';
+const heading = '이번 주 낼 수 있는 창업경진대회·지원사업';
+const range = `${formatDate(week.from)} ~ ${formatDate(week.to)}`;
+---
+<IndexPage heading={heading} title={`${heading} ${week.items.length}건 | 공고콕`}
+  description={`${range} 마감 창업경진대회·지원사업 ${week.items.length}건. 자격·업력·AI 사용 조항을 원문 그대로 정리했어요.`}
+  path="/week/" lead={`${range}에 마감하는 창업 공고예요.${week.aiForbidden ? ` 이 중 ${week.aiForbidden}건은 AI 초안을 낼 수 없어요.` : ''}`} items={week.items}>
+  <details>
+    <summary>어떤 공고를 모았나요</summary>
+    <p class="sub">지원사업, 창업자 대상 공고, 이름에 창업·스타트업이 들어간 공고 중 2주 안에 마감하는 것만 모았어요. 매주 새로 만들어요. 지원 전 원문 공고를 꼭 확인해 주세요.</p>
+  </details>
+</IndexPage>
