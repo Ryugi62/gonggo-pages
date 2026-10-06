@@ -1,0 +1,31 @@
+---
+// SPEC §12 P5·AC-31 — 환불 규정(AWS 빌드 전용)
+import Layout from '../layouts/Layout.astro';
+import { PRO_ORIGIN, OPERATOR } from '../infrastructure/config.ts';
+---
+<Layout title="환불 규정 | 공고콕" description="공고콕 Pro 환불 규정 — 지금은 돈이 나가지 않고, 오픈 뒤 첫 결제는 30일 안에 이유 없이 전액 환불해요." path="/refund/" origin={PRO_ORIGIN} analytics={false} legal>
+  <article class="doc">
+    <h1>환불 규정</h1>
+    <p class="small">시행일 2026-10-07</p>
+
+    <section class="card"><div class="big">30일</div><p style="margin:6px 0 0">첫 결제일부터 30일 안에는 이유를 묻지 않고 전액 환불해요.</p></section>
+
+    <h2>지금(오픈 전)</h2>
+    <p>창립 회원 신청은 결제가 아니라서 환불할 금액이 없어요. 지금은 돈이 나가지 않아요.</p>
+
+    <h2>오픈 뒤</h2>
+    <ul>
+      <li><strong>30일 무조건 환불</strong> — 첫 결제일부터 30일 안에 메일 한 통이면 전액 환불해요. 결제한 수단으로 취소하고, 요청을 받은 날부터 3영업일 안에 처리해요.</li>
+      <li>30일이 지나면 언제든 해지할 수 있고, 다음 결제일부터 청구되지 않아요.</li>
+      <li>이미 결제한 달의 환불은 전자상거래법 등 관련 법령이 정한 청약철회 기준을 따라요.</li>
+    </ul>
+
+    <h2>요청하는 곳</h2>
+    <p><a href={`mailto:${OPERATOR.email}?subject=${encodeURIComponent('공고콕 환불 요청')}`}>{OPERATOR.email}</a> — 결제한 이메일로 보내 주세요.</p>
+  </article>
+</Layout>
+<style>
+  .doc h2 { margin-top: 28px; font-size: 18px; }
+  .doc p, .doc li { font-size: 15px; }
+  .doc .card { margin-top: 16px; }
+</style>

@@ -104,6 +104,7 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - v0.1 2026-10-02 최초(MVP).
 - v0.2 2026-10-06 공고콕 Pro 검증 SPEC(볼트 `projects/공고콕-Pro-2026/SPEC`) 1단계 — AC-14~18, 공개 1,698건·조항 1칸 이상 64%. 호스팅에 AWS(기존 EC2, edge-caddy 뒤 nginx 1개, `deploy/aws/`) 추가 — Vercel Hobby는 가격 페이지 금지라 `/pro`는 AWS에만. 문구 조정: SPEC의 「원문에 AI 사용 규정이 없어요」는 원문 전문을 다 읽지 않은 상태의 단정이라 「원문에서 AI 사용 규정을 찾지 못했어요」로.
 - v0.3 2026-10-06 §11 성장 장치 ① 마감 캘린더 루프(AC-19~24).
+- v0.4 2026-10-07 §12 Pro 가격 페이지·결제 요청 저장(AC-25~32, AWS 빌드 전용).
 
 ## 11. 성장 장치 ① 마감 캘린더 루프 (v0.3, 2026-10-06 — 볼트 `projects/자동성장-서비스-2026` ④)
 **목적**: 사용 행위(「내 캘린더에 마감 넣기」·「분류 구독」)가 곧 재방문·전파가 되는 루프. 캘린더 일정 1건 = 우리 상세 페이지 링크 1개(`?from=cal`)가 사용자 캘린더에 박혀, 마감 알림이 울릴 때마다 사람 손 0으로 재방문이 생긴다. 구독 링크는 동아리·단톡방에 그대로 공유된다.
@@ -124,3 +125,24 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-22: Given 빌드 결과 When 마감일 있는 상세 페이지를 보면 Then 구글 템플릿 링크(dates=YYYYMMDD/YYYYMMDD+1)·`/cal/g/<slug>.ics`가 있고, 상시 공고 페이지엔 없다. 분류·태그·이번 주·홈에 구독 상자(구글 구독 링크·webcal 링크)가 있다.
 - AC-23: Given dist의 모든 `.ics` When 검사하면 Then 금지 토큰 0, C2·C3·C4 만족.
 - AC-24: Given nginx 설정 When `.ics`를 서빙하면 Then `text/calendar; charset=utf-8`.
+
+## 12. Pro 가격 페이지 `/pro/` + 결제 요청 저장 (v0.4, 2026-10-07 — 볼트 `projects/공고콕-Pro-2026/SPEC` §5-4~7·§7-1·§7-2)
+**목적**: 검색으로 들어온 예비·초기 창업자가 Pro(내 계획서 × 공고 배점 채점) 가격 **1안**을 보고, 돈이 나가지 않는 「창립 회원 신청」(= 결제 요청: 이메일 + 창립가 결제 의사 체크 + 개인정보 동의)을 남기게 한다. 14일 검증(D0 = 이 페이지 라이브일, D14 판정)의 보기 → 가격 클릭 → 결제 요청을 셀 수 있어야 한다. Vercel Hobby는 상품 판매 광고 금지라 **AWS(상업 이용 허용, 기존 EC2) 빌드에만** 만들고, 저장은 새 프로세스 없이 기존 nginx가 요청 본문을 파일에 한 줄씩 남긴다(데몬·DB·외부 폼 서비스 0).
+**숫자 성공 조건(배포 게이트)**
+- P1 `DEPLOY_TARGET=aws` 빌드에만 `/pro/`·`/terms/`·`/refund/`·`/privacy/` 4장이 생기고, 기본(Vercel) 빌드엔 0장 + `vercel.json`이 4경로를 AWS로 돌린다(리다이렉트 4). 가격 숫자(19,900·49,000)는 AWS 빌드에서도 `/pro/` 밖 0.
+- P2 `/pro/` HTML ≤ 40KB, 외부 요청 0(같은 출처만 — 외부 스크립트·폰트·Vercel 분석 스크립트 0), 390px 가로 넘침 0.
+- P3 저장: `POST /api/pro-request`(JSON ≤ 1KB) → 204, 서버 호스트 파일 `/home/ubuntu/gonggo/logs/pro-requests.jsonl`에 1줄(`{"t":시각,"body":본문}`). GET은 거절(403), 같은 IP 분당 5회 초과(버스트 3) 429. 컨테이너를 다시 만들어도(재배포) 파일이 남는다.
+- P4 계측: `/intent/pro/{view,price,request}/<H1|H2>`가 같은 출처 GET 비콘으로 나가 호스트 `logs/intent.log`에 남는다(재배포 뒤에도 보존 — 옛 컨테이너 안 로그는 재생성 전에 옮긴다). 경로에 입력값 0.
+- P5 고지: 4장 모두 하단에 사업자 정보(상호·사업자등록번호·통신판매업 신고번호·문의 메일) + 이용약관·환불 규정·개인정보처리방침 링크.
+- P6 수집 최소: 요청 본문 키 = `email`·`arm`·`pledge`·`consent` 4개뿐(그 밖 키가 있으면 집계에서 버린다). 보관 2026-11-21까지 후 파기.
+- 결과 지표(D14 = 2026-10-21): 적격 방문 ≥ 100 전제 결제 요청 ≥ 3(지인·자체 검증 제외) · 가격 클릭률 ≥ 8% · 결제 요청률 ≥ 2%.
+**용어**: 결제 요청 `PaymentRequest{email, arm, pledge, consent}` · 저장 줄 `StoredPaymentRequest{t, email, arm}` · 로그 읽기 `parsePaymentRequestLog` · 운영자 고지 `OPERATOR` · 배포 대상 `DEPLOY_TARGET`.
+- AC-25: Given `DEPLOY_TARGET` 없음 When 빌드 Then `dist/pro/` 없음·가격 문자열 0(AC-18 유지) / Given `DEPLOY_TARGET=aws` Then 4장이 있고 canonical은 AWS 주소, sitemap엔 넣지 않는다.
+- AC-26: Given 같은 브라우저 When `/pro/`를 두 번 열면 Then 같은 가격안(저장소 키 고정, 저장소가 막히면 그 방문만 무작위). 첫 화면엔 그 가격안 카드 1장만 보이고, 카드 첫 요소는 큰 숫자 「월 19,900원」(또는 49,000원).
+- AC-27: Then `/pro/`에 「결제는 오픈 때 · 창립가 고정 · 30일 무조건 환불 · 지금은 돈이 나가지 않아요」와 「계획서는 본인이 씁니다 — 공고콕은 조항 판독·배점 채점·보완 제안만」이 보이고, 카드 입력·「결제하기」 버튼 0. 이용약관에도 대필 아님 문구.
+- AC-28: Given `/pro/` 보기 When 「창립 회원 신청」 → 이메일 → 동의 2개 → 신청 Then `/intent/pro/view/<arm>` · `/intent/pro/price/<arm>` · `/intent/pro/request/<arm>`가 순서대로 1회씩(request는 저장 204 뒤에만). 입력 스텝은 한 화면 한 질문(이메일 / 체크 2개).
+- AC-29: Given 저장 파일 When `parsePaymentRequestLog`로 읽으면 Then 검증 통과 줄만(이메일 형식·가격안·두 체크·허용 키 4개), 같은 이메일은 마지막 1건, 가격안별 수를 돌려준다. 깨진 줄·허용 밖 키는 버린 수로 센다.
+- AC-30: Given nginx 설정 Then `location = /api/pro-request`는 POST만·`client_max_body_size 1k`·`limit_req`·`escape=json` 로그 형식으로 `/var/log/gonggo/pro-requests.jsonl`에 쓰고, 계측 비콘은 `/var/log/gonggo/intent.log`. 배포 스크립트는 `$R/logs`를 마운트하고, AWS 빌드가 아닌 dist는 배포를 거절한다.
+- AC-31: Given 개인정보처리방침 Then 수집 항목(이메일·접속 기록)·목적·보유 기간(2026-11-21 파기)·처리 위탁(AWS 서울 리전)·정보주체 권리·문의처가 있다. 환불 규정 = 지금 결제 0 + 오픈 뒤 첫 결제 30일 무조건 전액 환불.
+- AC-32: Given dist 전체 When 금지 토큰을 검사하면 Then 0 — 단, 선언된 운영자 고지 문자열(`OPERATOR`)은 4장에서만 허용하고 그 밖 페이지에 나오면 실패.
+**비목표**: 실결제·PG·카드 입력 · 계정·로그인 · 메일 자동 발송(신청자 메일은 메인 세션 손) · 새 서버 앱·데몬·DB · 도메인 구매 · Vercel에 가격 노출.

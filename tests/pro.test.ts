@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { assignArm, PRICE_ARMS } from '../src/domain/pricing.ts';
 import { validatePaymentRequest } from '../src/domain/paymentRequest.ts';
 import { funnelPath } from '../src/application/funnel.ts';
+import { parsePaymentRequestLog } from '../src/application/paymentRequestLog.ts';
+import { PRO_PLAN, formatWon } from '../src/domain/pricing.ts';
 
 describe('Pro §5-4 가격 배정 고정', () => {
   it('가격안 = H1 19,900 · H2 49,000', () => {
@@ -32,7 +34,7 @@ describe('Pro §5-5 퍼널 사건 경로', () => {
 });
 
 describe('Pro 결제 요청(돈 0) 검증', () => {
-  const ok = { email: 'a.b@example.co.kr', arm: 'H1' as const, pledge: true };
+  const ok = { email: 'a.b@example.co.kr', arm: 'H1' as const, pledge: true, consent: true };
   it('이메일 형식·가격안·창립가 체크가 맞으면 통과', () => {
     expect(validatePaymentRequest(ok)).toEqual({ ok: true, errors: [] });
   });
@@ -40,8 +42,52 @@ describe('Pro 결제 요청(돈 0) 검증', () => {
     expect(validatePaymentRequest({ ...ok, email: 'nope' }).errors).toEqual(['email']);
     expect(validatePaymentRequest({ ...ok, pledge: false }).errors).toEqual(['pledge']);
     expect(validatePaymentRequest({ ...ok, arm: 'H3' as any }).errors).toEqual(['arm']);
+    expect(validatePaymentRequest({ ...ok, consent: false }).errors).toEqual(['consent']);
   });
   it('허용 밖 필드(이름·전화 등)는 받지 않는다', () => {
     expect(validatePaymentRequest({ ...ok, phone: '010-0000-0000' } as any).errors).toEqual(['extra']);
+  });
+});
+
+describe('Pro §12 가격 카드 문구(AC-26)', () => {
+  it('원 단위 쉼표 표기', () => {
+    expect(formatWon(19900)).toBe('19,900');
+    expect(formatWon(49000)).toBe('49,000');
+  });
+  it('가격안마다 포함 기능이 있다(H1 채점 월 5회 · H2 무제한 + 보완안)', () => {
+    expect(PRO_PLAN.H1.join(' ')).toContain('월 5회');
+    expect(PRO_PLAN.H2.join(' ')).toContain('무제한');
+    expect(PRO_PLAN.H2.join(' ')).toContain('보완안');
+  });
+});
+
+describe('AC-29 결제 요청 저장 파일 읽기', () => {
+  const line = (t: string, body: unknown) => JSON.stringify({ t, body: typeof body === 'string' ? body : JSON.stringify(body) });
+  const ok = { email: 'a@example.com', arm: 'H1', pledge: true, consent: true };
+  it('검증 통과 줄만 세고, 가격안별 수를 돌려준다', () => {
+    const text = [
+      line('2026-10-07T10:00:00+00:00', ok),
+      line('2026-10-07T10:01:00+00:00', { ...ok, email: 'b@example.com', arm: 'H2' }),
+      line('2026-10-07T10:02:00+00:00', { ...ok, email: 'nope' }),
+      line('2026-10-07T10:03:00+00:00', { ...ok, email: 'c@example.com', consent: false }),
+      line('2026-10-07T10:04:00+00:00', { ...ok, email: 'd@example.com', phone: '010' }),
+      '{깨진 줄',
+      line('2026-10-07T10:05:00+00:00', '{not json'),
+      '',
+    ].join('\n');
+    const r = parsePaymentRequestLog(text);
+    expect(r.valid.map((v) => v.email)).toEqual(['a@example.com', 'b@example.com']);
+    expect(r.byArm).toEqual({ H1: 1, H2: 1 });
+    expect(r.rejected).toBe(5);
+  });
+  it('같은 이메일(대소문자 무시)은 마지막 1건만', () => {
+    const text = [line('2026-10-07T10:00:00+00:00', ok), line('2026-10-07T11:00:00+00:00', { ...ok, email: 'A@Example.com', arm: 'H2' })].join('\n');
+    const r = parsePaymentRequestLog(text);
+    expect(r.valid).toEqual([{ t: '2026-10-07T11:00:00+00:00', email: 'a@example.com', arm: 'H2' }]);
+    expect(r.byArm).toEqual({ H1: 0, H2: 1 });
+  });
+  it('nginx escape=json 로그 줄(본문이 이스케이프된 문자열)을 읽는다', () => {
+    const raw = '{"t":"2026-10-07T20:00:00+09:00","body":"{\\"email\\":\\"x@example.com\\",\\"arm\\":\\"H2\\",\\"pledge\\":true,\\"consent\\":true}"}';
+    expect(parsePaymentRequestLog(raw).valid).toEqual([{ t: '2026-10-07T20:00:00+09:00', email: 'x@example.com', arm: 'H2' }]);
   });
 });

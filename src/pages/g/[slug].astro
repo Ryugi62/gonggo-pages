@@ -5,7 +5,7 @@ import { index, listings, generatedAt } from '../../adapters/site/data.ts';
 import { categorySlug, tagSlug } from '../../domain/category.ts';
 import { dDayLabel, formatDate } from '../../domain/format.ts';
 import type { PublicListing } from '../../domain/listing.ts';
-import { SITE_NAME } from '../../infrastructure/config.ts';
+import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
 import { CLAUSE_LABEL } from '../../domain/clause.ts';
 import { deadlineEvent, googleAddUrl } from '../../domain/ics.ts';
 
@@ -109,6 +109,12 @@ const jsonLd = [
     <button class="btn secondary block" type="button" id="alert-btn" data-slug={l.slug}>마감 알림 받기 (준비 중)</button>
     <p class="small" id="alert-note" style="margin:8px 0 0">아직 알림을 보내지 않아요. 누르면 이 브라우저에만 관심 표시가 남고, 어디에도 전송되지 않아요.</p>
   </section>
+
+  {IS_AWS && (
+    <section>
+      <a class="tile" href="/pro/?from=g"><b>이 공고 배점으로 내 계획서 채점받기 (Pro) →</b><span>오픈 준비 중 · 창립 회원 신청은 돈이 나가지 않아요</span></a>
+    </section>
+  )}
 
   <section>
     <a class="tile" href="/check/"><b>내 조건으로 낼 수 있는 공고 찾기 →</b><span>나이·학생·지역·사업자 여부만 고르면 돼요. 입력값은 브라우저 밖으로 나가지 않아요.</span></a>

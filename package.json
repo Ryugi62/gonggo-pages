@@ -9,7 +9,9 @@
     "preview": "astro preview --host 127.0.0.1",
     "test": "vitest run tests/*.test.ts",
     "test:dist": "vitest run tests/dist",
-    "release": "bash scripts/release.sh"
+    "release": "bash scripts/release.sh",
+    "pro:requests": "node scripts/pro-requests.ts",
+    "deploy:aws": "DEPLOY_TARGET=aws npm run build && DEPLOY_TARGET=aws npm run test:dist && bash deploy/aws/deploy.sh"
   },
   "license": "UNLICENSED",
   "type": "module",

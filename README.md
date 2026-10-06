@@ -31,6 +31,8 @@ npm test            # 단위·수용 테스트
 npm run build       # dist/ 생성 + 페이지 수·크기 출력
 npm run test:dist   # 빌드 산출물 검사(sitemap 수, 메타, 금지 토큰)
 npm run release     # 위 전부 + 데이터 커밋·푸시 + vercel 프로덕션 배포
+npm run deploy:aws  # AWS 빌드(DEPLOY_TARGET=aws — /pro·약관·환불·처리방침 포함) → 산출물 테스트 → EC2 배포 (SPEC §12)
+npm run pro:requests  # 서버 결제 요청(창립 회원 신청) 집계 — 가격안별 수(--emails 로 목록)
 ```
 
 ## 주간 재생성 (메인 세션, 공고 스윕 뒤)

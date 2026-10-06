@@ -1,0 +1,194 @@
+---
+// SPEC §12 — Pro 가격 페이지(AWS 빌드 전용). 가격안 1개만 보이고, 「창립 회원 신청」 = 결제 요청(돈 0).
+import Layout from '../layouts/Layout.astro';
+import { PRICE_ARMS, PRO_PLAN, formatWon, type PriceArm } from '../domain/pricing.ts';
+import { PRO_ORIGIN, OPERATOR } from '../infrastructure/config.ts';
+
+const arms: PriceArm[] = ['H1', 'H2'];
+const title = 'Pro — 내 계획서를 공고 배점표로 채점 | 공고콕';
+const description = '계획서 하나로 이번 달 낼 수 있는 창업경진대회·지원사업만 골라, 그 공고 배점표로 채점해 드려요. 지금은 창립 회원 신청만 받아요 — 돈이 나가지 않아요.';
+---
+<Layout title={title} description={description} path="/pro/" origin={PRO_ORIGIN} analytics={false} legal>
+  <div id="pro" data-pro>
+    <div id="step-intro">
+      <p class="small" style="margin:0">공고콕 Pro · 오픈 준비 중</p>
+      <h1>계획서 하나로, 낼 수 있는 공고만 골라 그 배점표로 채점해 드려요</h1>
+      <p class="sub">자격·AI 사용·중복 수상 조항까지 읽어서 통과하는 공고만 남기고, 그 공고의 심사 배점대로 내 계획서를 점수로 보여 드려요.</p>
+
+      <section class="card skel" id="price-skel" aria-hidden="true"><span></span><span></span><span></span></section>
+      {arms.map((arm) => (
+        <section class="card price" data-arm={arm} hidden aria-label="Pro 창립가"><div class="big">월 {formatWon(PRICE_ARMS[arm])}원</div><p class="price-note">창립가 — 창립 회원은 구독하는 동안 이 가격 그대로예요</p><ul class="feat">{PRO_PLAN[arm].map((f) => <li>{f}</li>)}</ul></section>
+      ))}
+      <noscript><p class="sub">가격을 보려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
+
+      <p class="promise"><strong>결제는 오픈 때 · 창립가 고정 · 30일 무조건 환불 · 지금은 돈이 나가지 않아요</strong></p>
+      <p class="sub">계획서는 본인이 씁니다 — 공고콕은 조항 판독·배점 채점·보완 제안만</p>
+
+      <section>
+        <h2>지금은 무료로 쓸 수 있어요</h2>
+        <div class="grid2">
+          <a class="tile" href="/week/"><b>이번 주 마감</b><span>창업경진대회·지원사업</span></a>
+          <a class="tile" href="/check/"><b>내가 낼 수 있나?</b><span>나이·학생·지역·사업자로 거르기</span></a>
+        </div>
+      </section>
+
+      <details>
+        <summary>채점은 어떻게 하나요</summary>
+        <p class="sub">공고문에 실린 심사 기준과 배점(예: 문제 인식 20점·실현 가능성 30점)을 항목별로 나누고, 계획서에서 각 항목에 해당하는 문단을 찾아 빠진 근거와 고칠 곳을 알려 드려요. 점수는 참고용이고, 실제 심사는 주최 측이 해요.</p>
+      </details>
+      <details>
+        <summary>창립 회원 신청을 하면 어떻게 되나요</summary>
+        <p class="sub">이메일 1개만 받아요. Pro가 열리면 그 메일로 창립가 결제 링크를 한 번 보내 드리고, 결제할지는 그때 다시 고르시면 돼요. 신청만으로는 아무것도 청구되지 않아요. 받은 이메일은 2026-11-21에 지워요.</p>
+      </details>
+    </div>
+
+    <form id="step-email" class="step" hidden novalidate onsubmit="return false">
+      <p class="small" aria-live="polite">1 / 2</p>
+      <h1>오픈 소식과 결제 링크를 받을 이메일을 알려 주세요</h1>
+      <label class="field">
+        <span>이메일</span>
+        <input id="email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="예: me@example.com" />
+        <small class="small" id="email-msg">이메일 말고 다른 정보는 받지 않아요</small>
+      </label>
+    </form>
+
+    <form id="step-agree" class="step" hidden novalidate onsubmit="return false">
+      <p class="small" aria-live="polite">2 / 2</p>
+      <h1>두 가지만 확인해 주세요</h1>
+      <label class="check"><input id="pledge" type="checkbox" /><span>오픈하면 창립가 <b id="pledge-price">월 19,900원</b>으로 결제할게요 — 지금은 돈이 나가지 않아요</span></label>
+      <label class="check"><input id="consent" type="checkbox" /><span>[필수] 개인정보 수집·이용 동의 — 이메일 1개를 오픈 안내·결제 링크 발송에만 쓰고 <span class="nw">2026-11-21</span>에 지워요. <a href="/privacy/">자세히</a></span></label>
+      <p class="small" id="agree-msg" aria-live="polite">두 칸 모두 체크해야 신청돼요. 동의하지 않아도 무료 기능은 그대로 쓸 수 있어요.</p>
+    </form>
+
+    <div id="step-done" hidden>
+      <section class="card" style="margin-top:0">
+        <div class="big">신청됐어요</div>
+        <p style="margin:6px 0 0" class="sub">오픈하면 적어 주신 메일로 창립가 결제 링크를 한 번 보내 드려요. 그 전엔 아무것도 청구되지 않아요.</p>
+      </section>
+      <p class="small" style="margin-top:16px">신청을 취소하거나 이메일을 지우고 싶으면 <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>로 알려 주세요.</p>
+    </div>
+    <p class="small" id="send-err" hidden role="alert">전송이 안 됐어요. 잠시 뒤 다시 누르거나 <a href={`mailto:${OPERATOR.email}?subject=${encodeURIComponent('창립 회원 신청')}`}>메일</a>로 「창립 회원 신청」이라고 보내 주세요.</p>
+  </div>
+  <div class="cta-bar"><button class="cta" id="next" type="button" style="width:100%;border:0;font-family:inherit;cursor:pointer">창립 회원 신청</button></div>
+</Layout>
+<style>
+  #pro { padding-bottom: 80px; }
+  #pro [hidden] { display: none !important; } /* .skel 의 display:grid 가 hidden 을 덮지 않게 */
+  .price { margin-top: 24px; }
+  .price-note { margin: 6px 0 0; font-size: 15px; color: var(--sub); }
+  .feat { margin: 16px 0 0; padding-left: 20px; font-size: 15px; }
+  .feat li { margin-bottom: 4px; }
+  .promise { margin: 20px 0 8px; font-size: 15px; color: var(--blue-text); }
+  .skel { margin-top: 24px; display: grid; gap: 10px; }
+  .skel span { display: block; height: 18px; border-radius: 8px; background: var(--line); }
+  .skel span:first-child { height: 38px; width: 60%; }
+  .step h1 { margin-bottom: 24px; }
+  .field { display: block; margin: 0 0 28px; }
+  .field > span { display: block; font-weight: 600; font-size: 15px; color: var(--sub); margin-bottom: 8px; }
+  input[type='email'] { width: 100%; height: 56px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 18px; padding: 0 16px; font-family: inherit; }
+  .check { display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: 16px; background: var(--card); margin-bottom: 12px; font-size: 15px; cursor: pointer; }
+  .check input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--btn); }
+  .warn { color: var(--no); }
+  .nw { white-space: nowrap; }
+</style>
+<script>
+  import { assignArm, PRICE_ARMS, formatWon, type PriceArm } from '../domain/pricing.ts';
+  import { validatePaymentRequest } from '../domain/paymentRequest.ts';
+  import { funnelPath, type FunnelEvent } from '../application/funnel.ts';
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  // 방문자 키 = 이 브라우저에만 두는 무작위 값(서버로 보내지 않음). 저장소가 막히면 이번 방문만 무작위.
+  function visitorKey(): string {
+    const fresh = () => (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now());
+    try {
+      let k = localStorage.getItem('gk_vk');
+      if (!k) {
+        k = fresh();
+        localStorage.setItem('gk_vk', k);
+      }
+      return k;
+    } catch {
+      return fresh();
+    }
+  }
+  const arm: PriceArm = assignArm(visitorKey());
+  const sent = new Set<FunnelEvent>();
+  // 계측 = 같은 출처 비콘(서버 접근 로그로 센다). 사건마다 1회, 경로에 입력값 없음.
+  function track(e: FunnelEvent) {
+    if (sent.has(e)) return;
+    sent.add(e);
+    try { fetch(funnelPath(e, arm), { keepalive: true, cache: 'no-store', credentials: 'omit' }).catch(() => {}); } catch {}
+  }
+
+  $('price-skel').hidden = true;
+  (document.querySelector(`[data-arm="${arm}"]`) as HTMLElement).hidden = false;
+  $('pledge-price').textContent = `월 ${formatWon(PRICE_ARMS[arm])}원`;
+  track('VIEW');
+
+  const steps = ['step-intro', 'step-email', 'step-agree', 'step-done'];
+  let step = 0;
+  const labels = ['창립 회원 신청', '다음', '신청하기', '공고 둘러보기'];
+  function go(n: number) {
+    steps.forEach((id, i) => ($(id).hidden = i !== n));
+    step = n;
+    $('next').textContent = labels[n];
+    window.scrollTo(0, 0);
+    if (n === 1) $<HTMLInputElement>('email').focus();
+  }
+
+  async function submit() {
+    const body = {
+      email: $<HTMLInputElement>('email').value.trim(),
+      arm,
+      pledge: $<HTMLInputElement>('pledge').checked,
+      consent: $<HTMLInputElement>('consent').checked,
+    };
+    const v = validatePaymentRequest(body);
+    if (!v.ok) {
+      if (v.errors.includes('email')) return go(1);
+      $('agree-msg').textContent = '두 칸 모두 체크해 주세요.';
+      $('agree-msg').classList.add('warn');
+      return;
+    }
+    const btn = $<HTMLButtonElement>('next');
+    btn.disabled = true;
+    $('send-err').hidden = true;
+    try {
+      const r = await fetch('/api/pro-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        credentials: 'omit',
+      });
+      if (r.status !== 204 && !r.ok) throw new Error(String(r.status));
+      track('REQUEST');
+      go(3);
+    } catch {
+      $('send-err').hidden = false;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  $('next').addEventListener('click', () => {
+    if (step === 0) {
+      track('PRICE');
+      go(1);
+    } else if (step === 1) {
+      const ok = validatePaymentRequest({ email: $<HTMLInputElement>('email').value.trim(), arm, pledge: true, consent: true }).ok;
+      if (!ok) {
+        $('email-msg').textContent = '이메일 형식을 확인해 주세요. 예: me@example.com';
+        $('email-msg').classList.add('warn');
+        return;
+      }
+      go(2);
+    } else if (step === 2) {
+      void submit();
+    } else {
+      location.href = '/';
+    }
+  });
+  $('email').addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') $('next').click();
+  });
+</script>

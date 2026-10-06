@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { findForbidden } from '../../src/domain/privacy.ts';
+import { OPERATOR, PRO_PAGES } from '../../src/infrastructure/config.ts';
 
 // 빌드 산출물 검사 (npm run build 뒤 실행)
 const walk = (d: string): string[] =>
@@ -10,6 +11,9 @@ const files = walk('dist');
 // 검색 소유확인 파일(google*.html·naver*.html)은 페이지가 아니다
 const html = files.filter((f) => f.endsWith('.html') && !/^dist\/(google|naver)[0-9a-f]+\.html$/.test(f));
 const detail = html.filter((f) => f.startsWith('dist/g/'));
+// §12 Pro 4장(AWS 빌드에만)은 sitemap 밖 · 운영자 고지 허용
+const proFiles = PRO_PAGES.map((p) => `dist${p}index.html`);
+const sitePages = html.filter((f) => !proFiles.includes(f));
 const data = JSON.parse(readFileSync('data/listings.json', 'utf8'));
 
 describe('AC-10 상세 페이지', () => {
@@ -44,7 +48,7 @@ describe('AC-11 sitemap', () => {
   const xml = readFileSync('dist/sitemap.xml', 'utf8');
   const urls = xml.match(/<loc>[^<]+<\/loc>/g) ?? [];
   it('URL 수 = HTML 수 - 404, ≥ 400', () => {
-    expect(urls.length).toBe(html.length - 1);
+    expect(urls.length).toBe(sitePages.length - 1);
     expect(urls.length).toBeGreaterThanOrEqual(400);
   });
   it('sitemap의 모든 경로에 HTML이 있다', () => {
@@ -61,7 +65,8 @@ describe('AC-11 sitemap', () => {
 describe('공개 산출물 전체 금지 토큰 0', () => {
   it('dist의 모든 html·json에 금지 토큰 없음', () => {
     for (const f of files.filter((f) => /\.(html|json|xml|txt)$/.test(f))) {
-      const s = readFileSync(f, 'utf8').replace(/github\.com\/Ryugi62\/gonggo-pages/g, '');
+      let s = readFileSync(f, 'utf8').replace(/github\.com\/Ryugi62\/gonggo-pages/g, '');
+      if (proFiles.includes(f)) for (const v of Object.values(OPERATOR)) s = s.split(v).join('');
       expect(findForbidden(s), f).toEqual([]);
     }
   }, 120_000);
@@ -106,8 +111,8 @@ describe('Pro §5 조항 판독 블록', () => {
     expect(page).toContain('조항 판독');
     expect(page).toContain('원문과 다르면 원문이 맞아요');
   });
-  it('§5-6 결제 0: 어떤 페이지에도 카드 입력·결제 버튼·가격 없음', () => {
-    for (const f of html) {
+  it('§5-6 결제 0: 어떤 페이지에도 카드 입력·결제 버튼·가격 없음(가격은 AWS /pro/만 — §12)', () => {
+    for (const f of html.filter((f) => f !== 'dist/pro/index.html')) {
       const s = readFileSync(f, 'utf8');
       expect(s, f).not.toMatch(/type="(?:tel|number)"[^>]*card|카드\s*번호|결제하기|19,900|49,000/);
     }

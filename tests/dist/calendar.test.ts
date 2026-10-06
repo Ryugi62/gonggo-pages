@@ -65,7 +65,7 @@ describe('C3·C4·C6 모든 .ics', () => {
       expect((u.match(/^URL:https:\/\/[^\r]+\/g\/[a-z0-9-]+\/\?from=cal\r?$/gm) ?? []).length, f).toBe(ev);
       expect(findForbidden(u), f).toEqual([]);
     }
-  });
+  }, 60_000); // .ics 1,600여 개 전수 — 다른 산출물 테스트와 병렬이면 5초를 넘는다(2026-10-06 6.2s 관측)
   it('sitemap엔 .ics 없음', () => {
     expect(readFileSync('dist/sitemap.xml', 'utf8')).not.toContain('.ics');
   });
