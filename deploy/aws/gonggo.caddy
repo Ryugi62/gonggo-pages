@@ -1,7 +1,7 @@
 # 공고콕 엣지 라우팅 스니펫 — 이 파일이 유일한 출처(deploy/aws/deploy.sh 가 서버 ~/edge/sites/gonggo.caddy 로 동기화).
 # 규칙: 공고콕 소유 호스트 블록만. 전역 설정·뼈대는 server-ops 리포의 edge/Caddyfile 소유.
-# 호스트: 정식 gonggo.oaksoo.com(Cloudflare DNS only A → 43.202.151.104, 2026-10-06) + sslip.io 와일드카드(기존 주소 유지). 둘 다 Let's Encrypt 자동 발급.
-gonggo.oaksoo.com, gonggo.43-202-151-104.sslip.io {
+# 정식 gonggo.oaksoo.com(Cloudflare DNS only A → 43.202.151.104, 2026-10-06, SPEC §13). Let's Encrypt 자동 발급.
+gonggo.oaksoo.com {
 	encode gzip
 	log {
 		output file /data/logs/gonggo-access.log {
@@ -13,5 +13,26 @@ gonggo.oaksoo.com, gonggo.43-202-151-104.sslip.io {
 	reverse_proxy gonggo-web:80 {
 		lb_try_duration 15s
 		lb_try_interval 500ms
+	}
+}
+# 옛 주소 sslip.io — 페이지는 정식 주소 같은 경로로 301. 이미 구독한 캘린더(/cal/)·결제 요청 POST(/api/)·비콘(/intent/)은 그대로 서빙.
+gonggo.43-202-151-104.sslip.io {
+	encode gzip
+	log {
+		output file /data/logs/gonggo-access.log {
+			roll_size 20MiB
+			roll_keep 5
+		}
+		format json
+	}
+	@keep path /cal/* /api/* /intent/*
+	handle @keep {
+		reverse_proxy gonggo-web:80 {
+			lb_try_duration 15s
+			lb_try_interval 500ms
+		}
+	}
+	handle {
+		redir https://gonggo.oaksoo.com{uri} 301
 	}
 }

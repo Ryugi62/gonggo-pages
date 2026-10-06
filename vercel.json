@@ -5,9 +5,6 @@
   "outputDirectory": "dist",
   "trailingSlash": true,
   "redirects": [
-    { "source": "/pro/:path*", "destination": "https://gonggo.43-202-151-104.sslip.io/pro/", "permanent": false },
-    { "source": "/terms/:path*", "destination": "https://gonggo.43-202-151-104.sslip.io/terms/", "permanent": false },
-    { "source": "/refund/:path*", "destination": "https://gonggo.43-202-151-104.sslip.io/refund/", "permanent": false },
-    { "source": "/privacy/:path*", "destination": "https://gonggo.43-202-151-104.sslip.io/privacy/", "permanent": false }
+    { "source": "/((?!google[0-9a-f]+\\.html$|naver[0-9a-f]+\\.html$).*)", "destination": "https://gonggo.oaksoo.com/$1", "statusCode": 301 }
   ]
 }

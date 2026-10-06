@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 // SPEC §12 AC-25 — Pro 가격 페이지 4장은 상업 이용이 허용된 AWS 빌드(DEPLOY_TARGET=aws)에만 만든다.
-// Vercel(Hobby)은 「상품 판매 광고」 금지라 기본 빌드엔 넣지 않는다(vercel.json도 4경로를 AWS로 돌린다).
+// Vercel(Hobby)은 「상품 판매 광고」 금지라 기본 빌드엔 넣지 않는다(vercel.json이 모든 경로를 정식 주소로 301, SPEC §13).
 const proPages = {
   name: 'pro-pages',
   hooks: {
@@ -17,7 +17,7 @@ const proPages = {
 };
 
 export default defineConfig({
-  site: process.env.SITE_URL ?? 'https://gonggo-pages.vercel.app',
+  site: process.env.SITE_URL ?? 'https://gonggo.oaksoo.com', // SPEC §13 정식 주소 = config.ts CANONICAL_ORIGIN
   output: 'static',
   trailingSlash: 'always',
   build: { format: 'directory', inlineStylesheets: 'always' },

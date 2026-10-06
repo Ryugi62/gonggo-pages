@@ -9,12 +9,12 @@ const sh = readFileSync('deploy/aws/deploy.sh', 'utf8');
 const PRO_PATHS = ['/pro', '/terms', '/refund', '/privacy'];
 
 describe('AC-25 Vercel엔 /pro 없음', () => {
-  it('vercel.json이 4경로를 AWS 주소로 돌린다', () => {
+  it('vercel.json이 4경로를 AWS 정식 주소로 돌린다(§13 AC-34 전체 301 규칙에 포함)', () => {
     const r = vercel.redirects ?? [];
     for (const p of PRO_PATHS) {
-      const hit = r.find((x: any) => x.source === `${p}/:path*` || x.source === `${p}/` || x.source === p);
+      const hit = r.find((x: any) => new RegExp(`^${x.source}$`).test(`${p}/`));
       expect(hit, p).toBeTruthy();
-      expect(hit.destination).toMatch(/^https:\/\/gonggo\.43-202-151-104\.sslip\.io\//);
+      expect(hit.destination).toMatch(/^https:\/\/gonggo\.oaksoo\.com\//);
     }
   });
   it('astro 설정: DEPLOY_TARGET=aws일 때만 4장을 주입한다', () => {

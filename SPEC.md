@@ -105,6 +105,7 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - v0.2 2026-10-06 공고콕 Pro 검증 SPEC(볼트 `projects/공고콕-Pro-2026/SPEC`) 1단계 — AC-14~18, 공개 1,698건·조항 1칸 이상 64%. 호스팅에 AWS(기존 EC2, edge-caddy 뒤 nginx 1개, `deploy/aws/`) 추가 — Vercel Hobby는 가격 페이지 금지라 `/pro`는 AWS에만. 문구 조정: SPEC의 「원문에 AI 사용 규정이 없어요」는 원문 전문을 다 읽지 않은 상태의 단정이라 「원문에서 AI 사용 규정을 찾지 못했어요」로.
 - v0.3 2026-10-06 §11 성장 장치 ① 마감 캘린더 루프(AC-19~24).
 - v0.4 2026-10-07 §12 Pro 가격 페이지·결제 요청 저장(AC-25~32, AWS 빌드 전용).
+- v0.5 2026-10-06 §13 정식 주소 https://gonggo.oaksoo.com 전환(AC-33~38) — 도메인 구매 0원(기존 oaksoo.com 하위 호스트).
 
 ## 11. 성장 장치 ① 마감 캘린더 루프 (v0.3, 2026-10-06 — 볼트 `projects/자동성장-서비스-2026` ④)
 **목적**: 사용 행위(「내 캘린더에 마감 넣기」·「분류 구독」)가 곧 재방문·전파가 되는 루프. 캘린더 일정 1건 = 우리 상세 페이지 링크 1개(`?from=cal`)가 사용자 캘린더에 박혀, 마감 알림이 울릴 때마다 사람 손 0으로 재방문이 생긴다. 구독 링크는 동아리·단톡방에 그대로 공유된다.
@@ -146,3 +147,21 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-31: Given 개인정보처리방침 Then 수집 항목(이메일·접속 기록)·목적·보유 기간(2026-11-21 파기)·처리 위탁(AWS 서울 리전)·정보주체 권리·문의처가 있다. 환불 규정 = 지금 결제 0 + 오픈 뒤 첫 결제 30일 무조건 전액 환불.
 - AC-32: Given dist 전체 When 금지 토큰을 검사하면 Then 0 — 단, 선언된 운영자 고지 문자열(`OPERATOR`)은 4장에서만 허용하고 그 밖 페이지에 나오면 실패.
 **비목표**: 실결제·PG·카드 입력 · 계정·로그인 · 메일 자동 발송(신청자 메일은 메인 세션 손) · 새 서버 앱·데몬·DB · 도메인 구매 · Vercel에 가격 노출.
+
+## 13. 정식 주소 전환 — https://gonggo.oaksoo.com (v0.5, 2026-10-06)
+**목적**: 검색 유입이 vercel.app(가격 페이지 금지·/pro 입구 없음)으로 가던 것을 AWS의 정식 주소 1곳으로 모은다. 검색 방문 = /pro 입구가 있는 페이지 방문이 되게 한다(볼트 Pro 로그 「메인 결정 1」). 도메인 구매 0원 — 기존 oaksoo.com의 하위 호스트(Cloudflare DNS only A → 기존 EC2, 엣지 caddy가 인증서 자동 발급).
+**정식 주소** `CANONICAL_ORIGIN = https://gonggo.oaksoo.com` — `SITE_URL`(astro `site`)·`PRO_ORIGIN`·`FEED_ORIGIN`의 기본값이 모두 이것.
+**숫자 성공 조건(배포 게이트)**
+- R1 dist의 모든 HTML(소유확인 파일 제외) canonical·og:url 100%가 `https://gonggo.oaksoo.com/`로 시작. sitemap `<loc>` 100% · robots `Sitemap:` · `.ics`의 상세 링크 100%도 같은 호스트.
+- R2 dist 전체(HTML·xml·txt·ics·json)에 옛 주소(`gonggo-pages*.vercel.app`·`*.sslip.io`) 문자열 0. (공고 원문 링크가 남의 vercel.app인 것은 원문 주소라 허용.)
+- R3 옛 주소: `gonggo-pages.vercel.app`의 모든 경로 → 같은 경로의 정식 주소로 **301**(검색 소유확인 파일 google*/naver*.html만 제외 — 옛 속성 확인 유지). `gonggo.43-202-151-104.sslip.io`의 페이지 → 정식 주소 같은 경로 **301**, 단 `/cal/*`(이미 구독한 캘린더)·`/api/*`(POST 저장)·`/intent/*`(비콘)는 301 없이 그대로 서빙.
+- R4 계측 유지: 정식 주소(AWS 빌드)엔 Vercel 분석 스크립트가 없으므로 `window.va('pageview',{path:'/intent/…'})`가 같은 출처 GET 비콘(`/intent/…`, nginx intent.log)으로 나간다. `/intent/`로 시작하지 않는 경로는 보내지 않는다.
+- R5 라이브: `https://gonggo.oaksoo.com/`·`/pro/` 200, 페이지 소스 canonical = 정식 주소. 같은 EC2의 다른 서비스(daboyeong.kr·oaksoo.com·EIP:7860) 상태 코드 전후 동일.
+**용어**: 정식 주소 `CANONICAL_ORIGIN` · 옛 주소 `LEGACY_ORIGINS`(vercel.app·sslip.io).
+- AC-33: Given 환경 변수 없음 When 설정을 읽으면 Then `SITE_URL`·`PRO_ORIGIN`·`FEED_ORIGIN` = `CANONICAL_ORIGIN` = `https://gonggo.oaksoo.com`, astro `site` 기본값도 같다.
+- AC-34: Given `vercel.json` When `/`·`/g/<slug>/`·`/pro/`·`/sitemap.xml`를 맞추면 Then 리다이렉트 1개가 `https://gonggo.oaksoo.com/<같은 경로>`·statusCode 301로 보내고, `google09201ae909576b2d.html`·`naver….html`은 맞지 않는다. (§12 P1의 「4경로 → AWS」를 대체 — 4경로도 이 규칙에 포함.)
+- AC-35: Given 엣지 스니펫 When 읽으면 Then 정식 호스트 블록은 `reverse_proxy gonggo-web:80`, sslip 블록은 `/cal/*`·`/api/*`·`/intent/*`만 프록시하고 나머지는 `redir https://gonggo.oaksoo.com{uri} 301`. 블록은 공고콕 호스트 2개뿐·전역 설정 없음.
+- AC-36: Given 빌드 결과 When 모든 페이지·sitemap·robots·`.ics`를 보면 Then R1·R2.
+- AC-37: Given AWS 빌드 When 페이지를 보면 Then `/_vercel/insights/script.js` 없음 + `va` 비콘 심(R4). 기본(Vercel) 빌드는 지금처럼 Vercel 스크립트.
+- AC-38: Given 라이브 When curl(맥 DNS 음성 캐시면 `--resolve`/1.1.1.1) Then R3·R5.
+**비목표**: 도메인 구매 · Vercel 사용자 지정 도메인 연결 · 서치 콘솔 새 속성 등록·주소 변경 도구(계정 행위 — 메인 몫) · 결제 연결.

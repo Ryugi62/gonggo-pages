@@ -1,5 +1,5 @@
 ---
-import { SITE_NAME, REPO_URL } from '../infrastructure/config.ts';
+import { SITE_NAME, REPO_URL, IS_AWS } from '../infrastructure/config.ts';
 import { generatedAt } from '../adapters/site/data.ts';
 import LegalFooter from '../components/LegalFooter.astro';
 
@@ -12,7 +12,7 @@ interface Props {
   bottomCta?: { href: string; label: string; external?: boolean };
   /** canonical 호스트를 바꿀 때(Pro 4장 = AWS 주소, SPEC §12) */
   origin?: string;
-  /** Vercel 분석 스크립트 — AWS 전용 페이지엔 없다(같은 출처 비콘만) */
+  /** Vercel 분석 스크립트 — AWS 빌드엔 없다(정식 주소는 va → 같은 출처 /intent/ 비콘, SPEC §13 R4) */
   analytics?: boolean;
   /** 사업자 정보·약관 링크(Pro 4장) */
   legal?: boolean;
@@ -42,8 +42,10 @@ const ogImage = new URL('/og.png', Astro.site).href;
   <meta name="naver-site-verification" content="b075ec90d3f456a4ecbac88671fff441169d5b8b" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
-  <script is:inline>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
-  {analytics && <script is:inline defer src="/_vercel/insights/script.js"></script>}
+  {IS_AWS
+    ? <script is:inline>window.va=function(e,o){var p=o&&o.path;if(e==='pageview'&&typeof p==='string'&&p.indexOf('/intent/')===0)try{fetch(p,{method:'GET',keepalive:true,credentials:'omit'})}catch(x){}};</script>
+    : <script is:inline>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>}
+  {analytics && !IS_AWS && <script is:inline defer src="/_vercel/insights/script.js"></script>}
 </head>
 <body class={bottomCta ? 'has-cta' : ''}>
   <header class="top">
