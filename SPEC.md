@@ -103,3 +103,24 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 ## 10. 변경 이력
 - v0.1 2026-10-02 최초(MVP).
 - v0.2 2026-10-06 공고콕 Pro 검증 SPEC(볼트 `projects/공고콕-Pro-2026/SPEC`) 1단계 — AC-14~18, 공개 1,698건·조항 1칸 이상 64%. 호스팅에 AWS(기존 EC2, edge-caddy 뒤 nginx 1개, `deploy/aws/`) 추가 — Vercel Hobby는 가격 페이지 금지라 `/pro`는 AWS에만. 문구 조정: SPEC의 「원문에 AI 사용 규정이 없어요」는 원문 전문을 다 읽지 않은 상태의 단정이라 「원문에서 AI 사용 규정을 찾지 못했어요」로.
+- v0.3 2026-10-06 §11 성장 장치 ① 마감 캘린더 루프(AC-19~24).
+
+## 11. 성장 장치 ① 마감 캘린더 루프 (v0.3, 2026-10-06 — 볼트 `projects/자동성장-서비스-2026` ④)
+**목적**: 사용 행위(「내 캘린더에 마감 넣기」·「분류 구독」)가 곧 재방문·전파가 되는 루프. 캘린더 일정 1건 = 우리 상세 페이지 링크 1개(`?from=cal`)가 사용자 캘린더에 박혀, 마감 알림이 울릴 때마다 사람 손 0으로 재방문이 생긴다. 구독 링크는 동아리·단톡방에 그대로 공유된다.
+**숫자 성공 조건(배포 게이트)**
+- C1 마감일 있는 공개 공고 **100%**(현재 1,574/1,698)의 상세 페이지에 「구글 캘린더에 추가」(템플릿 URL, 날짜 정확)와 `.ics` 링크가 있다. 상시·마감 미상 공고 0건에 노출.
+- C2 구독 피드 = 전체 1 + 분류(공고 있는 것) + 대상 태그(공고 있는 것) + 이번 주 창업 1. 피드엔 **오늘~90일 안 마감**만(전체 피드 1MB 상한 — 2026-10-06 실측 1,574건 전부 넣으면 986KB), 피드마다 VEVENT 수 = 그 창의 공고 수(±0), 파일 ≤ 1MB. 피드 일정 설명은 짧게(안내 문장은 단건 .ics에만).
+- C3 RFC 5545: CRLF 줄끝 · 모든 줄 ≤ 75옥텟(접기, UTF-8 문자 안 자름) · `, ; \ 줄바꿈` 이스케이프 · UID 공고마다 고유(`<slug>@gonggo`) · DTSTAMP · 종일 일정 DTEND=마감 다음 날(월·연 넘김 포함) · 단건 `.ics`엔 VALARM 3일 전.
+- C4 루프: 모든 VEVENT의 DESCRIPTION과 URL에 상세 페이지 절대 주소 + `?from=cal`이 있다(100%).
+- C5 계측(가상 페이지뷰, 입력값 0): 추가 클릭 `/intent/cal/add/<slug>` · 구독 클릭 `/intent/cal/sub/<feed>` · 캘린더에서 돌아온 방문 `/intent/cal/return/<slug>`. 피드 요청은 AWS 엣지 접근 로그(UA별)로 센다 → 구독 피드 주소는 AWS 호스트(`FEED_ORIGIN`).
+- C6 개인정보: 모든 `.ics`에서 금지 토큰 0 · 상세 HTML ≤ 40KB 유지 · sitemap은 HTML만(.ics 제외).
+- C7 라이브: AWS·Vercel 둘 다 `/cal/all.ics` 200 + `Content-Type: text/calendar`. 실파서(python icalendar 또는 동급)로 전체 피드 파싱 오류 0.
+- 결과 지표(30일, 판정 2026-11-06): 추가+구독 클릭 ≥ 20(자체 검증 클릭 제외) · `from=cal` 재방문 ≥ 5 · 피드 요청 UA 중 캘린더 클라이언트(Google-Calendar-Importer 등) ≥ 1. 미달이면 위치(첫 화면 노출)부터 바꾼다.
+**비목표**: 이메일 알림 발송·계정·서버 API·푸시 없음. 비공개 캘린더 쓰기(OAuth) 없음.
+**용어**: 마감 일정 `DeadlineEvent` · 피드 `CalendarFeed{slug,name,items}` · 직렬화 `serializeCalendar` · 구글 추가 링크 `googleAddUrl` · 구독 링크 `googleSubscribeUrl`/`webcalUrl`.
+- AC-19: Given 마감 2026-10-30 23:59 공고 When 일정을 만들면 Then DTSTART;VALUE=DATE:20261030 · DTEND;VALUE=DATE:20261031 · SUMMARY 「[마감] <공고명> 23:59」, 12-31 마감이면 DTEND 다음 해 0101.
+- AC-20: Given 긴 한글 공고명·쉼표·세미콜론·줄바꿈 When 직렬화하면 Then 모든 줄 ≤ 75옥텟·CRLF·이스케이프되고, 접은 줄을 다시 펴면 원문과 같다.
+- AC-21: Given 상시·마감 미상·어제 마감 공고 When 피드를 만들면 Then 들어가지 않는다 / 오늘 마감은 들어간다.
+- AC-22: Given 빌드 결과 When 마감일 있는 상세 페이지를 보면 Then 구글 템플릿 링크(dates=YYYYMMDD/YYYYMMDD+1)·`/cal/g/<slug>.ics`가 있고, 상시 공고 페이지엔 없다. 분류·태그·이번 주·홈에 구독 상자(구글 구독 링크·webcal 링크)가 있다.
+- AC-23: Given dist의 모든 `.ics` When 검사하면 Then 금지 토큰 0, C2·C3·C4 만족.
+- AC-24: Given nginx 설정 When `.ics`를 서빙하면 Then `text/calendar; charset=utf-8`.

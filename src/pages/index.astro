@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ListingList from '../components/ListingList.astro';
+import CalendarSubscribe from '../components/CalendarSubscribe.astro';
 import { index, listings, categories, tags, weeks, week, generatedAt } from '../adapters/site/data.ts';
 import { weekLabel } from '../domain/format.ts';
 import { deadlineWeek } from '../application/buildSiteIndex.ts';
@@ -31,6 +32,8 @@ const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SI
       {index.rolling.length > 0 && <a class="tile" href="/rolling/"><b>상시 모집 {index.rolling.length}</b><span>마감일 없이 수시로 받는 공고</span></a>}
     </div>
   </section>
+
+  <CalendarSubscribe feed="all" />
 
   <section>
     <h2>마감 임박</h2>

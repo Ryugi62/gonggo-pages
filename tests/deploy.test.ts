@@ -18,6 +18,9 @@ describe('AWS 배포 설정', () => {
     expect(nginx).toMatch(/location \^~ \/intent\/ \{[^}]*return 204/);
     expect(nginx).toContain('error_page 404 /404.html');
   });
+  it('AC-24 nginx: .ics는 text/calendar; charset=utf-8', () => {
+    expect(nginx).toMatch(/location ~\* \\\.ics\$ \{ types \{ \} default_type "text\/calendar; charset=utf-8";/);
+  });
   it('배포 스크립트: 자기 스니펫만 복사, validate 실패 시 원복, 설정은 디렉터리 마운트', () => {
     expect(sh).toContain('/home/ubuntu/edge/sites/gonggo.caddy');
     expect(sh).not.toMatch(/edge\/Caddyfile\s*$/m);

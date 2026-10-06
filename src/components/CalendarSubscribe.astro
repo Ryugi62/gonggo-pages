@@ -1,0 +1,16 @@
+---
+import { feedUrl } from '../adapters/site/data.ts';
+import { googleSubscribeUrl, webcalUrl } from '../domain/ics.ts';
+interface Props { feed: string }
+const { feed } = Astro.props;
+const url = feedUrl(feed);
+---
+<section class="card" aria-labelledby={`cal-sub-${feed}`}>
+  <b id={`cal-sub-${feed}`}>이 목록 마감을 내 캘린더로 받기</b>
+  <p class="small" style="margin:6px 0 12px">한 번 구독하면 새 공고 마감이 캘린더에 알아서 들어와요. 일정마다 자격·조항 정리 링크가 붙어요.</p>
+  <div class="grid2">
+    <a class="btn primary block" href={googleSubscribeUrl(url)} target="_blank" rel="noopener" data-intent={`/intent/cal/sub/${feed}`}>구글 캘린더</a>
+    <a class="btn secondary block" href={webcalUrl(url)} data-intent={`/intent/cal/sub/${feed}`}>애플·아웃룩</a>
+  </div>
+  <p class="small" style="margin:10px 0 0;word-break:break-all">구독 주소(동아리·단톡방에 그대로 공유해도 돼요): {url}</p>
+</section>

@@ -1,10 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ListingList from './ListingList.astro';
+import CalendarSubscribe from './CalendarSubscribe.astro';
+import { hasFeed } from '../adapters/site/data.ts';
 import type { PublicListing } from '../domain/listing.ts';
 import { SITE_NAME } from '../infrastructure/config.ts';
-interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[] }
-const { heading, title, description, path, lead, items } = Astro.props;
+interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[]; feed?: string }
+const { heading, title, description, path, lead, items, feed } = Astro.props;
 const site = Astro.site!.href.replace(/\/$/, '');
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -22,6 +24,7 @@ const jsonLd = [
     <div class="big">{items.length}건</div>
     <p style="margin:6px 0 0" class="sub">마감이 가까운 순서예요.</p>
   </section>
+  {feed && hasFeed(feed) && <CalendarSubscribe feed={feed} />}
   <section><ListingList items={items} /></section>
   <slot />
 </Layout>

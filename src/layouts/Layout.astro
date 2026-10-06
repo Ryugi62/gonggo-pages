@@ -61,6 +61,9 @@ const ogImage = new URL('/og.png', Astro.site).href;
     </div>
   )}
   <script is:inline>
+    document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-intent]');if(!a)return;try{window.va&&window.va('pageview',{route:'/intent/cal',path:a.getAttribute('data-intent')})}catch(x){}});
+  </script>
+  <script is:inline>
     (function(){var t=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date());var at=function(d){return Date.parse(d+'T12:00:00Z')};document.querySelectorAll('[data-deadline]').forEach(function(el){var n=Math.round((at(el.getAttribute('data-deadline'))-at(t))/864e5);el.textContent=n<0?'마감':n===0?'D-day':'D-'+n;if(n<0)el.classList.add('closed')})})();
   </script>
 </body>
