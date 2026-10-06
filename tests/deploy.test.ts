@@ -9,7 +9,7 @@ const sh = readFileSync('deploy/aws/deploy.sh', 'utf8');
 describe('AWS 배포 설정', () => {
   it('엣지 스니펫은 공고콕 호스트 블록 1개만, 전역 설정 없음', () => {
     const hosts = caddy.split('\n').filter((l) => /^\S.*\{\s*$/.test(l));
-    expect(hosts).toEqual(['gonggo.43-202-151-104.sslip.io {']);
+    expect(hosts).toEqual(['gonggo.oaksoo.com, gonggo.43-202-151-104.sslip.io {']);
     expect(caddy).not.toMatch(/^\{/m);
     expect(caddy).toContain('reverse_proxy gonggo-web:80');
   });
