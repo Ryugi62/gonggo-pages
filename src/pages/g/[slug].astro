@@ -127,7 +127,7 @@ const jsonLd = [
   </details>
 </Layout>
 <script is:inline define:vars={{ slug: l.slug }}>
-  // 캘린더에서 돌아온 방문 — 기본 페이지뷰가 먼저 잡히도록 load 뒤에 보낸다(대기열에 먼저 넣으면 기본 페이지뷰를 덮음, 2026-10-06 실측)
+  // from=cal 재방문 — 기본 페이지뷰 뒤에 보낸다
   if(/[?&]from=cal(&|$)/.test(location.search))window.addEventListener('load',function(){setTimeout(function(){try{window.va&&window.va('pageview',{route:'/intent/cal',path:'/intent/cal/return/'+slug})}catch(e){}},1500)});
 </script>
 <script is:inline>
