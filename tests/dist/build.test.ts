@@ -76,6 +76,7 @@ describe('AC-12 검색 등록 소유확인', () => {
   it('구글·네이버 확인 파일과 홈 메타', () => {
     expect(readFileSync('dist/google09201ae909576b2d.html', 'utf8')).toContain('google-site-verification: google09201ae909576b2d.html');
     expect(readFileSync('dist/naver834f78053dd5db36c61e81760ecaf7ce.html', 'utf8')).toContain('naver-site-verification: naver834f78053dd5db36c61e81760ecaf7ce.html');
+    expect(readFileSync('dist/naver228ead5495fbad5fe49c95cc18e5bc7c.html', 'utf8')).toContain('naver-site-verification: naver228ead5495fbad5fe49c95cc18e5bc7c.html');
     expect(readFileSync('dist/index.html', 'utf8')).toContain('<meta name="naver-site-verification" content="b075ec90d3f456a4ecbac88671fff441169d5b8b"');
   });
 });

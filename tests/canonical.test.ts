@@ -42,6 +42,7 @@ describe('AC-34 vercel.app → 정식 주소 301', () => {
   it('검색 소유확인 파일은 리다이렉트하지 않는다', () => {
     expect(vercelRedirect('/google09201ae909576b2d.html')).toBeNull();
     expect(vercelRedirect('/naver834f78053dd5db36c61e81760ecaf7ce.html')).toBeNull();
+    expect(vercelRedirect('/naver228ead5495fbad5fe49c95cc18e5bc7c.html')).toBeNull();
   });
 });
 
