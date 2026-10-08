@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { findForbidden } from '../../src/domain/privacy.ts';
-import { OPERATOR, PRO_PAGES } from '../../src/infrastructure/config.ts';
+import { OPERATOR, PRO_PAGES, INDEXNOW_KEY } from '../../src/infrastructure/config.ts';
+import { searchTitle, listingFaq } from '../../src/domain/searchLanding.ts';
 
 // 빌드 산출물 검사 (npm run build 뒤 실행)
 const walk = (d: string): string[] =>
@@ -21,7 +22,7 @@ describe('AC-10 상세 페이지', () => {
   const page = readFileSync(`dist/g/${l.slug}/index.html`, 'utf8');
   it('title·description·canonical·OG·JSON-LD', () => {
     const esc = (s: string) => s.replace(/&/g, '&amp;');
-    expect(page).toContain(`<title>${esc(l.name)} 자격·마감·상금 정리</title>`);
+    expect(page).toContain(`<title>${esc(searchTitle(l))}</title>`);
     expect(page).toMatch(/<meta name="description" content="[^"]{40,}"/);
     expect(page).toMatch(new RegExp(`<link rel="canonical" href="https://[^"]+/g/${l.slug}/"`));
     expect(page).toContain('property="og:title"');
@@ -128,5 +129,31 @@ describe('주간 페이지 — 이번 주 낼 수 있는 창업경진대회·지
   });
   it('홈에서 주간 페이지로 가는 링크', () => {
     expect(readFileSync('dist/index.html', 'utf8')).toContain('href="/week/"');
+  });
+});
+
+describe('AC-47 검색 착지 — 고객 말 제목·FAQ(SPEC §15)', () => {
+  const ls = data.listings as any[];
+  // &amp; 는 마지막에 — 공고명에 원래 들어 있는 「&lt;」 글자를 두 번 풀지 않게
+  const unesc = (s: string) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+  it('상세 100%: title = searchTitle, FAQPage 1개, FAQ 질문이 화면 본문에 보인다', () => {
+    for (const l of ls) {
+      const page = readFileSync(`dist/g/${l.slug}/index.html`, 'utf8');
+      const t = /<title>([^<]*)<\/title>/.exec(page)![1];
+      expect(unesc(t), l.slug).toBe(searchTitle(l));
+      const lds = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+      const faqs = lds.filter((j) => j['@type'] === 'FAQPage');
+      expect(faqs.length, l.slug).toBe(1);
+      const body = unesc(page.slice(page.indexOf('<body')).replace(/<[^>]+>/g, ''));
+      const want = listingFaq(l);
+      expect(faqs[0].mainEntity.map((q: any) => q.name)).toEqual(want.map((f) => f.q));
+      for (const f of want) expect(body, `${l.slug} ${f.q}`).toContain(f.q);
+    }
+  }, 120_000);
+});
+
+describe('AC-48 IndexNow 키 파일', () => {
+  it('dist/<키>.txt 본문 = 키', () => {
+    expect(readFileSync(`dist/${INDEXNOW_KEY}.txt`, 'utf8').trim()).toBe(INDEXNOW_KEY);
   });
 });

@@ -18,6 +18,8 @@ export const OPERATOR = {
   mailOrderNo: '2026-창원의창-0388',
   email: 'xorjf1027@gmail.com',
 } as const;
+/** IndexNow 키(SPEC §15 Q4) — 공개값. 키 파일 public/<키>.txt 본문과 같아야 한다. */
+export const INDEXNOW_KEY = '7909e33069319f0eb1a00617178662c1';
 export const LISTINGS_PATH = 'data/listings.json';
 export const REPO_URL = 'https://github.com/Ryugi62/gonggo-pages';
 

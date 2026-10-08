@@ -107,6 +107,7 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - v0.4 2026-10-07 §12 Pro 가격 페이지·결제 요청 저장(AC-25~32, AWS 빌드 전용).
 - v0.5 2026-10-06 §13 정식 주소 https://gonggo.oaksoo.com 전환(AC-33~38) — 도메인 구매 0원(기존 oaksoo.com 하위 호스트).
 - v0.6 2026-10-08 §14 /pro 첫 화면 v2 — 고객 원문 인용·「판정마다 원문 조항」(AC-39~43).
+- v0.7 2026-10-08 §15 검색 유입 장치 — 고객 말 제목·설명·FAQ 구조화 데이터·IndexNow·사람 방문 계측(AC-44~50).
 
 ## 11. 성장 장치 ① 마감 캘린더 루프 (v0.3, 2026-10-06 — 볼트 `projects/자동성장-서비스-2026` ④)
 **목적**: 사용 행위(「내 캘린더에 마감 넣기」·「분류 구독」)가 곧 재방문·전파가 되는 루프. 캘린더 일정 1건 = 우리 상세 페이지 링크 1개(`?from=cal`)가 사용자 캘린더에 박혀, 마감 알림이 울릴 때마다 사람 손 0으로 재방문이 생긴다. 구독 링크는 동아리·단톡방에 그대로 공유된다.
@@ -180,3 +181,28 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-41: Then V3 금지 낱말 0 · 「찾지 못했어요」 · 「협약서·운영지침」 경계 문장이 있다.
 - AC-42: Then 첫 화면 버튼 문구 = 「창립가로 먼저 신청 · 지금 0원」(이후 스텝 문구 `다음`·`신청하기`·`공고 둘러보기` 유지).
 - AC-43: Given `CUSTOMER_VOICES` When 검사하면 Then 3개 이상, 날짜는 ISO, 링크는 https, 인용에 「」 없음.
+
+## 15. 검색 유입 장치 — 고객이 검색하는 말로 상세 페이지를 다시 달기 (v0.7, 2026-10-08 — 볼트 `projects/공고콕-Pro-2026/회차-01-2026-10-08`)
+**왜 이 채널인가(10/8 실측)**: 엣지 접근 로그(10/6 02:49~10/8 17:14 KST, 14,462줄) 중 사람으로 보이는 페이지 방문(브라우저 UA·Accept-Language·Sec-Fetch-Mode navigate·스캐너 IP 제외) = 한국어 2명(둘 다 `?utm_source=chatgpt.com` → `/c/contest/`), 외부 Referer 0. /pro 사람 방문 0. 상세 1,698장 전부에 이미 `/pro/?from=g` 링크가 있다 → 「무료 페이지에 사람이 오는데 /pro로 안 넘어온다」가 아니라 **무료 페이지에도 사람이 거의 0** → 맥락 CTA가 아니라 검색 유입이 병목. 색인: Naver `site:` 0건, Bing `site:` 무시(0으로 봄), Google `site:` curl 불가(null). ChatGPT-User가 55개 페이지를 101회 읽음 = AI 검색이 이미 인용 중.
+**고객 원문 → 검색어**: 「받을 수 있나요?」(지식iN 2025-12-03) · 「중복 수혜 가능한가요?」(네이버 카페 2026-02-04) · 「예비 단계인지 이미 창업기업인지」(카페 2026-04-07) · 「쳇지피티는 받을수 있다는데 영 못믿겠어서요」 → 제목·설명·질문 문장을 이 말로 단다.
+**숫자 성공 조건(배포 게이트)**
+- Q1 상세 1,698장 100%의 `<title>`이 「<공고명> <신청|참가> 자격·…·마감 — 나도 <받을|낼|참가할> 수 있나요?」 형태(분류별 동사). 조항이 있으면 고객이 묻는 조항 1개(중복 수혜 > AI 사용 > 중복 수상 > 업력 > 팀 구성 > 현장 참석)가 제목에 들어간다.
+- Q2 description은 질문으로 시작하고, 자격 인용이 있으면 「원문 자격: 「…」」를 싣는다. ≤ 158자, 금지 토큰·V3 과장 낱말 0.
+- Q3 상세마다 `FAQPage` JSON-LD 1개 — 질문·답 전부가 **화면에 보이는 문장 그대로**(누가 낼 수 있나요? / AI(챗GPT)로 쓴 내용을 내도 되나요? / 조항별 질문). 답은 공고 원문 인용이나 「찾지 못했어요」뿐 — 우리가 지어낸 결론 0. 질문 ≥ 1(AI 질문은 모든 상세에 있다).
+- Q4 IndexNow: 키 파일 `/<키>.txt`(본문 = 키)가 dist에 있고, `npm run indexnow`가 dist/sitemap.xml의 정식 주소 URL 전부를 `api.indexnow.org`·네이버 `searchadvisor.naver.com/indexnow`에 보낸다(계정·로그인 0, 응답 코드 기록). sitemap 밖 주소·옛 주소 0.
+- Q5 사람 방문 계측 고정: `npm run visits` 1개가 (a) intent.log에서 /pro 사람 방문 (b) 엣지 로그에서 무료 페이지 사람 착지(유입원별: google·naver·daum·bing·chatgpt·기타·직접)를 센다. 봇 제외 규칙은 코드 1곳(`isHumanUserAgent`).
+- Q6 상세 HTML ≤ 40KB 유지, 기존 테스트 전부 초록.
+- 결과 지표(판정 2026-10-21, 회차 01과 같은 날): 무료 페이지 검색 착지(google+naver+daum+bing+chatgpt) 사람 ≥ 30 · /pro 사람 방문 ≥ 5. 미달이면 제목 문형이 아니라 채널(외부 게시)을 바꾼다.
+**사람 판별 규칙(`isHumanUserAgent` + 로그별 조건)**
+- UA: `Mozilla/5.0 (` + 플랫폼(Windows NT·Macintosh·iPhone·iPad·Android·X11·Linux)으로 시작하고, 봇 낱말(bot·crawl·spider·Google(Other|-…)·compatible;·Headless·Lighthouse·preview·scan·GPT·Claude·Perplexity·Yeti·Daum… 등) 0.
+- intent.log(/pro): `GET /intent/pro/view/<H1|H2>` · 204 · Referer가 정식 주소 `/pro/`(페이지가 쏜 비콘) · 운영자 IP 제외(`privacy.local.json`의 `selfIps`, 저장소엔 없음) · D0(2026-10-07 KST) 이후 · 같은 (IP, UA, KST 날짜)는 1명.
+- 엣지 로그(무료 페이지): 정식 호스트 · GET 200 · HTML 경로 · Accept-Language에 한국어(ko) · Sec-Fetch-Mode navigate · 스캐너 경로(`.env`·`.git`·`wp-`·`.php` 등)를 한 번이라도 친 IP 제외 · 하루 페이지 30장 초과 IP 제외 · 운영자 IP 제외. 유입원 = Referer 호스트 또는 `utm_source`.
+**용어**: 검색 제목 `searchTitle` · 검색 설명 `searchDescription` · 자주 묻는 질문 `listingFaq` → `faqJsonLd` · 조항 질문 `CLAUSE_QUESTION` · AI 문장 `aiUseSentence` · 사람 UA `isHumanUserAgent` · /pro 방문 집계 `countProVisits` · 무료 착지 집계 `countLandings` · 색인 알림 `indexNowPayloads`.
+- AC-44: Given 지원사업 공고(중복 수혜 조항 있음) When 제목을 만들면 Then 「<공고명> 신청 자격·중복 수혜·마감 — 나도 받을 수 있나요?」 / 공모전(상금 있음, 조항 없음) Then 「<공고명> 참가 자격·상금·마감 — 나도 낼 수 있나요?」 / 해커톤·대외활동은 「참가할 수 있나요?」.
+- AC-45: Given 자격 인용 있는 공고 When 설명을 만들면 Then 질문(「…수 있나요?」)으로 시작, 「원문 자격: 「」 포함, ≤ 158자 / 인용 없으면 「자격은 원문 공고에서 확인」.
+- AC-46: Given 공고 When `listingFaq` Then 자격 인용이 있으면 첫 질문 「누가 낼 수 있나요?」·답 「공고 원문: 「<인용>」」, AI 질문은 항상 있고 답 = `aiUseSentence`(+ AI 조항 인용), 조항 종류마다(자격·AI 제외) 첫 인용 1개로 `CLAUSE_QUESTION` 질문. `faqJsonLd`는 `@type: FAQPage`·`Question`/`acceptedAnswer`.
+- AC-47: Given 빌드 결과 When 상세를 보면 Then `<title>`=`searchTitle`, `"@type":"FAQPage"` 1개, FAQ의 모든 질문 문자열이 화면 본문에 있다.
+- AC-48: Given 정식 주소·키·URL 목록(옛 주소·다른 호스트 섞임) When `indexNowPayloads` Then host=`gonggo.oaksoo.com`·key·keyLocation=`https://gonggo.oaksoo.com/<키>.txt`, urlList는 정식 호스트만·중복 0·10,000개씩 나눔. dist에 키 파일이 있고 본문 = 키.
+- AC-49: Given intent.log 줄(구글봇·GoogleOther·compatible; UA·Referer 없는 직접 호출·운영자 IP·D0 이전·같은 사람 2회·사람 1명 H2) When `countProVisits` Then 사람 view 1, 가격안별·날짜별 수.
+- AC-50: Given 엣지 JSON 줄(사람 chatgpt 착지·google 착지·스캐너 IP·Accept-Language 없는 봇·한국어 아닌 단발 방문·하루 31장 IP·옛 호스트) When `countLandings` Then 사람 2명, 유입원 chatgpt 1·google 1.
+**비목표**: 서치 콘솔·네이버 서치어드바이저 로그인 행위(메인 몫) · 원문 공고 재수집(데이터는 `data/listings.json` 그대로) · 무료 페이지 CTA 개편(이 회차 변수 밖) · 외부 커뮤니티 게시.

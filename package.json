@@ -11,7 +11,9 @@
     "test:dist": "vitest run tests/dist",
     "release": "bash scripts/release.sh",
     "pro:requests": "node scripts/pro-requests.ts",
-    "deploy:aws": "DEPLOY_TARGET=aws npm run build && DEPLOY_TARGET=aws npm run test:dist && bash deploy/aws/deploy.sh"
+    "deploy:aws": "DEPLOY_TARGET=aws npm run build && DEPLOY_TARGET=aws npm run test:dist && bash deploy/aws/deploy.sh",
+    "visits": "node scripts/visits.ts",
+    "indexnow": "node scripts/indexnow.ts"
   },
   "license": "UNLICENSED",
   "type": "module",
