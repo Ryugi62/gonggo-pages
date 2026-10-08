@@ -108,6 +108,7 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - v0.5 2026-10-06 §13 정식 주소 https://gonggo.oaksoo.com 전환(AC-33~38) — 도메인 구매 0원(기존 oaksoo.com 하위 호스트).
 - v0.6 2026-10-08 §14 /pro 첫 화면 v2 — 고객 원문 인용·「판정마다 원문 조항」(AC-39~43).
 - v0.7 2026-10-08 §15 검색 유입 장치 — 고객 말 제목·설명·FAQ 구조화 데이터·IndexNow·사람 방문 계측(AC-44~50).
+- v0.8 2026-10-08 §16 목록 페이지 /pro 맥락 입구 — 분류·주간·홈에 `?from=c|week|home` 링크 1개, 출처별 /pro 방문 집계(AC-51~53). §15 비목표 「무료 페이지 CTA 개편」 중 목록 페이지 입구 1개만 해제.
 
 ## 11. 성장 장치 ① 마감 캘린더 루프 (v0.3, 2026-10-06 — 볼트 `projects/자동성장-서비스-2026` ④)
 **목적**: 사용 행위(「내 캘린더에 마감 넣기」·「분류 구독」)가 곧 재방문·전파가 되는 루프. 캘린더 일정 1건 = 우리 상세 페이지 링크 1개(`?from=cal`)가 사용자 캘린더에 박혀, 마감 알림이 울릴 때마다 사람 손 0으로 재방문이 생긴다. 구독 링크는 동아리·단톡방에 그대로 공유된다.
@@ -206,3 +207,16 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-49: Given intent.log 줄(구글봇·GoogleOther·compatible; UA·Referer 없는 직접 호출·운영자 IP·D0 이전·같은 사람 2회·사람 1명 H2) When `countProVisits` Then 사람 view 1, 가격안별·날짜별 수.
 - AC-50: Given 엣지 JSON 줄(사람 chatgpt 착지·google 착지·스캐너 IP·Accept-Language 없는 봇·한국어 아닌 단발 방문·하루 31장 IP·옛 호스트) When `countLandings` Then 사람 2명, 유입원 chatgpt 1·google 1.
 **비목표**: 서치 콘솔·네이버 서치어드바이저 로그인 행위(메인 몫) · 원문 공고 재수집(데이터는 `data/listings.json` 그대로) · 무료 페이지 CTA 개편(이 회차 변수 밖) · 외부 커뮤니티 게시.
+
+## 16. 목록 페이지 /pro 맥락 입구 (v0.8, 2026-10-08 — 볼트 `projects/공고콕-Pro-2026/회차-01-2026-10-08`)
+**왜(10/8 실측)**: 사람 착지 2명(둘 다 `utm_source=chatgpt.com`)이 `/c/contest/`(분류 페이지)에 내렸는데, /pro 입구는 상세 1,698장에만 있고 홈·분류·주간 페이지엔 0. ChatGPT-User가 55쪽을 101회 읽는 중 = 목록 페이지가 실제 입구.
+**숫자 성공 조건(배포 게이트)**
+- E1 AWS 빌드의 홈 `/`·분류 `/c/*/`·주간 `/week/`·`/w/*/` 마다 `/pro/` 링크 정확히 1개, `href="/pro/?from=<home|c|week>"`. 기본(Vercel) 빌드엔 0(AC-25 유지).
+- E2 문구는 /pro v2와 같은 결(고객이 묻는 말 「나 내도 되나?」 + 「답마다 근거가 된 공고 원문 조항을 붙여 드려요」) + 「오픈 준비 중」 표기. V3 과장 낱말 0, 없는 기능 약속 0.
+- E3 목록 첫 화면 안(건수 카드 바로 뒤, 목록보다 위) — 긴 목록 끝에 묻히지 않게. 390/1280px 가로 넘침 0.
+- E4 `npm run visits`가 /pro 사람 방문을 `from=` 값별로 센다(비콘 Referer `…/pro/?from=x` 기준, 없으면 `none`).
+**용어**: /pro 입구 `proEntry` · 입구 출처 `ProEntryFrom`(`home`·`c`·`week`) · 출처별 방문 `byFrom`.
+- AC-51: Given `proEntry('c', '지원사업')` When 문구를 만들면 Then href=`/pro/?from=c`, 제목에 「지원사업」·「받을 수 있나?」·「공고 원문 조항」, 보조 문구에 「오픈 준비 중」. `proEntry('home')`·`proEntry('week')`는 href `?from=home`·`?from=week`. 모든 문구에 V3 금지 낱말 0.
+- AC-52: Given AWS 빌드 When 홈·분류 5장·`/week/`·`/w/*/`를 보면 Then `/pro/` 링크가 정확히 1개(`?from=` 값 일치)이고 목록(`ListingList`)보다 앞에 있다. Given 기본 빌드 Then 0.
+- AC-53: Given intent.log view 비콘(Referer `from=c`·`from=week`·`from=g`·from 없음, 봇 1줄) When `countProVisits` Then `byFrom` = {c:1, week:1, g:1, none:1}.
+

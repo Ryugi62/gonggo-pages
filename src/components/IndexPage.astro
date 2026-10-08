@@ -4,9 +4,11 @@ import ListingList from './ListingList.astro';
 import CalendarSubscribe from './CalendarSubscribe.astro';
 import { hasFeed } from '../adapters/site/data.ts';
 import type { PublicListing } from '../domain/listing.ts';
-import { SITE_NAME } from '../infrastructure/config.ts';
-interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[]; feed?: string }
-const { heading, title, description, path, lead, items, feed } = Astro.props;
+import type { ProEntry } from '../domain/proEntry.ts';
+import { SITE_NAME, IS_AWS } from '../infrastructure/config.ts';
+// pro = 목록 페이지 /pro 맥락 입구(SPEC §16) — AWS 빌드에서만(Vercel Hobby 상업 이용 금지, AC-25)
+interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[]; feed?: string; pro?: ProEntry }
+const { heading, title, description, path, lead, items, feed, pro } = Astro.props;
 const site = Astro.site!.href.replace(/\/$/, '');
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -24,6 +26,7 @@ const jsonLd = [
     <div class="big">{items.length}건</div>
     <p style="margin:6px 0 0" class="sub">마감이 가까운 순서예요.</p>
   </section>
+  {IS_AWS && pro && <section><a class="tile" href={pro.href}><b>{pro.title}</b><span>{pro.sub}</span></a></section>}
   {feed && hasFeed(feed) && <CalendarSubscribe feed={feed} />}
   <section><ListingList items={items} /></section>
   <slot />

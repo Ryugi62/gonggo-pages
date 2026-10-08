@@ -108,3 +108,24 @@ describe.skipIf(!aws)('§14 /pro 첫 화면 v2 (AWS)', async () => {
     expect(pro).toMatch(/[`"']창립가로 먼저 신청 · 지금 0원[`"'],[`"']다음[`"'],[`"']신청하기[`"'],[`"']공고 둘러보기[`"']/);
   });
 });
+
+// §16 목록 페이지 /pro 맥락 입구(AC-52)
+describe('AC-52 홈·분류·주간 /pro 입구', () => {
+  const pages: [string, string][] = [
+    ['dist/index.html', 'home'],
+    ['dist/week/index.html', 'week'],
+    ...readdirSync('dist/c').map((c): [string, string] => [`dist/c/${c}/index.html`, 'c']),
+    ...readdirSync('dist/w').map((w): [string, string] => [`dist/w/${w}/index.html`, 'week']),
+  ];
+  it(aws ? 'AWS: 페이지마다 /pro/ 링크 정확히 1개(from 일치), 목록보다 앞' : '기본 빌드: /pro/ 링크 0', () => {
+    expect(pages.length).toBeGreaterThanOrEqual(7);
+    for (const [f, from] of pages) {
+      const s = read(f);
+      const links = s.match(/href="\/pro\/[^"]*"/g) ?? [];
+      if (!aws) { expect(links, f).toEqual([]); continue; }
+      expect(links, f).toEqual([`href="/pro/?from=${from}"`]);
+      const list = s.indexOf('class="list"');
+      if (list >= 0) expect(s.indexOf('href="/pro/'), f).toBeLessThan(list);
+    }
+  });
+});

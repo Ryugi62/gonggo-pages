@@ -21,7 +21,7 @@ const pro = countProVisits(intent, opts);
 const land = countLandings(edge, opts);
 const fmt = (o: Record<string, number>) => Object.entries(o).map(([k, v]) => `${k} ${v}`).join(' · ') || '없음';
 console.log(`기준 ${since}~ (KST) · 운영자 IP 제외 ${selfIps.length}개`);
-console.log(`/pro 사람 방문 ${pro.view} (H1 ${pro.byArm.H1} · H2 ${pro.byArm.H2}) · 가격 클릭 ${pro.price} · 결제 요청 ${pro.request} · 날짜별: ${fmt(pro.byDay)}`);
+console.log(`/pro 사람 방문 ${pro.view} (H1 ${pro.byArm.H1} · H2 ${pro.byArm.H2}) · 가격 클릭 ${pro.price} · 결제 요청 ${pro.request} · 날짜별: ${fmt(pro.byDay)} · 입구별(from): ${fmt(pro.byFrom)}`);
 console.log(`무료 페이지 사람 착지 ${land.visitors}명 · 페이지뷰 ${land.pageviews} · 유입원: ${fmt(land.bySource)} · 날짜별: ${fmt(land.byDay)}`);
 const search = ['google', 'naver', 'daum', 'bing', 'chatgpt'].reduce((n, k) => n + (land.bySource[k] ?? 0), 0);
 console.log(`검색 착지(google+naver+daum+bing+chatgpt) ${search} — 목표 10/21 ≥ 30 · /pro 목표 ≥ 5`);

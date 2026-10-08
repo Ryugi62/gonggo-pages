@@ -1,6 +1,7 @@
 ---
 import IndexPage from '../../components/IndexPage.astro';
 import { categories, index } from '../../adapters/site/data.ts';
+import { proEntry } from '../../domain/proEntry.ts';
 export function getStaticPaths() {
   return categories.map((c) => ({ params: { cat: c.slug }, props: { c } }));
 }
@@ -9,4 +10,4 @@ const items = index.byCategory.get(c.name)!;
 ---
 <IndexPage heading={`접수 중인 ${c.name}`} title={`접수 중인 ${c.name} ${items.length}건 — 자격·마감·상금 정리 | 공고콕`}
   description={`지금 접수 중인 ${c.name} ${items.length}건의 자격 조건·마감일·상금을 마감 임박순으로 정리했어요. ${c.blurb}.`}
-  path={`/c/${c.slug}/`} lead={c.blurb} items={items} feed={c.slug} />
+  path={`/c/${c.slug}/`} lead={c.blurb} items={items} feed={c.slug} pro={proEntry('c', c.name)} />

@@ -5,9 +5,11 @@ import CalendarSubscribe from '../components/CalendarSubscribe.astro';
 import { index, listings, categories, tags, weeks, week, generatedAt } from '../adapters/site/data.ts';
 import { weekLabel } from '../domain/format.ts';
 import { deadlineWeek } from '../application/buildSiteIndex.ts';
-import { SITE_NAME } from '../infrastructure/config.ts';
+import { SITE_NAME, IS_AWS } from '../infrastructure/config.ts';
+import { proEntry } from '../domain/proEntry.ts';
 
 const thisWeek = deadlineWeek(generatedAt);
+const pro = proEntry('home'); // SPEC §16 — AWS 빌드에서만
 const soon = index.sorted.filter((l) => l.deadline).slice(0, 10);
 const title = `${SITE_NAME} — 공모전·해커톤·지원사업 자격·마감·상금 정리`;
 const description = `지금 접수 중인 공모전·해커톤·지원사업 ${listings.length}건의 자격 조건, 마감일, 상금을 공고 원문 그대로 정리했어요. 나이·학생·지역만 고르면 낼 수 있는 공고를 골라 드려요.`;
@@ -24,6 +26,8 @@ const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SI
   <section>
     <a class="tile" href="/week/"><b>이번 주 낼 수 있는 창업경진대회·지원사업 {week.items.length} →</b><span>7일 안에 마감하는 창업 공고만, 마감 임박순으로 모았어요.</span></a>
   </section>
+
+  {IS_AWS && <section><a class="tile" href={pro.href}><b>{pro.title}</b><span>{pro.sub}</span></a></section>}
 
   <section>
     <h2>분류별로 보기</h2>

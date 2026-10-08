@@ -9,14 +9,20 @@ const firstIp = (xff: string) => xff.split(',')[0].trim();
 // nginx intent 형식: $time_iso8601 $http_x_forwarded_for "$request" $status "$http_referer" "$http_user_agent"
 const INTENT = /^(\S+) (.+?) "GET (\/intent\/pro\/(view|price|request)\/(H1|H2)) HTTP\/[\d.]+" (\d{3}) "([^"]*)" "([^"]*)"$/;
 
-export interface ProVisits { view: number; price: number; request: number; byArm: { H1: number; H2: number }; byDay: Record<string, number> }
+export interface ProVisits { view: number; price: number; request: number; byArm: { H1: number; H2: number }; byDay: Record<string, number>; byFrom: Record<string, number> }
+
+/** 입구 출처(SPEC §16 E4) — 비콘 Referer `…/pro/?from=x`의 x, 없으면 none */
+function fromOf(ref: string): string {
+  const v = /[?&]from=([^&#]*)/.exec(ref)?.[1] ?? '';
+  return /^[a-z]{1,12}$/.test(v) ? v : v ? 'other' : 'none';
+}
 
 /** /pro 사람 방문 — 페이지가 쏜 비콘(Referer = 정식 주소 /pro/)만, 같은 (IP, UA, KST 날짜)는 1명 */
 export function countProVisits(text: string, o: CountOptions): ProVisits {
   const origin = (o.origin ?? 'https://gonggo.oaksoo.com').replace(/\/$/, '');
   const self = new Set(o.selfIps);
   const seen = { view: new Set<string>(), price: new Set<string>(), request: new Set<string>() };
-  const r: ProVisits = { view: 0, price: 0, request: 0, byArm: { H1: 0, H2: 0 }, byDay: {} };
+  const r: ProVisits = { view: 0, price: 0, request: 0, byArm: { H1: 0, H2: 0 }, byDay: {}, byFrom: {} };
   for (const line of text.split('\n')) {
     const m = INTENT.exec(line.trim());
     if (!m) continue;
@@ -35,6 +41,8 @@ export function countProVisits(text: string, o: CountOptions): ProVisits {
     if (step === 'view') {
       r.byArm[arm as 'H1' | 'H2']++;
       r.byDay[day] = (r.byDay[day] ?? 0) + 1;
+      const f = fromOf(ref);
+      r.byFrom[f] = (r.byFrom[f] ?? 0) + 1;
     }
   }
   return r;

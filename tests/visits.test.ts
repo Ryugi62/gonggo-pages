@@ -43,6 +43,23 @@ describe('AC-49 /pro 사람 방문(intent.log)', () => {
   });
 });
 
+describe('AC-53 /pro 사람 방문 출처(from=)별', () => {
+  const R = 'https://gonggo.oaksoo.com/pro/';
+  const log = [
+    line('2026-10-08T01:00:00+00:00', '1.0.0.1', '/intent/pro/view/H1', `${R}?from=c`, CHROME),
+    line('2026-10-08T01:01:00+00:00', '1.0.0.2', '/intent/pro/view/H2', `${R}?from=week`, IPHONE),
+    line('2026-10-08T01:02:00+00:00', '1.0.0.3', '/intent/pro/view/H1', `${R}?from=g`, CHROME),
+    line('2026-10-08T01:03:00+00:00', '1.0.0.4', '/intent/pro/view/H1', R, CHROME),
+    line('2026-10-08T01:04:00+00:00', '1.0.0.5', '/intent/pro/view/H1', `${R}?from=home`, GBOT), // 봇
+    line('2026-10-08T01:05:00+00:00', '1.0.0.1', '/intent/pro/price/H1', `${R}?from=c`, CHROME), // view 아님
+  ].join('\n');
+  it('byFrom = c 1 · week 1 · g 1 · none 1', () => {
+    const r = countProVisits(log, { since: '2026-10-07', selfIps: [] });
+    expect(r.view).toBe(4);
+    expect(r.byFrom).toEqual({ c: 1, week: 1, g: 1, none: 1 });
+  });
+});
+
 const edge = (o: { ts: number; ip: string; uri: string; ua: string; host?: string; al?: string; sf?: string; ref?: string; status?: number }) => JSON.stringify({
   ts: o.ts, status: o.status ?? 200,
   request: { client_ip: o.ip, method: 'GET', host: o.host ?? 'gonggo.oaksoo.com', uri: o.uri, headers: {
