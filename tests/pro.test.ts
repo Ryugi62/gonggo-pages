@@ -91,3 +91,17 @@ describe('AC-29 결제 요청 저장 파일 읽기', () => {
     expect(parsePaymentRequestLog(raw).valid).toEqual([{ t: '2026-10-07T20:00:00+09:00', email: 'x@example.com', arm: 'H2' }]);
   });
 });
+
+describe('§14 AC-43 고객 원문 목록', () => {
+  it('3개 이상 · 날짜 ISO · 링크 https · 인용에 「」 없음 · 출처 칸 채움', async () => {
+    const { CUSTOMER_VOICES } = await import('../src/infrastructure/proCopy.ts');
+    expect(CUSTOMER_VOICES.length).toBeGreaterThanOrEqual(3);
+    for (const v of CUSTOMER_VOICES) {
+      expect(v.date, v.quote).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(v.url, v.quote).toMatch(/^https:\/\//);
+      expect(v.quote).not.toMatch(/[「」]/);
+      expect(v.who.length * v.where.length * v.quote.length).toBeGreaterThan(0);
+    }
+    expect(CUSTOMER_VOICES[0].quote).toBe('쳇지피티는 받을수 있다는데 영 못믿겠어서요!');
+  });
+});

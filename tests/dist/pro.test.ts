@@ -76,3 +76,35 @@ describe.skipIf(!aws)('§12 /pro/ 산출물 (AWS)', () => {
     expect(read(`dist/g/${data.listings[0].slug}/index.html`)).toContain('href="/pro/?from=g"');
   });
 });
+
+describe.skipIf(!aws)('§14 /pro 첫 화면 v2 (AWS)', async () => {
+  const pro = aws ? read('dist/pro/index.html') : '';
+  const { CUSTOMER_VOICES } = await import('../../src/infrastructure/proCopy.ts');
+  const intro = pro.slice(pro.indexOf('id="step-intro"'), pro.indexOf('id="step-email"'));
+  const text = intro.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ');
+  it('AC-39 첫 요소 = 첫 고객 인용 blockquote + 출처·날짜·원문 링크, 나머지 인용도 출처와 함께', () => {
+    const firstBlock = intro.match(/<(h1|blockquote|section|p class="sub")[^>]*>/);
+    expect(firstBlock?.[1]).toBe('blockquote');
+    for (const v of CUSTOMER_VOICES) {
+      expect(intro, v.quote).toContain(v.quote);
+      expect(intro.includes(`href="${v.url}"`) || intro.includes(`href="${v.url.replaceAll('&', '&amp;')}"`), v.url).toBe(true);
+      expect(intro, v.date).toContain(v.date);
+      expect(intro, v.where).toContain(v.where);
+    }
+    expect(intro).toMatch(/<a [^>]*href="https:\/\/kin\.naver\.com[^"]*"[^>]*rel="noopener[^"]*"/);
+  });
+  it('AC-40 새 헤드라인, 옛 헤드라인 0', () => {
+    expect(pro).toMatch(/<h1[^>]*>「받을 수 있다」는 답마다, 근거가 된 공고 원문 문장을 붙여 드려요<\/h1>/);
+    expect(pro).not.toContain('계획서 하나로, 낼 수 있는 공고만 골라 그 배점표로 채점해 드려요');
+  });
+  it('AC-41 과장 낱말 0 · 「찾지 못했어요」 · 협약서·운영지침 경계', () => {
+    expect(text).not.toMatch(/모든 공고|100\s*%|완벽|정확히|합격 보장|대신 판단/);
+    expect(text).toContain('찾지 못했어요');
+    expect(pro).toContain('협약서·운영지침');
+  });
+  it('AC-42 첫 화면 버튼 = 「창립가로 먼저 신청 · 지금 0원」, 이후 스텝 문구 유지', () => {
+    expect(pro).toMatch(/<button[^>]*id="next"[^>]*>창립가로 먼저 신청 · 지금 0원<\/button>/);
+    // 스텝 문구 배열(번들은 템플릿 리터럴로 인라인) — 첫 칸도 새 문구, 나머지 유지
+    expect(pro).toMatch(/[`"']창립가로 먼저 신청 · 지금 0원[`"'],[`"']다음[`"'],[`"']신청하기[`"'],[`"']공고 둘러보기[`"']/);
+  });
+});
