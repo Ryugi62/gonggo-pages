@@ -21,7 +21,7 @@ describe('AC-10 상세 페이지', () => {
   const l = data.listings[0];
   const page = readFileSync(`dist/g/${l.slug}/index.html`, 'utf8');
   it('title·description·canonical·OG·JSON-LD', () => {
-    const esc = (s: string) => s.replace(/&/g, '&amp;');
+    const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');   // 제목에 따옴표가 든 공고(10/13 「'2026 일터의 빈틈을 묻다'」) — Astro가 HTML 이스케이프
     expect(page).toContain(`<title>${esc(searchTitle(l))}</title>`);
     expect(page).toMatch(/<meta name="description" content="[^"]{40,}"/);
     expect(page).toMatch(new RegExp(`<link rel="canonical" href="https://[^"]+/g/${l.slug}/"`));

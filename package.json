@@ -13,7 +13,8 @@
     "pro:requests": "node scripts/pro-requests.ts",
     "deploy:aws": "DEPLOY_TARGET=aws npm run build && DEPLOY_TARGET=aws npm run test:dist && bash deploy/aws/deploy.sh",
     "visits": "node scripts/visits.ts",
-    "indexnow": "node scripts/indexnow.ts"
+    "indexnow": "node scripts/indexnow.ts",
+    "release:aws": "npm run export && npm test && npm run deploy:aws && npm run indexnow"
   },
   "license": "UNLICENSED",
   "type": "module",
