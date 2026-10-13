@@ -105,7 +105,7 @@ describe('Pro §5 조항 판독 블록', () => {
   it('§5-2 AI 문장 없는 공고: 단정하지 않는 문구, 「허용」 표시 없음', () => {
     const l = data.listings.find((x: any) => x.aiUse === 'UNSTATED' && x.clauses.length > 0);
     const page = pageOf(l.slug);
-    expect(page).toContain('원문에서 AI 사용 규정을 찾지 못했어요 — 원문 확인');
+    expect(page).toContain('원문에서 AI 사용 규정을 찾지 못했으니 지원 전 원문을 확인해 주세요.');
     expect(page).not.toContain('AI 사용 허용');
   });
   it('§5-8 판독 블록 아래 원문 링크와 「원문이 맞아요」 면책', () => {

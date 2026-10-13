@@ -40,7 +40,7 @@ const verb = (c: Category) => VERB[c] ?? VERB['공모전'];
 export function aiUseSentence(v: AiUseVerdict): string {
   if (v === 'FORBIDDEN') return '이 공고는 AI로 만든 초안을 낼 수 없어요.';
   if (v === 'ALLOWED') return '원문에 AI 활용을 허용하는 문장이 있어요. 조건은 아래 원문으로 확인하세요.';
-  return '원문에서 AI 사용 규정을 찾지 못했어요 — 원문 확인';
+  return '원문에서 AI 사용 규정을 찾지 못했으니 지원 전 원문을 확인해 주세요.';
 }
 
 function titleTopic(l: PublicListing): string | null {

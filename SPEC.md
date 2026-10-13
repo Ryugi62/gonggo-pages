@@ -67,7 +67,7 @@
 - AC-12: Given 빌드 결과 When 루트를 보면 Then 구글(google09201ae909576b2d.html)·네이버(naver834f…html — 옛 주소용, naver228e…html — 정식 주소 gonggo.oaksoo.com용 2026-10-06) 소유확인 파일과 홈 `naver-site-verification` 메타가 있고, 이 파일들은 sitemap 페이지 수에 넣지 않는다.
 - AC-14 (Pro v0.1, 2026-10-06): Given 상태가 조건불가·제출함·탈락인 행 When 내보내면 Then 공고는 공개되고(상태·gate 사유는 안 나감), 중복·수혜완료만 제외. **AC-1을 대체한다.**
 - AC-15 조항 판독: Given 메모의 「」 원문 인용 When 내보내면 Then 종류(자격·AI 사용·본인 창작 서약·중복수혜·중복수상·현장 참석·팀 구성·업력)로 분류된 `clauses[]`가 원문 그대로 나가고, 사용자 발화(「사용자 M/D 「…」」)·메일 회신·구어체·내부 분석 메모·제목 인용은 버린다. GU 행은 괄호 원문 인용만.
-- AC-16 AI 사용 판정: 금지 문장(같은 문장 25자 이내 「AI … 불가/금지/심사 제외/활용하지 않은」) → FORBIDDEN(상세 첫 화면 「AI 초안 사용 불가」), 허용 문장 → ALLOWED, 그 밖 → UNSTATED(「원문에서 AI 사용 규정을 찾지 못했어요 — 원문 확인」, 「허용」 단정 금지). 금지가 허용을 이긴다.
+- AC-16 AI 사용 판정: 금지 문장(같은 문장 25자 이내 「AI … 불가/금지/심사 제외/활용하지 않은」) → FORBIDDEN(상세 첫 화면 「AI 초안 사용 불가」), 허용 문장 → ALLOWED, 그 밖 → UNSTATED(「원문에서 AI 사용 규정을 찾지 못했으니 지원 전 원문을 확인해 주세요.」, 「허용」 단정 금지). 금지가 허용을 이긴다.
 - AC-17 주간 페이지 `/week/`: 오늘~6일 뒤(7일) 마감하는 창업 공고(지원사업·창업자 태그·이름에 창업/스타트업) 마감 임박순, sitemap·홈 링크 포함.
 - AC-18 결제 0: 어떤 페이지에도 카드 입력·결제 버튼·가격 없음(Pro 가격은 상업 허용 호스트에서 10/7 이후).
 - AC-13: Given 상세 페이지 When 「마감 알림 받기」를 켜면 Then Vercel Analytics에 가상 페이지뷰 `/intent/alert/<slug>`를 1회 보낸다(무료 플랜은 커스텀 이벤트가 없어 페이지뷰로 센다). 끌 때는 보내지 않는다.
@@ -101,6 +101,7 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - 배포 후 curl: 200·sitemap URL 수·상세 title/meta·`/_vercel/insights/script.js` 200.
 
 ## 10. 변경 이력
+- v1.0 2026-10-14 §18 규칙 감사 2차 — 공고명 HTML 엔티티 해제·체커 오류/빈 상태/뒤로·홈·목록 보조 버튼·.astro 로직 domain 이동(AC-60~64).
 - v0.1 2026-10-02 최초(MVP).
 - v0.2 2026-10-06 공고콕 Pro 검증 SPEC(볼트 `projects/공고콕-Pro-2026/SPEC`) 1단계 — AC-14~18, 공개 1,698건·조항 1칸 이상 64%. 호스팅에 AWS(기존 EC2, edge-caddy 뒤 nginx 1개, `deploy/aws/`) 추가 — Vercel Hobby는 가격 페이지 금지라 `/pro`는 AWS에만. 문구 조정: SPEC의 「원문에 AI 사용 규정이 없어요」는 원문 전문을 다 읽지 않은 상태의 단정이라 「원문에서 AI 사용 규정을 찾지 못했어요」로.
 - v0.3 2026-10-06 §11 성장 장치 ① 마감 캘린더 루프(AC-19~24).
@@ -237,3 +238,16 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 **비목표**: 새 판정·점수·요약 생성(LLM 호출) · 외부 게시 · 서버 설정 변경 · `llms-full.txt`(공고 1,700장 본문 복제 — 한 사실 한 곳).
 - AC-58: Given 배포 전 `logs/pro-requests.jsonl`·`intent.log` When 배포 뒤 어느 파일이든 줄 수가 줄었거나 사라졌으면 Then `deploy/aws/logguard.sh verify`가 exit 1(배포 실패)이고 사본은 `logs.bak/`에 남는다. 배포 전 `snapshot`이 컨테이너 교체보다 앞이다(tests/proDeploy.test.ts). 10/14 감사 #3. 10/8 08:10Z 0바이트 원인: 배포 스크립트·compose·nginx 설정에 truncate/rm 없음 → 미확인(정본 기록은 볼트 UI검수/규칙감사 후속).
 - AC-59: Given 빌드 산출물 When `tests/dist/ui.test.ts`와 `ui_audit.py` Then §8 자동 항목 통과·fail 0. 수동 항목은 볼트 `UI검수-*.md`.
+
+
+## 18. 규칙 감사 2차 수정 (v1.0, 2026-10-14 — 볼트 `projects/공고콕-Pro-2026/규칙감사-2026-10-14` #4·#6·#8, `UI검수-2026-10-14` 수동 8)
+**비목표 불변**: 계정·결제·서버 API 없음. 빌드 때 정리한 파일과 브라우저 안 계산만 쓴다.
+**숫자 성공 조건**: 산출 HTML의 이중 엔티티(`&amp;#NNN;`·`&amp;lt;` 등) 0 · 체커 문구 3종(오류·빈 상태·뒤로) 각 1개 이상 · `btn primary` 0(404 제외 없이 전 페이지) · `.astro` `<script>`가 계산·판정을 하지 않음(domain 호출만).
+**용어**: 체커 문구 `checkerCopy` · 체커 단계 `checkerStep` · Pro 단계 `proStep`.
+- AC-60: Given 원천 공고명에 `&#034;`·`&lt;`·`&gt;`·`&amp;` When `exportPublicListings` Then 공개 이름·주최·상금·자격 인용에 엔티티가 풀린 글자(`"`·`<`·`>`·`&`)만 남는다. Given 빌드 When 산출 HTML 전부를 보면 Then `&amp;(#\d+|#x[0-9a-f]+|lt|gt|quot|amp);` 0건.
+- AC-61: Given 체커 When 공고 파일을 못 불러오면 Then 「공고를 불러오지 못했어요. 인터넷을 확인하고 다시 눌러 주세요.」와 버튼 「다시 불러오기」. Given 결과 0개 When 보면 Then 「아직 맞는 공고가 없어요. 조건을 바꿔 다시 골라 보세요.」(확인 필요 탭이면 「확인할 공고가 없어요.」). 뒤로: 2스텝과 결과에 「이전」 보조 버튼, 입력값은 유지.
+- AC-62: Given 홈·목록의 캘린더 구독 카드 When 보면 Then 버튼은 모두 보조 스타일이고 `btn primary`는 404(유일한 행동 1개) 외 전 페이지 0, 주 행동은 하단 고정 `.cta` 1개.
+- AC-63: Given `nextStep`·`proNextStep`·`checkerCounts`·`dDayLabel` When 단위 호출 Then 위 화면 상태가 domain 순수 함수로 결정된다(`.astro`에 D-day 계산·상태 전이 중복 없음).
+- AC-64: Given `tests/architecture.test.ts` When `.astro` 전부 Then 비-inline `<script>`는 domain/application만 import하고 `Date.parse`·`Math.round` 계산을 하지 않는다. 예외 1: `is:inline` 스크립트(D-day 표시·비콘·알림 의향)는 번들러를 못 쓰므로 소량 인라인 허용(§8-10).
+- AC-65: Given `/pro` 사람 방문·가격 클릭·결제 요청 수 When `verdict(counts, today)` Then 방문 ≥100 ∧ 요청 ≥3 ∧ 가격 클릭 ≥8% ∧ 요청률 ≥2% = GO, 방문 <100 = 보류(D45 11/21 이후 채널 실패), 요청 1~2 = 보류, 그 외 NO-GO. `npm run visits` 끝에 판정 1줄(10/14 감사 #10).
+- AC-66: Given 상세 When `?from=cal`로 열면 Then 페이지 load 뒤 1.5초에 `/intent/cal/return/<slug>` 비콘이 나가도록 인라인 스크립트가 있다(10/14 감사 #9, tests/dist/ui.test.ts).

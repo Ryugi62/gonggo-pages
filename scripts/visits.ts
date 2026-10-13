@@ -4,6 +4,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { countProVisits, countLandings } from '../src/application/visitCount.ts';
+import { verdict } from '../src/application/verdict.ts';
 import { CANONICAL_ORIGIN } from '../src/infrastructure/config.ts';
 
 const arg = (k: string) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : undefined; };
@@ -25,3 +26,4 @@ console.log(`/pro 사람 방문 ${pro.view} (H1 ${pro.byArm.H1} · H2 ${pro.byAr
 console.log(`무료 페이지 사람 착지 ${land.visitors}명 · 페이지뷰 ${land.pageviews} · 유입원: ${fmt(land.bySource)} · 날짜별: ${fmt(land.byDay)}`);
 const search = ['google', 'naver', 'daum', 'bing', 'chatgpt'].reduce((n, k) => n + (land.bySource[k] ?? 0), 0);
 console.log(`검색 착지(google+naver+daum+bing+chatgpt) ${search} — 목표 10/21 ≥ 30 · /pro 목표 ≥ 5`);
+console.log(`14일 검증 판정(검증설계 §4) — ${verdict(pro, new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })).line}`);

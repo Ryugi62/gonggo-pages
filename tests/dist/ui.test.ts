@@ -77,3 +77,34 @@ describe('SPEC §8 UI 수용기준 — 자동 검사 가능 항목', () => {
     }
   }, 60_000);
 });
+
+import { execSync } from 'node:child_process';
+// SPEC §18 AC-60·61·62 — 산출 HTML 전체 대상
+describe('SPEC §18 감사 2차 — dist 전수', () => {
+  const htmls = execSync('find dist -name "*.html"', { encoding: 'utf8' }).trim().split('\n');
+  it('AC-60 이중 엔티티 0', () => {
+    const bad = htmls.filter((f) => /&amp;(#\d+|#x[0-9a-f]+|lt|gt|quot|amp);/i.test(readFileSync(f, 'utf8')));
+    expect(bad).toEqual([]);
+  });
+  it('AC-62 btn primary 0 (홈·목록·상세·체커)', () => {
+    const bad = htmls.filter((f) => !f.includes('/404') && /class="btn primary/.test(readFileSync(f, 'utf8')));
+    expect(bad).toEqual([]);
+  });
+  it('AC-61 체커: 오류·빈 상태·뒤로 문안이 번들에 있다', () => {
+    const s = readFileSync('dist/check/index.html', 'utf8') + readdirSync('dist/_astro').filter((f) => f.endsWith('.js')).map((f) => readFileSync(`dist/_astro/${f}`, 'utf8')).join('');
+    expect(s).toContain('공고를 불러오지 못했어요');
+    expect(s).toContain('아직 맞는 공고가 없어요');
+    expect(s).toContain('id="back"');
+  });
+});
+
+describe('AC-66 캘린더 재방문 비콘 (C5)', () => {
+  it('상세에 from=cal 판별 + load 뒤 지연 + /intent/cal/return/<slug>', () => {
+    const s = read(pages.detail);
+    expect(s).toMatch(/from=cal/);
+    expect(s).toMatch(/addEventListener\('load'/);
+    expect(s).toMatch(/setTimeout\([\s\S]{0,200}1500/);
+    expect(s).toContain("/intent/cal/return/'+slug");
+    expect(s).toContain(JSON.stringify(slug)); // define:vars 로 슬러그가 값으로 들어간다
+  });
+});

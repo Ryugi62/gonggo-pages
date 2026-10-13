@@ -1,6 +1,6 @@
 import { classify } from '../domain/category.ts';
 import { parseConstraints, tagsFor } from '../domain/eligibility.ts';
-import { cleanName, extractEligibility, extractOrganizer, extractPrize } from '../domain/extract.ts';
+import { cleanName, decodeEntities, extractEligibility, extractOrganizer, extractPrize } from '../domain/extract.ts';
 import type { PublicListing, SourceRow } from '../domain/listing.ts';
 import { findForbidden, isClean } from '../domain/privacy.ts';
 import { makeSlug } from '../domain/slug.ts';
@@ -52,8 +52,8 @@ export function exportPublicListings(rows: SourceRow[], today: string): ExportRe
     if (seenUrl.has(urlKey)) { dropped.duplicate++; continue; }
     seenUrl.add(urlKey);
 
-    const note = String(r.note ?? '');
-    const why = String(r.why ?? '');
+    const note = decodeEntities(String(r.note ?? ''));
+    const why = decodeEntities(String(r.why ?? ''));
     const timeM = deadline ? (r.due ?? '').match(/^\d{4}-\d{2}-\d{2}\s+(\d{1,2}:\d{2})/) : null;
     const eligibilityQuote = extractEligibility(note);
     const constraints = parseConstraints(eligibilityQuote ?? '', name);

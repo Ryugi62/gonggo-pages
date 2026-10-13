@@ -60,6 +60,13 @@ function ok(s: string): string | null {
 }
 
 /** 스크래핑 잔여물(「N새글」 등)을 걷어 낸 공고명 */
+const NAMED: Record<string, string> = { lt: '<', gt: '>', amp: '&', quot: '"', apos: "'" };
+/** HTML 엔티티를 한 단계 푼다(원천에 이미 들어 있는 `&#034;` 등 — 화면에서 날것으로 보이지 않게). */
+export function decodeEntities(s: string): string {
+  return s.replace(/&(?:#(\d{1,6})|#x([0-9a-f]{1,5})|(lt|gt|amp|quot|apos));/gi, (_m, d, h, n) =>
+    n ? NAMED[n.toLowerCase()] : String.fromCodePoint(d ? Number(d) : parseInt(h, 16)));
+}
+
 export function cleanName(name: string): string {
-  return squash(name.replace(/N?새글$/, '').replace(/\s*N$/, ''));
+  return squash(decodeEntities(name).replace(/N?새글$/, '').replace(/\s*N$/, ''));
 }

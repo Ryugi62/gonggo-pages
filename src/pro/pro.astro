@@ -13,6 +13,7 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
 ---
 <Layout title={title} description={description} path="/pro/" origin={PRO_ORIGIN} analytics={false} legal>
   <div id="pro" data-pro>
+    <button class="btn secondary" id="back" type="button" hidden style="min-height:44px;padding:0 16px;margin-bottom:12px">이전</button>
     <div id="step-intro">
       <p class="small" style="margin:0">공고콕 Pro · 오픈 준비 중</p>
       <blockquote class="voice">「{lead.quote}」<cite>{lead.who} · {lead.where} · {lead.date} · <a href={lead.url} target="_blank" rel="noopener nofollow">원문</a></cite></blockquote>
@@ -115,6 +116,7 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
   import { assignArm, PRICE_ARMS, formatWon, type PriceArm } from '../domain/pricing.ts';
   import { validatePaymentRequest } from '../domain/paymentRequest.ts';
   import { funnelPath, type FunnelEvent } from '../application/funnel.ts';
+  import { proNextStep } from '../domain/checker.ts';
 
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   // 방문자 키 = 이 브라우저에만 두는 무작위 값(서버로 보내지 않음). 저장소가 막히면 이번 방문만 무작위.
@@ -152,6 +154,7 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
     steps.forEach((id, i) => ($(id).hidden = i !== n));
     step = n;
     $('next').textContent = labels[n];
+    $('back').hidden = n === 0 || n === 3;
     window.scrollTo(0, 0);
     if (n === 1) $<HTMLInputElement>('email').focus();
   }
@@ -191,23 +194,19 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
   }
 
   $('next').addEventListener('click', () => {
-    if (step === 0) {
-      track('PRICE');
-      go(1);
-    } else if (step === 1) {
-      const ok = validatePaymentRequest({ email: $<HTMLInputElement>('email').value.trim(), arm, pledge: true, consent: true }).ok;
-      if (!ok) {
-        $('email-msg').textContent = '이메일 형식을 확인해 주세요. 예: me@example.com';
-        $('email-msg').classList.add('warn');
-        return;
-      }
-      go(2);
-    } else if (step === 2) {
-      void submit();
-    } else {
-      location.href = '/';
+    const emailOk = validatePaymentRequest({ email: $<HTMLInputElement>('email').value.trim(), arm, pledge: true, consent: true }).ok;
+    const act = proNextStep(step, { emailOk, agreeOk: true });
+    if ('submit' in act) return void submit();
+    if ('home' in act) { location.href = '/'; return; }
+    if (act.track) track(act.track);
+    if (act.warn === 'email') {
+      $('email-msg').textContent = '이메일 형식을 확인해 주세요. 예: me@example.com';
+      $('email-msg').classList.add('warn');
+      return;
     }
+    go(act.to);
   });
+  $('back').addEventListener('click', () => go(Math.max(0, step - 1)));
   $('email').addEventListener('keydown', (e) => {
     if ((e as KeyboardEvent).key === 'Enter') $('next').click();
   });
