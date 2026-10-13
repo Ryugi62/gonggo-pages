@@ -81,17 +81,17 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 ```
 역방향 import 금지 — `tests/architecture.test.ts`가 grep으로 검사.
 
-## 8. UI 수용 기준 (토스 원칙 체크리스트 10 구체화)
-1. 모바일 퍼스트: 390px 가로 스크롤 0, 1280px 본문 폭 ≤ 720px 중앙.
-2. 한 화면 한 질문: 자격 체커는 입력 4개 → 2스텝(나이·학생 / 지역·사업자), 스텝당 ≤2, 진행 표시.
-3. 타이포: 제목 ≥22px 700, 본문 16px, 보조 13px.
-4. 여백·라운드: 섹션 간 ≥24px, 카드 라운드 16px, 그림자 0~1단계.
-5. 하단 고정 CTA: 상세 페이지 「원문 공고 보기」 1개, 하단 고정, 높이 ≥52px, 전폭(모바일).
-6. 숫자 먼저: 상세 첫 카드 = 「D-n」(≥28px), 그 아래 마감일·상금 1줄. 체커 결과 = 「낼 수 있는 공고 N개」.
-7. 근거는 접힘: 정리 기준·출처 안내는 `<details>`(닫힘).
-8. 마이크로카피: 존댓말·짧게(「모르면 비워도 돼요」).
-9. 색: 흰 배경 + #3182F6 1색 + 상태 3색, 본문 대비 ≥4.5:1, `prefers-color-scheme: dark` 최소 대응.
-10. 성능: 시스템 폰트, 외부 CDN 0, 상세 페이지 JS = D-day 계산·알림 의향 인라인 소량.
+## 8. UI 수용 기준 (토스 원칙 체크리스트 10 구체화) — 자동 = `tests/dist/ui.test.ts`(+ `ui_audit.py` fail 0), 수동 = 볼트 `UI검수-YYYY-MM-DD.md`
+1. 모바일 퍼스트: 390px 가로 스크롤 0, 1280px 본문 폭 ≤ 720px 중앙. [자동: viewport·확대 차단 없음·.wrap 720 / 가로 스크롤·캡처는 수동 — UI검수 기록]
+2. 한 화면 한 질문: 자격 체커는 입력 4개 → 2스텝(나이·학생 / 지역·사업자), 스텝당 ≤2, 진행 표시. [수동 — UI검수 기록]
+3. 타이포: 제목 ≥22px 700, 본문 16px, 보조 13px. [자동: 본문 16px·12px 미만 0·굵기 ≥400]
+4. 여백·라운드: 섹션 간 ≥24px, 카드 라운드 16px, 그림자 0~1단계. [자동: ui_audit spacing(warn 허용 — 사유는 검수 기록) · 터치 ≥44]
+5. 하단 고정 CTA: 상세 페이지 「원문 공고 보기」 1개, 하단 고정, 높이 ≥52px, 전폭(모바일). **그 외 버튼은 모두 보조 스타일(btn primary 0)** — 페이지마다 주 행동 1개. [자동]
+6. 숫자 먼저: 상세 첫 카드 = 「D-n」(≥28px), 그 아래 마감일·상금 1줄. 체커 결과 = 「낼 수 있는 공고 N개」. /pro는 가격 카드가 질문 목록보다 앞이고 하단 고정 버튼에 가리지 않게 아래 여백 ≥112px. [자동: 순서·크기·여백 / 첫 화면 안 위치는 수동]
+7. 근거는 접힘: 정리 기준·출처 안내는 `<details>`(닫힘). 조항 판독 인용은 제품 본문이라 예외(차별 축). [자동: open 속성 0]
+8. 마이크로카피: 존댓말·짧게(「모르면 비워도 돼요」), 공고명 뒤에 조사를 조립하지 않는다(AC-54). [수동 — UI검수 기록]
+9. 색: 흰 배경 + #3182F6 1색 + 상태 3색(원칙 쌍), 본문 대비 ≥4.5:1, `prefers-color-scheme: dark` 최소 대응. [자동: 다크 규칙·outline 유지·ui_audit contrast fail 0]
+10. 성능: 시스템 폰트, 외부 CDN 0, 상세 페이지 JS = D-day 계산·알림 의향 인라인 소량. [자동: 외부 의존 0]
 
 ## 9. 물리 검증 계획
 - `npm run export`(실데이터) → 내보낸 건수·제외 사유별 수 출력.
@@ -230,8 +230,10 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - I4 배포 뒤 curl: 표본 상세 3장 200 + JSON-LD 파싱 성공 + `/llms.txt` 200 text/plain, 다른 주소(daboyeong.kr·oaksoo.com·www) 상태 전후 동일.
 - 결과 지표(며칠 뒤, 로그): `/llms.txt` 요청 수 · ChatGPT-User·OAI-SearchBot의 상세 재방문 · `utm_source=chatgpt.com` 등 답변 엔진 착지 사람(`npm run visits`). 10/21 판정 지표(§15)는 그대로.
 **용어**: 첫 요약 `leadSummary` · 모델용 사이트 안내 `llmsTxt` · 이번 주 줄 `weekLines`.
-- AC-54: Given 공고(AI 금지 / 허용 / 미언급) When `leadSummary` Then 문장 배열 길이 2, 첫 문장 = 「<공고명>은(는) <마감> 마감하는 <분류> 공고예요.」(상시면 「상시 모집하는」), 둘째 = `aiUseSentence`와 같은 문자열. 금지 토큰·과장 낱말 0.
+- AC-54: Given 공고(AI 금지 / 허용 / 미언급) When `leadSummary` Then 문장 배열 길이 2, 첫 문장 = 「「<공고명>」 — <마감> 마감하는 <분류> 공고예요.」(상시면 「상시 모집하는」). 조사(은/는)를 조립하지 않는다 — 공고명 끝이 영문·숫자·문장이어도 받침 판별이 틀리므로 이름을 낫표로 감싼다(원칙-디자인 8, 10/14 감사 #2), 둘째 = `aiUseSentence`와 같은 문자열. 금지 토큰·과장 낱말 0.
 - AC-55: Given 빌드 When 상세 전부를 보면 Then `<h1>` 다음 첫 `<p>`가 `class="lead"`이고 본문이 `leadSummary` 문장 이음과 같다.
 - AC-56: Given 공고 목록·주간 When `llmsTxt` Then I3 형식 전부(첫 줄·인용문·절대 링크만·주간 ≤30건·금지 토큰 0). Given 빌드 Then `dist/llms.txt`가 있고 같은 내용.
 - AC-57: Given 상세 전부 When FAQ를 보면 Then I1(AI 질문 100%, 조항이 있을 때만 해당 질문, 질문 문자열이 화면에 있음 — AC-47과 합쳐 검증).
 **비목표**: 새 판정·점수·요약 생성(LLM 호출) · 외부 게시 · 서버 설정 변경 · `llms-full.txt`(공고 1,700장 본문 복제 — 한 사실 한 곳).
+- AC-58: Given 배포 전 `logs/pro-requests.jsonl`·`intent.log` When 배포 뒤 어느 파일이든 줄 수가 줄었거나 사라졌으면 Then `deploy/aws/logguard.sh verify`가 exit 1(배포 실패)이고 사본은 `logs.bak/`에 남는다. 배포 전 `snapshot`이 컨테이너 교체보다 앞이다(tests/proDeploy.test.ts). 10/14 감사 #3. 10/8 08:10Z 0바이트 원인: 배포 스크립트·compose·nginx 설정에 truncate/rm 없음 → 미확인(정본 기록은 볼트 UI검수/규칙감사 후속).
+- AC-59: Given 빌드 산출물 When `tests/dist/ui.test.ts`와 `ui_audit.py` Then §8 자동 항목 통과·fail 0. 수동 항목은 볼트 `UI검수-*.md`.

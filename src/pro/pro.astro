@@ -17,6 +17,10 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
       <p class="small" style="margin:0">공고콕 Pro · 오픈 준비 중</p>
       <blockquote class="voice">「{lead.quote}」<cite>{lead.who} · {lead.where} · {lead.date} · <a href={lead.url} target="_blank" rel="noopener nofollow">원문</a></cite></blockquote>
       <h1>「받을 수 있다」는 답마다, 근거가 된 공고 원문 문장을 붙여 드려요</h1>
+      <section class="card skel" id="price-skel" aria-hidden="true"><span></span><span></span><span></span></section>
+      {arms.map((arm) => (
+        <section class="card price" data-arm={arm} hidden aria-label="Pro 창립가"><div class="big">월 {formatWon(PRICE_ARMS[arm])}원</div><p class="price-note">창립가 — 창립 회원은 구독하는 동안 이 가격 그대로예요</p><ul class="feat">{PRO_PLAN[arm].map((f) => <li>{f}</li>)}</ul></section>
+      ))}
       <p class="sub">답 옆에 공고 원문 조항을 그대로 옮겨 둬서 맞는지 직접 대조할 수 있어요. AI 사용·중복 수혜·업력·본인 창작 서약 조항은 따로 찾아 보여 주고, 원문에서 못 찾으면 「찾지 못했어요」라고 말해요.</p>
 
       <section class="asks" aria-labelledby="asks-h">
@@ -26,10 +30,6 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
         </ul>
       </section>
 
-      <section class="card skel" id="price-skel" aria-hidden="true"><span></span><span></span><span></span></section>
-      {arms.map((arm) => (
-        <section class="card price" data-arm={arm} hidden aria-label="Pro 창립가"><div class="big">월 {formatWon(PRICE_ARMS[arm])}원</div><p class="price-note">창립가 — 창립 회원은 구독하는 동안 이 가격 그대로예요</p><ul class="feat">{PRO_PLAN[arm].map((f) => <li>{f}</li>)}</ul></section>
-      ))}
       <noscript><p class="sub">가격을 보려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
 
       <p class="promise"><strong>결제는 오픈 때 · 창립가 고정 · 30일 무조건 환불 · 지금은 돈이 나가지 않아요</strong></p>
@@ -88,7 +88,7 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
   <div class="cta-bar"><button class="cta" id="next" type="button" style="width:100%;border:0;font-family:inherit;cursor:pointer">창립가로 먼저 신청 · 지금 0원</button></div>
 </Layout>
 <style>
-  #pro { padding-bottom: 80px; }
+  #pro { padding-bottom: 112px; } /* 하단 고정 버튼(56px+여백 24px)이 마지막 줄을 가리지 않게 */
   #pro [hidden] { display: none !important; } /* .skel 의 display:grid 가 hidden 을 덮지 않게 */
   .price { margin-top: 24px; }
   .voice { margin: 12px 0 16px; font-size: 17px; font-weight: 600; }

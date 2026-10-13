@@ -15,6 +15,7 @@ ssh "$HOST" "mkdir -p $REMOTE/site $REMOTE/conf/nginx $REMOTE/logs"
 rsync -az --delete dist/ "$HOST:$REMOTE/site/"
 rsync -az deploy/aws/nginx.conf "$HOST:$REMOTE/conf/nginx/default.conf"
 scp -q deploy/aws/gonggo.caddy "$HOST:$REMOTE/conf/gonggo.caddy"
+scp -q deploy/aws/logguard.sh "$HOST:$REMOTE/conf/logguard.sh"
 
 ssh "$HOST" bash -s <<'REMOTE_EOF'
 set -euo pipefail
@@ -25,6 +26,8 @@ mkdir -p $R/logs
 if ! docker run --rm -v $R/conf/nginx:/etc/nginx/conf.d:ro -v $R/logs:/var/log/gonggo nginx:1.27-alpine nginx -t -q; then
   echo "nginx 설정 검사 실패 — 기존 컨테이너 유지"; exit 1
 fi
+# 계측·결제 요청 로그 줄 수·사본을 먼저 기록(10/14 감사 #3) — 교체 뒤 줄면 배포 실패로 끝낸다
+bash $R/conf/logguard.sh snapshot $R/logs $R/logs.snapshot
 # 옛 구성(컨테이너 안 /var/log/nginx/intent.log)의 계측 로그를 지우기 전에 호스트로 옮긴다(1회성, 없으면 건너뜀)
 if docker exec gonggo-web test -s /var/log/nginx/intent.log 2>/dev/null; then
   docker exec gonggo-web cat /var/log/nginx/intent.log >> $R/logs/intent.log
@@ -37,6 +40,7 @@ docker run -d --name gonggo-web --network edge --restart unless-stopped \
   -v $R/logs:/var/log/gonggo \
   nginx:1.27-alpine >/dev/null
 docker exec gonggo-web nginx -t -q
+bash $R/conf/logguard.sh verify $R/logs $R/logs.snapshot || { echo "로그 감소 — 배포 중단(사본 $R/logs.bak)"; exit 1; }
 S=/home/ubuntu/edge/sites/gonggo.caddy
 [ -f $S ] && cp $S $R/conf/gonggo.caddy.prev || true
 cp $R/conf/gonggo.caddy $S

@@ -81,12 +81,14 @@ const ogImage = new URL('/og.png', Astro.site).href;
 <style is:global>
   :root {
     --bg: #ffffff; --text: #191f28; --sub: #4e5968; --muted: #5f6b78; --btn: #1f6ce0; --line: #e5e8eb; --card: #f2f4f6;
-    --blue: #3182f6; --blue-weak: #e8f3ff; --blue-text: #1b64da; --ok: #0a7a4b; --warn: #a35200; --no: #d22030;
+    --blue: #3182f6; --blue-weak: #e8f3ff; --blue-text: #1b64da; --ok: #087f5b; --warn: #9c4f00; --no: #c62828;
+    --ok-bg: #e6fcf5; --ok-fg: #087f5b; --no-bg: #ffebee; --no-fg: #c62828;
     color-scheme: light dark;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #17171c; --text: #ececee; --sub: #b0b8c1; --muted: #9ea7b2; --line: #2c2c35; --card: #222229;
-      --blue: #4c93ff; --btn: #1f6ce0; --blue-weak: #1d2a40; --blue-text: #8bb8ff; --ok: #3ecf8e; --warn: #ffb35c; --no: #ff6b78; }
+      --blue: #4c93ff; --btn: #1f6ce0; --blue-weak: #1d2a40; --blue-text: #8bb8ff; --ok: #3ecf8e; --warn: #ffb35c; --no: #ff6b78;
+      --ok-bg: #12382b; --ok-fg: #3ecf8e; --no-bg: #3a1a20; --no-fg: #ff8a95; }
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -115,8 +117,8 @@ const ogImage = new URL('/og.png', Astro.site).href;
   .chip { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--blue-weak); color: var(--blue-text); font-size: 13px; font-weight: 600; text-decoration: none; }
   .chip.gray { background: var(--card); color: var(--sub); }
   .badge { display: inline-block; padding: 6px 12px; border-radius: 8px; font-size: 14px; font-weight: 700; margin: 0; }
-  .badge.no { background: color-mix(in srgb, var(--no) 12%, transparent); color: var(--no); }
-  .badge.ok { background: color-mix(in srgb, var(--ok) 12%, transparent); color: var(--ok); }
+  .badge.no { background: var(--no-bg); color: var(--no-fg); }
+  .badge.ok { background: var(--ok-bg); color: var(--ok-fg); }
   .clauses { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .clauses li { background: var(--card); border-radius: 16px; padding: 14px 16px; }
   .clauses .ck { display: block; font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 4px; }

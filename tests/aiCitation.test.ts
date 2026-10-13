@@ -22,9 +22,16 @@ describe('AC-54 첫 요약 ≤2문장 — 기존 판독 문장만', () => {
     }
   });
   it('첫 문장 = 공고명·마감·분류', () => {
-    expect(leadSummary(mk({}))[0]).toBe('테스트 공모전은(는) 10월 30일(금) 마감하는 공모전 공고예요.');
-    expect(leadSummary(mk({ deadline: null }))[0]).toBe('테스트 공모전은(는) 상시 모집하는 공모전 공고예요.');
+    expect(leadSummary(mk({}))[0]).toBe('「테스트 공모전」 — 10월 30일(금) 마감하는 공모전 공고예요.');
+    expect(leadSummary(mk({ deadline: null }))[0]).toBe('「테스트 공모전」 — 상시 모집하는 공모전 공고예요.');
     expect(leadSummary(mk({ deadline: '2026-10-30', deadlineTime: '18:00' }))[0]).toContain('10월 30일(금) 18:00 마감');
+  });
+  it('조사 조립 흔적 0 — 「은(는)」 없이 이름은 낫표 안에 둔다(공고명 끝이 영문·숫자·문장이어도 자연스럽다)', () => {
+    for (const name of ['HacKITSnova 2026', '청년 창업가를 모집합니다', 'AI 해커톤']) {
+      const f = leadSummary(mk({ name }))[0];
+      expect(f).not.toMatch(/은\(는\)|이\(가\)|을\(를\)/);
+      expect(f.startsWith(`「${name}」 — `)).toBe(true);
+    }
   });
   it('금지 토큰·과장 낱말 0', () => {
     for (const aiUse of ['FORBIDDEN', 'ALLOWED', 'UNSTATED'] as const) {
