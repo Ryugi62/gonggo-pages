@@ -8,6 +8,7 @@ import type { PublicListing } from '../../domain/listing.ts';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
 import { CLAUSE_LABEL } from '../../domain/clause.ts';
 import { deadlineEvent, googleAddUrl } from '../../domain/ics.ts';
+import { leadSummary } from '../../domain/aiCitation.ts';
 import { searchTitle, searchDescription, listingFaq, faqJsonLd, aiUseSentence, CLAUSE_QUESTION } from '../../domain/searchLanding.ts';
 
 export function getStaticPaths() {
@@ -21,6 +22,7 @@ const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? `
 const title = searchTitle(l);
 const description = searchDescription(l);
 const faq = listingFaq(l);
+const lead = leadSummary(l).join(' '); // SPEC §17 — 첫 단락 2문장
 const catSlug = categorySlug(l.category);
 const path = `/g/${l.slug}/`;
 const site = Astro.site!.href.replace(/\/$/, '');
@@ -44,6 +46,7 @@ const jsonLd = [
 <Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={{ href: l.url, label: '원문 공고 보기', external: true }}>
   <nav class="crumb" aria-label="위치"><a href="/">홈</a> › <a href={`/c/${catSlug}/`}>{l.category}</a></nav>
   <h1>{l.name}</h1>
+  <p class="lead">{lead}</p>
   <p class="sub">신청 자격·조항 원문 정리{l.organizer ? ` · ${l.organizer}` : ''}</p>
   {l.aiUse === 'FORBIDDEN' && <p class="badge no" style="margin-top:12px">AI 초안 사용 불가</p>}
   {l.aiUse === 'ALLOWED' && <p class="badge ok" style="margin-top:12px">원문에 AI 활용 가능 문장이 있어요</p>}

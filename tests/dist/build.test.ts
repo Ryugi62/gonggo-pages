@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { findForbidden } from '../../src/domain/privacy.ts';
 import { OPERATOR, PRO_PAGES, INDEXNOW_KEY } from '../../src/infrastructure/config.ts';
 import { searchTitle, listingFaq } from '../../src/domain/searchLanding.ts';
+import { leadSummary } from '../../src/domain/aiCitation.ts';
 
 // 빌드 산출물 검사 (npm run build 뒤 실행)
 const walk = (d: string): string[] =>
@@ -155,5 +156,33 @@ describe('AC-47 검색 착지 — 고객 말 제목·FAQ(SPEC §15)', () => {
 describe('AC-48 IndexNow 키 파일', () => {
   it('dist/<키>.txt 본문 = 키', () => {
     expect(readFileSync(`dist/${INDEXNOW_KEY}.txt`, 'utf8').trim()).toBe(INDEXNOW_KEY);
+  });
+});
+
+describe('AC-55·56·57 AI 검색 인용 장치(SPEC §17)', () => {
+  const ls = data.listings as any[];
+  const unesc = (s: string) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+  it('상세 100%: h1 다음 첫 p.lead = leadSummary, AI 질문 FAQ 100%', () => {
+    for (const l of ls) {
+      const page = readFileSync(`dist/g/${l.slug}/index.html`, 'utf8');
+      const m = /<\/h1>\s*<p class="lead">([^<]*)<\/p>/.exec(page);
+      expect(m, l.slug).not.toBeNull();
+      expect(unesc(m![1]), l.slug).toBe(leadSummary(l).join(' '));
+      const faq = JSON.parse([...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((x) => x[1]).find((x) => x.includes('FAQPage'))!);
+      const names = faq.mainEntity.map((q: any) => q.name);
+      expect(names, l.slug).toContain('AI(챗GPT)로 쓴 내용을 내도 되나요?');
+      if (l.eligibilityQuote) expect(names).toContain('누가 낼 수 있나요?');
+      if (l.clauses.some((c: any) => c.kind === 'DUPLICATE_AWARD')) expect(names).toContain('다른 대회에서 상 받은 작품도 낼 수 있나요?');
+    }
+  }, 120_000);
+  it('dist/llms.txt — 첫 줄·정식 주소 링크만·주간 항목', () => {
+    const t = readFileSync('dist/llms.txt', 'utf8');
+    expect(t.split('\n')[0]).toBe('# 공고콕');
+    const links = [...t.matchAll(/\]\((https?:[^)]+)\)/g)].map((m) => m[1]);
+    for (const x of links) expect(x.startsWith('https://gonggo.oaksoo.com/'), x).toBe(true);
+    expect(links).toContain('https://gonggo.oaksoo.com/week/');
+    expect(findForbidden(t)).toEqual([]);
+    expect(statSync('dist/llms.txt').size).toBeLessThan(20 * 1024);
+    expect(readFileSync('dist/sitemap.xml', 'utf8')).not.toContain('llms.txt');
   });
 });

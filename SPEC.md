@@ -220,3 +220,18 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-52: Given AWS 빌드 When 홈·분류 5장·`/week/`·`/w/*/`를 보면 Then `/pro/` 링크가 정확히 1개(`?from=` 값 일치)이고 목록(`ListingList`)보다 앞에 있다. Given 기본 빌드 Then 0.
 - AC-53: Given intent.log view 비콘(Referer `from=c`·`from=week`·`from=g`·from 없음, 봇 1줄) When `countProVisits` Then `byFrom` = {c:1, week:1, g:1, none:1}.
 
+
+## 17. AI 검색 인용 장치 — 답변 엔진이 판독 문장을 그대로 집어 가게 (v0.9, 2026-10-14 — 볼트 `projects/공고콕-Pro-2026/실측-2026-10-14` 후보 1)
+**왜(10/14 실측)**: 28시간 nginx 로그 GPTBot 621·ClaudeBot 905·OAI-SearchBot 503·ChatGPT-User 240 대비 사람 방문 수십 건, 검색 유입 0. 답변 엔진이 이미 우리 판독 페이지를 읽는다 → 읽은 쪽이 「한 문장 요약 + 원문 인용 FAQ」를 바로 집을 수 있고, 사이트 전체 지도를 한 파일로 받게 한다. 새 판정은 만들지 않는다 — 기존 `aiUseSentence`·원문 인용만 재배치.
+**숫자 성공 조건(배포 게이트)**
+- I1 FAQ(§15 Q3) 유지·확인: 상세 100%에 `FAQPage` 1개, 「AI(챗GPT)로 쓴 내용을 내도 되나요?」 질문 100%, 자격 인용이 있으면 「누가 낼 수 있나요?」, 중복 수상 조항이 있으면 「다른 대회에서 상 받은 작품도 낼 수 있나요?」 — 답은 원문 인용·`aiUseSentence`뿐.
+- I2 상세 100%의 `<h1>` 바로 다음 첫 단락 `<p class="lead">` ≤ 2문장, 문장 재료는 공고명·분류·마감·`aiUseSentence`(기존 판독 문장)뿐. 상세 HTML ≤ 40KB 유지.
+- I3 사이트 루트 `/llms.txt`(text/plain, UTF-8): 첫 줄 `# 공고콕`, 인용문 `> 설명`, 정식 주소 절대 링크만(옛 주소·sslip 0), 주요 경로(`/`·`/week/`·`/check/`·`/about/`·`/rolling/`·분류 `/c/*/`·`/sitemap.xml`·`/cal/all.ics`), 이번 주 마감 창업 공고(주간 페이지 항목, 최대 30건, 각 줄 = 링크 + 마감 + AI 문장), 금지 토큰 0, ≤ 20KB. sitemap에는 넣지 않는다.
+- I4 배포 뒤 curl: 표본 상세 3장 200 + JSON-LD 파싱 성공 + `/llms.txt` 200 text/plain, 다른 주소(daboyeong.kr·oaksoo.com·www) 상태 전후 동일.
+- 결과 지표(며칠 뒤, 로그): `/llms.txt` 요청 수 · ChatGPT-User·OAI-SearchBot의 상세 재방문 · `utm_source=chatgpt.com` 등 답변 엔진 착지 사람(`npm run visits`). 10/21 판정 지표(§15)는 그대로.
+**용어**: 첫 요약 `leadSummary` · 모델용 사이트 안내 `llmsTxt` · 이번 주 줄 `weekLines`.
+- AC-54: Given 공고(AI 금지 / 허용 / 미언급) When `leadSummary` Then 문장 배열 길이 2, 첫 문장 = 「<공고명>은(는) <마감> 마감하는 <분류> 공고예요.」(상시면 「상시 모집하는」), 둘째 = `aiUseSentence`와 같은 문자열. 금지 토큰·과장 낱말 0.
+- AC-55: Given 빌드 When 상세 전부를 보면 Then `<h1>` 다음 첫 `<p>`가 `class="lead"`이고 본문이 `leadSummary` 문장 이음과 같다.
+- AC-56: Given 공고 목록·주간 When `llmsTxt` Then I3 형식 전부(첫 줄·인용문·절대 링크만·주간 ≤30건·금지 토큰 0). Given 빌드 Then `dist/llms.txt`가 있고 같은 내용.
+- AC-57: Given 상세 전부 When FAQ를 보면 Then I1(AI 질문 100%, 조항이 있을 때만 해당 질문, 질문 문자열이 화면에 있음 — AC-47과 합쳐 검증).
+**비목표**: 새 판정·점수·요약 생성(LLM 호출) · 외부 게시 · 서버 설정 변경 · `llms-full.txt`(공고 1,700장 본문 복제 — 한 사실 한 곳).
