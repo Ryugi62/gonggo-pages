@@ -51,12 +51,15 @@ export function deadlineEvent(l: PublicListing, site: string, opts: { brief?: bo
   if (!l.deadline) return null;
   const url = detailUrl(site, l.slug);
   const when = `${l.deadline}${l.deadlineTime ? ' ' + l.deadlineTime : ''}`;
-  const description = [
-    `마감 ${when}${l.prize ? ` · ${l.prize}` : ''}${l.organizer ? ` · 주최 ${l.organizer}` : ''}`,
-    `자격·조항 정리(공고콕): ${url}`,
-    `원문 공고: ${l.url}`,
-    ...(opts.brief ? [] : ['지원 전 원문 공고를 꼭 확인하세요. 원문이 기준이에요.']),
-  ].join('\n');
+  // 구독 피드(brief)는 마감·상금·상세 링크만 — 원문 주소·주최·안내 문장은 상세 페이지와 단건 .ics에 있다(SPEC §11 C2 1MB 상한, 2026-10-15).
+  const description = opts.brief
+    ? [`마감 ${when}${l.prize ? ` · ${l.prize}` : ''}`, `공고콕: ${url}`].join('\n')
+    : [
+        `마감 ${when}${l.prize ? ` · ${l.prize}` : ''}${l.organizer ? ` · 주최 ${l.organizer}` : ''}`,
+        `자격·조항 정리(공고콕): ${url}`,
+        `원문 공고: ${l.url}`,
+        '지원 전 원문 공고를 꼭 확인하세요. 원문이 기준이에요.',
+      ].join('\n');
   return {
     uid: `${l.slug}@gonggo`,
     date: l.deadline,

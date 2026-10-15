@@ -3,7 +3,7 @@ import file from '../../../data/listings.json';
 import { buildSiteIndex } from '../../application/buildSiteIndex.ts';
 import { founderWeek } from '../../application/founderWeek.ts';
 import { buildCalendarFeeds } from '../../application/calendarFeeds.ts';
-import { FEED_ORIGIN } from '../../infrastructure/config.ts';
+import { FEED_ORIGIN, SITE_URL } from '../../infrastructure/config.ts';
 import { CATEGORIES, TAGS } from '../../domain/category.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 
@@ -14,7 +14,7 @@ export const categories = CATEGORIES.filter((c) => index.byCategory.get(c.name)?
 export const tags = TAGS.filter((t) => index.byTag.get(t.name)?.length);
 export const weeks = [...index.byWeek.keys()];
 export const week = founderWeek(listings, generatedAt);
-export const calendarFeeds = buildCalendarFeeds(listings, generatedAt);
+export const calendarFeeds = buildCalendarFeeds(listings, generatedAt, { site: SITE_URL.replace(/\/$/, '') });
 export const feedUrl = (slug: string) => `${FEED_ORIGIN.replace(/\/$/, '')}/cal/${slug}.ics`;
 export const hasFeed = (slug: string) => calendarFeeds.some((f) => f.slug === slug);
 

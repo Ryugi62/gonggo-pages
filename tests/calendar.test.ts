@@ -98,10 +98,45 @@ describe('AC-21 피드 구성', () => {
     expect(deadlineEvent(mk({}), SITE, { brief: true })!.description).not.toContain('원문이 기준');
     expect(deadlineEvent(mk({}), SITE)!.description).toContain('원문이 기준');
   });
+  it('피드 일정 설명은 마감·상금·상세 링크만(원문·주최 생략, 2026-10-15 크기 수선)', () => {
+    const d = deadlineEvent(mk({ organizer: '한국 주최 기관', prize: '총상금 100만 원' }), SITE, { brief: true })!.description;
+    expect(d).toContain(`${SITE}/g/x-1/?from=cal`);
+    expect(d).toContain('총상금 100만 원');
+    expect(d).not.toContain('example.org');
+    expect(d).not.toContain('주최');
+  });
   it('분류·태그·이번 주 창업, 빈 피드는 만들지 않는다', () => {
     expect(get('hackathon').items.map((l) => l.slug)).toEqual(['d']);
     expect(get('student').items.map((l) => l.slug)).toEqual(['d']);
     expect(get('founder-week').items.map((l) => l.slug)).toEqual(['e']);
     expect(feeds.find((f) => f.slug === 'scholarship')).toBeUndefined();
+  });
+});
+
+describe('C2 크기 상한 — 창 자동 축소(2026-10-15)', () => {
+  const many = Array.from({ length: 120 }, (_, i) => {
+    const d = new Date(Date.UTC(2026, 9, 6 + Math.floor(i / 2)));
+    return mk({ slug: `s-${i}`, name: '아주 긴 공고 이름 '.repeat(4) + i, deadline: d.toISOString().slice(0, 10) });
+  });
+  const size = (items: PublicListing[]) =>
+    bytes(serializeCalendar({ name: '공고콕 — 접수 중인 공고 마감', events: items.map((l) => deadlineEvent(l, SITE, { brief: true })), stamp: '2026-10-06' }));
+  it('상한 안이면 90일 창 그대로', () => {
+    const f = buildCalendarFeeds(many, '2026-10-06', { site: SITE });
+    expect(f.find((x) => x.slug === 'all')!.items.length).toBe(120);
+    expect(f.find((x) => x.slug === 'all')!.windowDays).toBe(90);
+  });
+  it('상한을 넘으면 마감 날짜 단위로 창을 줄여 전체 피드 ≤ 상한, 일정 수 = 창 안 공고 수', () => {
+    const full = size(many);
+    const cap = Math.floor(full / 2);
+    const f = buildCalendarFeeds(many, '2026-10-06', { site: SITE, maxBytes: cap });
+    const all = f.find((x) => x.slug === 'all')!;
+    expect(all.windowDays).toBeLessThan(90);
+    expect(size(all.items)).toBeLessThanOrEqual(cap);
+    const until = new Date(Date.UTC(2026, 9, 6 + all.windowDays)).toISOString().slice(0, 10);
+    expect(all.items.length).toBe(many.filter((l) => l.deadline! <= until).length);
+    // 하루만 더 넓히면 상한을 넘는다(가장 넓은 창)
+    const next = new Date(Date.UTC(2026, 9, 7 + all.windowDays)).toISOString().slice(0, 10);
+    expect(size(many.filter((l) => l.deadline! <= next))).toBeGreaterThan(cap);
+    for (const x of f) expect(x.windowDays).toBe(all.windowDays);
   });
 });

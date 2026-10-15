@@ -3,6 +3,8 @@ import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { findForbidden } from '../../src/domain/privacy.ts';
 import { buildCalendarFeeds } from '../../src/application/calendarFeeds.ts';
+import { SITE_URL } from '../../src/infrastructure/config.ts';
+const feedOpts = { site: SITE_URL.replace(/\/$/, '') };
 
 // SPEC §11 마감 캘린더 루프 — 빌드 산출물 검사(AC-22·23, C1~C4·C6)
 const data = JSON.parse(readFileSync('data/listings.json', 'utf8'));
@@ -31,7 +33,7 @@ describe('C1 상세 페이지 캘린더 추가', () => {
 });
 
 describe('C2 구독 피드', () => {
-  const feeds = buildCalendarFeeds(listings, data.generatedAt);
+  const feeds = buildCalendarFeeds(listings, data.generatedAt, feedOpts);
   it('피드마다 VEVENT 수 = 목록 공고 수, ≤1MB', () => {
     expect(feeds.length).toBeGreaterThanOrEqual(5);
     for (const f of feeds) {
@@ -53,7 +55,7 @@ describe('C2 구독 피드', () => {
 
 describe('C3·C4·C6 모든 .ics', () => {
   it('CRLF·≤75옥텟·UID 고유·상세 링크 ?from=cal·금지 토큰 0', () => {
-    expect(icsFiles.length).toBe(dated.length + buildCalendarFeeds(listings, data.generatedAt).length);
+    expect(icsFiles.length).toBe(dated.length + buildCalendarFeeds(listings, data.generatedAt, feedOpts).length);
     for (const f of icsFiles) {
       const s = readFileSync(f, 'utf8');
       expect(s.replace(/\r\n/g, ''), f).not.toMatch(/[\r\n]/);
