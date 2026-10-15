@@ -38,10 +38,10 @@ describe('AC-20 직렬화 규칙', () => {
     for (const line of ics.split('\r\n')) expect(bytes(line), line).toBeLessThanOrEqual(75);
   });
   it('펴면 원문 그대로(이스케이프 포함)', () => {
-    expect(unfold(ics)).toContain('SUMMARY:[마감] 제18회 한국고전종합DB 활용 공모전\\, 고전명구\; 부문\\\\특별\\n둘째 줄');
+    expect(unfold(ics)).toContain('SUMMARY:[마감] 제18회 한국고전종합DB 활용 공모전\\, 고전명구\\; 부문\\\\특별\\n둘째 줄');
   });
   it('escapeText·foldLine 단위', () => {
-    expect(escapeText('a,b;c\\d\ne')).toBe('a\\,b\;c\\\\d\\ne');
+    expect(escapeText('a,b;c\\d\ne')).toBe('a\\,b\\;c\\\\d\\ne');
     const f = foldLine('DESCRIPTION:' + '가'.repeat(60));
     for (const l of f.split('\r\n')) expect(bytes(l)).toBeLessThanOrEqual(75);
     expect(f.replace(/\r\n /g, '')).toBe('DESCRIPTION:' + '가'.repeat(60));

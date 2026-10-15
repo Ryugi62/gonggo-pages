@@ -20,7 +20,7 @@ export function nextDay(date: string): string {
 }
 
 export function escapeText(s: string): string {
-  return s.replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+  return s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
 }
 
 /** 한 줄을 75옥텟 이하로 접는다(이어지는 줄은 공백 1칸으로 시작, UTF-8 문자를 자르지 않음). */
