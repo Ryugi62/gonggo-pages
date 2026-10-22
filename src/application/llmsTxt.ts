@@ -25,6 +25,8 @@ export function llmsTxt(site: string, i: LlmsInput): string {
     link('공고콕 홈', '/', '마감 임박 공고와 분류 안내'),
     link('이번 주 낼 수 있는 창업경진대회·지원사업', '/week/', `${i.weekRange} 마감하는 창업 공고`),
     link('내가 낼 수 있는 공고 찾기', '/check/', '나이·학생·지역·사업자 여부로 거르기(입력값은 브라우저 안에서만 처리)'),
+    link('AI 사용 허용·금지 공고 모음', '/clauses/ai/', '원문 인용이 있는 공고만'),
+    link('중복 수상·중복 지원 조항 공고 모음', '/clauses/duplicate/', '원문 인용이 있는 공고만'),
     link('정리 기준', '/about/', '공고 원문을 어떻게 옮기는지'),
     ...(i.hasRolling ? [link('상시 모집 공고', '/rolling/', '마감일이 없는 공고')] : []),
     ...i.categories.map((c) => link(`${c.name} 공고`, `/c/${c.slug}/`, `${c.count}건`)),

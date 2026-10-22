@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { formatDate } from '../domain/format.ts';
+import { SITE_NAME, IS_AWS } from '../infrastructure/config.ts';
+import { generatedAt } from '../adapters/site/data.ts';
+import type { CollectionItem } from '../domain/clausePreview.ts';
+// SPEC §19 X3 — 원문 인용이 판독과 맞는 공고만. 항목마다 판독 날짜를 적는다.
+interface Group { title: string; note: string; items: CollectionItem[] }
+interface Props { heading: string; title: string; description: string; path: string; lead: string; groups: Group[]; emptyNote?: string }
+const { heading, title, description, path, lead, groups, emptyNote } = Astro.props;
+const site = Astro.site!.href.replace(/\/$/, '');
+const total = groups.reduce((n, g) => n + g.items.length, 0);
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: SITE_NAME, item: `${site}/` },
+    { '@type': 'ListItem', position: 2, name: heading, item: `${site}${path}` } ] },
+];
+---
+<Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={{ href: '/check/', label: '내가 낼 수 있는 공고 찾기' }}>
+  <nav class="crumb" aria-label="위치"><a href="/">홈</a></nav>
+  <h1>{heading}</h1>
+  <p class="lead">{lead}</p>
+  <p class="small" style="margin:8px 0 0">{generatedAt} 판독 · 지금 열려 있는 공고 {total}건 · 공고 원문 문장을 그대로 옮겼어요. 원문과 다르면 원문이 맞아요.</p>
+  {groups.map((g) => (
+    <section aria-label={g.title}>
+      <h2>{g.title} ({g.items.length}건)</h2>
+      <p class="sub" style="margin:0 0 8px">{g.note}</p>
+      {g.items.length > 0 ? (
+        <ul class="clauses">
+          {g.items.map((it) => (
+            <li>
+              <span class="ck">{it.label}</span>
+              <a href={`/g/${it.listing.slug}/`}>{it.listing.name}</a>
+              <span class="small"> · {it.listing.deadline ? `${formatDate(it.listing.deadline)} 마감` : '상시 모집'}</span>
+              <q>{it.quote}</q>
+              <span class="small">{generatedAt} 판독 · <a href={it.listing.url} target="_blank" rel="noopener">원문 공고</a></span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="small">{emptyNote ?? '지금은 원문 근거가 있는 공고가 없어요.'}</p>
+      )}
+    </section>
+  ))}
+  {IS_AWS && <section><a class="tile" href="/pro/?from=clauses"><b>내 계획서를 이 공고 배점으로 채점받기 (Pro) →</b><span>오픈 준비 중 · 창립 회원 신청은 돈이 나가지 않아요</span></a></section>}
+  <details>
+    <summary>어떤 공고를 모았나요</summary>
+    <p class="sub">공고 원문에서 옮긴 조항 문장이 판독 결과와 같은 방향인 공고만 모았어요. 문장이 없거나 애매한 공고는 넣지 않았어요. 마감이 지난 공고는 다음 재생성 때 빠져요. <a href="/about/">정리 기준 자세히</a></p>
+  </details>
+</Layout>

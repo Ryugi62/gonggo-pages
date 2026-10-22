@@ -1,0 +1,13 @@
+---
+import ClauseCollection from '../../components/ClauseCollection.astro';
+import { collections } from '../../adapters/site/data.ts';
+const { allow, limit } = collections.duplicate;
+---
+<ClauseCollection heading="중복 수상·중복 지원 조항 공고 모음" title={`중복 수상·중복 지원 되는 공고 모음 ${allow.length + limit.length}건 | 공고콕`}
+  description={`다른 대회 수상작·중복 지원이 되는지 공고 원문이 직접 말한 ${allow.length + limit.length}건을 원문 문장 그대로 모았어요.`}
+  path="/clauses/duplicate/" lead="다른 대회에서 상 받은 작품을 내도 되는지, 여러 곳에 중복 지원해도 되는지 공고 원문이 직접 말한 곳만 모았어요."
+  emptyNote="지금은 이 방향의 원문 문장이 있는 공고가 없어요."
+  groups={[
+    { title: '중복 지원 가능', note: '원문에 중복 지원·신청이 가능하다고 적힌 공고예요. 중복 수상을 허용한다는 뜻은 아니니 인용을 확인하세요.', items: allow },
+    { title: '수상·중복 제한', note: '다른 대회 수상 이력이나 중복 지원을 막는다고 적힌 공고예요.', items: limit },
+  ]} />

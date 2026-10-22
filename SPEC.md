@@ -252,3 +252,21 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-64: Given `tests/architecture.test.ts` When `.astro` 전부 Then 비-inline `<script>`는 domain/application만 import하고 `Date.parse`·`Math.round` 계산을 하지 않는다. 예외 1: `is:inline` 스크립트(D-day 표시·비콘·알림 의향)는 번들러를 못 쓰므로 소량 인라인 허용(§8-10).
 - AC-65: Given `/pro` 사람 방문·가격 클릭·결제 요청 수 When `verdict(counts, today)` Then 방문 ≥100 ∧ 요청 ≥3 ∧ 가격 클릭 ≥8% ∧ 요청률 ≥2% = GO, 방문 <100 = 보류(D45 11/21 이후 채널 실패), 요청 1~2 = 보류, 그 외 NO-GO. `npm run visits` 끝에 판정 1줄(10/14 감사 #10).
 - AC-66: Given 상세 When `?from=cal`로 열면 Then 페이지 load 뒤 1.5초에 `/intent/cal/return/<slug>` 비콘이 나가도록 인라인 스크립트가 있다(10/14 감사 #9, tests/dist/ui.test.ts).
+
+
+## 19. 실험 X1·X3 — 상세 조항 미리보기 + 조항 모음 페이지 (v1.1, 2026-10-22 — 볼트 `projects/공고콕-Pro-2026/회차-02-2026-10-22/실험.md` X1·X3)
+**왜(10/22 실측)**: 10/20~21 이틀 착지 35명 중 /pro 진입 0. 상세 화면 첫 장면에 Pro가 주는 것(그 공고의 AI·중복 조항 판독)이 안 보임(X1). 「중복 수상 되나」「AI로 써도 되나」를 공고별로 답하는 곳이 없음(X3). 메인 J 결정 10/22: §15 비목표 「무료 페이지 CTA 개편」 중 상세 조항 미리보기 1줄만 해제.
+**데이터 현실(10/22 실측, 2,321건)**: AI 판독 15건(허용 11·금지 4), 중복 수상 조항 3건(모두 「제한」 문장 — 「허용」 문장 0), 중복 지원 허용 문장 2건. 그래서 **원문 인용이 판독 방향과 일치하는 것만** 쓴다(허용 판독인데 인용이 「AI-generated … is allowed」를 부정하는 8건 등 불일치는 모두 제외).
+**숫자 성공 조건(배포 게이트)**
+- P1 상세: 근거 있는 공고(AI 인용 일치 또는 중복 인용 방향 분명)에만 `<h1>` 뒤 미리보기 1줄(`.clause-preview`), 근거 없는 상세엔 0개. 줄은 인용을 70자까지만(넘으면 …) 옮기고 새 판정 문장을 만들지 않는다.
+- P2 AWS 빌드에서만 `/pro/?from=gp` 링크 1개(기존 하단 `from=g` 타일과 구분되는 X1 전용 출처), 기본 빌드엔 0(AC-25).
+- P3 모음 `/clauses/ai/`·`/clauses/duplicate/`: 항목마다 공고 링크 + 원문 인용 + 마감 + 「<generatedAt> 판독」 표기, 근거 없는 공고 0, 항목 수 = 근거 있는 공고 수. 「중복」 모음은 **허용(중복 지원 가능)** 과 **제한(수상·중복 제한)** 을 갈라 쓰고, 중복 수상 허용 문장이 없으면 그렇게 적는다(없는 것을 만들지 않음).
+- P4 두 주소가 sitemap·llms.txt에 들어간다. 금지 토큰 0, V3 과장 낱말 0, 상세 HTML ≤ 40KB.
+- P5 배포 뒤 curl: 두 모음 200 · 미리보기가 붙은 상세 2장 200 + 줄 원문 확인.
+**용어**: 조항 미리보기 `clausePreview` · AI 근거 `aiEvidence` · 중복 근거 `duplicateEvidence` · 모음 `clauseCollections`.
+- AC-67: Given AI 판독 ALLOWED + 허용 인용 / FORBIDDEN + 금지 인용 When `aiEvidence` Then {verdict, quote}. Given 판독과 인용이 어긋남(ALLOWED인데 「…not allowed」·FORBIDDEN인데 내부 메모 「저작 모드: 컷」) 또는 인용 없음 Then null.
+- AC-68: Given 중복 조항 인용 When `duplicateEvidence` Then 「가능」 계열은 ALLOW, 「불가·제외·취소·환수·경력 없음」 계열은 LIMIT, 둘 다 아니면 null.
+- AC-69: Given 공고 When `clausePreview` Then 근거 0이면 null, 있으면 「이 공고의 AI 사용·중복수상 조항」으로 시작하고 인용이 ≤70자.
+- AC-70: Given 빌드 When 상세 전부를 보면 Then 미리보기 줄 수 = `clausePreview`가 null이 아닌 공고 수이고, AWS에서만 `from=gp` 링크가 줄 안에 1개.
+- AC-71: Given 공고 목록 When `clauseCollections` Then ai.allowed/forbidden, duplicate.allow/limit가 근거 있는 것만 마감 순으로 나온다. 빌드에 `/clauses/ai/`·`/clauses/duplicate/`가 있고 sitemap에 포함, 항목 수 일치.
+**비목표**: 새 판정·분류기 수정(`clause.ts` 불일치 8건은 원천 수정 대상으로 메인에 넘김) · 결제·가격 · 외부 게시 · 서버 API.

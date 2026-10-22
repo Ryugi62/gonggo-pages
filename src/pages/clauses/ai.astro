@@ -1,0 +1,12 @@
+---
+import ClauseCollection from '../../components/ClauseCollection.astro';
+import { collections } from '../../adapters/site/data.ts';
+const { allowed, forbidden } = collections.ai;
+---
+<ClauseCollection heading="AI 사용 허용·금지 공고 모음" title={`AI 사용 허용·금지 공모전·해커톤 모음 ${allowed.length + forbidden.length}건 | 공고콕`}
+  description={`공고 원문에 AI로 써도 된다고 적힌 ${allowed.length}건과 AI 사용이 금지된 ${forbidden.length}건을 원문 문장 그대로 모았어요.`}
+  path="/clauses/ai/" lead="챗GPT 같은 AI를 써서 내도 되는지, 공고 원문이 직접 말한 곳만 모았어요."
+  groups={[
+    { title: 'AI 사용 허용', note: '원문에 AI 활용이 가능하다고 적힌 공고예요.', items: allowed },
+    { title: 'AI 사용 금지', note: '원문이 AI 사용·AI 생성물을 금지한다고 적은 공고예요.', items: forbidden },
+  ]} />
