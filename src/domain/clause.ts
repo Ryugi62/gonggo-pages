@@ -58,6 +58,9 @@ const AI_FORBID = new RegExp(
 );
 const AI_ALLOW = new RegExp(`${AI}[^」.。!?]{0,25}?(?:활용\\s*가능|사용\\s*가능|이용\\s*가능|허용|활용할\\s*수\\s*있|사용할\\s*수\\s*있|allowed|permitted|encouraged)`, 'i');
 
+/** 허용 낱말이 부정문 안에 있음 — 「No … AI-generated … is allowed」「허용되지 않는다」는 금지다 */
+const NEG_ALLOW = /\b(?:no|not|never|without)\b[^.」]{0,60}?(?:allowed|permitted)|(?:allowed|permitted)\s+(?:only\s+)?(?:if\s+)?not|허용\s*(?:되지|하지|안|불가)|허용(?:되|하)?지\s*않|\b(?:no|not)\b[^.」]{0,40}\b(?:use|using)\s+of\s+AI/i;
+
 /** 앞쪽 규칙이 이긴다(구체 → 일반) */
 const RULES: [ClauseKind, RegExp][] = [
   ['ORIGINALITY_PLEDGE', /순수\s*창작|본인\s*(?:\(팀\))?\s*의?\s*창작|직접\s*창작|자작\s*(?:품|물)/],
@@ -76,7 +79,7 @@ const RULES: [ClauseKind, RegExp][] = [
 
 const QUOTE_RE = /「([^「」]{4,800})」/g;
 /** 내부 메모로 쓴 「」(공고 원문이 아님) */
-const INTERNAL = /줄\s*없음|미판독|판독\s*전|Live page|[{}]|미기재|확인\s*필요|미확인|원문\s*없음|본문\s*없음|\.\.\.|…|분석\s*결과|&\s*제안|시즌\s*목록|https?:\/\/|[✓✗→]/;
+const INTERNAL = /줄\s*없음|미판독|판독\s*전|Live page|[{}]|미기재|확인\s*필요|미확인|원문\s*없음|본문\s*없음|\.\.\.|…|분석\s*결과|&\s*제안|시즌\s*목록|https?:\/\/|[✓✗→]|저작\s*모드|컷\s*\(/;
 /** 사용자 발화·구어체 */
 const COLLOQUIAL = /거르자|접자|하자|할게|해줘|나한테|필요\s*없음|그딴|엥|ㅋ|ㅎㅎ|[?？]\s*$|싫/;
 /** 인용 바로 앞이 「누가 말했다/보냈다」면 원문이 아니다 */
@@ -123,7 +126,7 @@ function markCut(q: string): string {
 export function deriveAiUse(clauses: Clause[]): AiUseVerdict {
   if (clauses.some((c) => c.kind === 'ORIGINALITY_PLEDGE' && new RegExp(AI, 'i').test(c.quote))) return 'FORBIDDEN';
   const ai = clauses.filter((c) => c.kind === 'AI_USE');
-  if (ai.some((c) => AI_FORBID.test(c.quote))) return 'FORBIDDEN';
+  if (ai.some((c) => AI_FORBID.test(c.quote) || (AI_ALLOW.test(c.quote) && NEG_ALLOW.test(c.quote)))) return 'FORBIDDEN';
   if (ai.some((c) => AI_ALLOW.test(c.quote))) return 'ALLOWED';
   return 'UNSTATED';
 }

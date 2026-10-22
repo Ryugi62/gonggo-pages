@@ -7927,14 +7927,9 @@
      "kind": "TEAM",
      "quote": "Compete solo or form a team of up to four players",
      "source": "https://qhack.ai/"
-    },
-    {
-     "kind": "AI_USE",
-     "quote": "저작 모드: 컷(AI금지)",
-     "source": "https://qhack.ai/"
     }
    ],
-   "aiUse": "FORBIDDEN"
+   "aiUse": "UNSTATED"
   },
   {
    "slug": "qiskit-fall-fest-unstop-5c4ac4fa",
@@ -10852,7 +10847,7 @@
      "source": "https://unstop.com/competitions/motions-migration-2d-animation-challenge-anuva-2026-the-annual-design-festival-central-institute-of-technol-1757087"
     }
    ],
-   "aiUse": "ALLOWED"
+   "aiUse": "FORBIDDEN"
   },
   {
    "slug": "mzbs-pd-pd-b578d65a",
@@ -11223,7 +11218,7 @@
      "source": "https://unstop.com/competitions/the-digital-expedition-ui-design-challenge-anuva-2026-the-annual-design-festival-central-institute-of-techn-1761355"
     }
    ],
-   "aiUse": "ALLOWED"
+   "aiUse": "FORBIDDEN"
   },
   {
    "slug": "the-dimensional-voyage-3d-modelling-challenge-e02092fc",
@@ -11258,7 +11253,7 @@
      "source": "https://unstop.com/competitions/the-dimensional-voyage-3d-modelling-challenge-anuva-2026-the-annual-design-festival-central-institute-of-te-1761356"
     }
    ],
-   "aiUse": "ALLOWED"
+   "aiUse": "FORBIDDEN"
   },
   {
    "slug": "the-identity-journey-brand-identity-challenge-25815007",
@@ -11293,7 +11288,7 @@
      "source": "https://unstop.com/competitions/the-identity-journey-brand-identity-challenge-anuva-2026-the-annual-design-festival-central-institute-of-te-1761357"
     }
    ],
-   "aiUse": "ALLOWED"
+   "aiUse": "FORBIDDEN"
   },
   {
    "slug": "the-outlander-s-odyssey-character-designing-chal-f5f090de",
@@ -11328,7 +11323,7 @@
      "source": "https://unstop.com/competitions/the-outlanders-odyssey-character-designing-challenge-anuva-2026-the-annual-design-festival-central-institut-1757085"
     }
    ],
-   "aiUse": "ALLOWED"
+   "aiUse": "FORBIDDEN"
   },
   {
    "slug": "the-surface-trek-3d-texturing-challenge-03c9bedf",
@@ -11363,7 +11358,7 @@
      "source": "https://unstop.com/competitions/the-surface-trek-3d-texturing-challenge-anuva-2026-the-annual-design-festival-central-institute-of-technolo-1761358"
     }
    ],
-   "aiUse": "ALLOWED"
+   "aiUse": "FORBIDDEN"
   },
   {
    "slug": "the-top-500-uh-v2-00bc6cf8",

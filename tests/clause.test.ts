@@ -120,4 +120,30 @@ describe('조항 판독 (Pro SPEC §5)', () => {
     const r = readClauses({ note: '「Teams of up to 4 members」 · 「This is an in-person event」', gateQuote: null, gate: null, url: URL });
     expect(kinds(r.clauses)).toEqual(['TEAM', 'ONSITE']);
   });
+
+  describe('부정문·내부 메모 오판 수리 (AC-16b, 10/22)', () => {
+    const neg = [
+      'No traced, copied, or AI-generated content is allowed. Plagiarism or use of AI will lead to disqualification.',
+      'No traced, copied, or AI-generated content is allowed.',
+      'AI-generated content is not allowed.',
+      'AI 생성물은 허용되지 않습니다',
+      'AI 활용은 허용하지 않음',
+    ];
+    for (const q of neg) {
+      it(`부정문은 허용이 아니다 — ${q.slice(0, 40)}`, () => {
+        const r = readClauses({ note: `「${q}」`, gateQuote: null, gate: null, url: URL });
+        expect(r.aiUse).not.toBe('ALLOWED');
+        expect(deriveAiUse([{ kind: 'AI_USE', quote: q, source: URL }])).toBe('FORBIDDEN');
+      });
+    }
+    it('내부 메모 「저작 모드: 컷(AI금지)」는 조항이 아니다', () => {
+      const r = readClauses({ note: '「저작 모드: 컷(AI금지)」', gateQuote: '저작 모드: 컷(AI금지)', gate: 'G0', url: URL });
+      expect(r.clauses).toEqual([]);
+      expect(r.aiUse).toBe('UNSTATED');
+    });
+    it('긍정문은 그대로 허용', () => {
+      expect(readClauses({ note: '「Using AI assistants is allowed and encouraged.」', gateQuote: null, gate: null, url: URL }).aiUse).toBe('ALLOWED');
+      expect(readClauses({ note: '「AI coding assistants are allowed」', gateQuote: null, gate: null, url: URL }).aiUse).toBe('ALLOWED');
+    });
+  });
 });
