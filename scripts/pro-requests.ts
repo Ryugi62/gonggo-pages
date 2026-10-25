@@ -7,4 +7,7 @@ const host = process.env.DEPLOY_HOST ?? 'daboyeong';
 const text = execFileSync('ssh', [host, 'cat /home/ubuntu/gonggo/logs/pro-requests.jsonl 2>/dev/null || true'], { encoding: 'utf8' });
 const r = parsePaymentRequestLog(text);
 console.log(`결제 요청 ${r.valid.length}건 (H1 ${r.byArm.H1} · H2 ${r.byArm.H2}) · 버린 줄 ${r.rejected}`);
-if (process.argv.includes('--emails')) for (const v of r.valid) console.log(`${v.t} ${v.arm} ${v.email}`);
+const byNeed: Record<string, number> = {};
+for (const v of r.valid) byNeed[v.need ?? '(미선택)'] = (byNeed[v.need ?? '(미선택)'] ?? 0) + 1;
+console.log(`가장 필요한 기능: ${JSON.stringify(byNeed)}`);
+if (process.argv.includes('--emails')) for (const v of r.valid) console.log(`${v.t} ${v.arm} ${v.need ?? '-'} ${v.email}`);

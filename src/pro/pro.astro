@@ -3,13 +3,14 @@
 // SPEC §14 — 첫 화면 v2: 고객 원문 인용(CUSTOMER_VOICES)으로 시작, 「판정마다 공고 원문 조항」.
 import Layout from '../layouts/Layout.astro';
 import { PRICE_ARMS, PRO_PLAN, formatWon, type PriceArm } from '../domain/pricing.ts';
+import { PRO_NEEDS } from '../domain/paymentRequest.ts';
 import { PRO_ORIGIN, OPERATOR } from '../infrastructure/config.ts';
 import { CUSTOMER_VOICES } from '../infrastructure/proCopy.ts';
 
-const arms: PriceArm[] = ['H1', 'H2'];
+const arms: PriceArm[] = ['H1']; // 10/26 사전 신청 — 가격 하나(월 19,900원)만 보여 「사겠다」를 센다
 const [lead, ...rest] = CUSTOMER_VOICES;
 const title = 'Pro — 답마다 공고 원문 조항을 붙여 드려요 | 공고콕';
-const description = '「이 공고, 나 내도 되나」에 결론만 말하지 않고 근거가 된 공고 원문 조항을 붙여 드려요. AI 사용·중복 수혜·업력·서약 조항도 따로 읽어요. 지금은 창립 회원 신청만 받아요 — 돈이 나가지 않아요.';
+const description = '「이 공고, 나 내도 되나」에 결론만 말하지 않고 근거가 된 공고 원문 조항을 붙여 드려요. AI 사용·중복 수혜·업력·서약 조항도 따로 읽어요. 월 19,900원 Pro가 열리면 쓰겠다는 사전 신청만 받아요 — 결제 약속이 아니고 돈이 나가지 않아요.';
 ---
 <Layout title={title} description={description} path="/pro/" origin={PRO_ORIGIN} analytics={false} legal>
   <div id="pro" data-pro>
@@ -33,7 +34,7 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
 
       <noscript><p class="sub">가격을 보려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
 
-      <p class="promise"><strong>결제는 오픈 때 · 창립가 고정 · 30일 무조건 환불 · 지금은 돈이 나가지 않아요</strong></p>
+      <p class="promise"><strong>월 19,900원 Pro가 열리면 쓰겠다 — 사전 신청이에요 · 결제 약속이 아니고 지금은 돈이 나가지 않아요</strong></p>
       <p class="sub">계획서는 본인이 씁니다 — 공고콕은 조항 판독·배점 채점·보완 제안만</p>
 
       <section>
@@ -54,39 +55,44 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
         <p class="sub">공고문에 실린 심사 기준과 배점(예: 문제 인식 20점·실현 가능성 30점)을 항목별로 나누고, 계획서에서 각 항목에 해당하는 문단을 찾아 빠진 근거와 고칠 곳을 알려 드려요. 점수는 참고용이고, 실제 심사는 주최 측이 해요.</p>
       </details>
       <details>
-        <summary>창립 회원 신청을 하면 어떻게 되나요</summary>
-        <p class="sub">이메일 1개만 받아요. Pro가 열리면 그 메일로 창립가 결제 링크를 한 번 보내 드리고, 결제할지는 그때 다시 고르시면 돼요. 신청만으로는 아무것도 청구되지 않아요. 받은 이메일은 2026-11-21에 지워요.</p>
+        <summary>사전 신청을 하면 어떻게 되나요</summary>
+        <p class="sub">이메일 1개와 가장 필요한 기능 1개만 받아요. Pro가 열리면 그 메일로 결제 링크를 한 번 보내 드리고, 결제할지는 그때 다시 고르시면 돼요. 신청만으로는 아무것도 청구되지 않아요. 받은 이메일은 2026-11-21에 지워요.</p>
       </details>
     </div>
 
     <form id="step-email" class="step" hidden novalidate onsubmit="return false">
       <p class="small" aria-live="polite">1 / 2</p>
-      <h1>오픈 소식과 결제 링크를 받을 이메일을 알려 주세요</h1>
+      <h1>Pro가 열리면 알려 드릴 이메일과, 가장 필요한 기능 1개를 알려 주세요</h1>
       <label class="field">
         <span>이메일</span>
         <input id="email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="예: me@example.com" />
         <small class="small" id="email-msg">이메일 말고 다른 정보는 받지 않아요</small>
       </label>
+      <fieldset class="needs">
+        <legend>가장 필요한 기능 1개</legend>
+        {Object.entries(PRO_NEEDS).map(([k, label]) => <label class="check"><input type="radio" name="need" value={k} /><span>{label}</span></label>)}
+        <small class="small" id="need-msg">하나를 골라 주세요</small>
+      </fieldset>
     </form>
 
     <form id="step-agree" class="step" hidden novalidate onsubmit="return false">
       <p class="small" aria-live="polite">2 / 2</p>
       <h1>두 가지만 확인해 주세요</h1>
-      <label class="check"><input id="pledge" type="checkbox" /><span>오픈하면 창립가 <b id="pledge-price">월 19,900원</b>으로 결제할게요 — 지금은 돈이 나가지 않아요</span></label>
+      <label class="check"><input id="pledge" type="checkbox" /><span>월 <b id="pledge-price">19,900원</b> Pro가 열리면 쓰겠어요 — 사전 신청일 뿐 결제 약속이 아니고, 지금은 돈이 나가지 않아요</span></label>
       <label class="check"><input id="consent" type="checkbox" /><span>[필수] 개인정보 수집·이용 동의 — 이메일 1개를 오픈 안내·결제 링크 발송에만 쓰고 <span class="nw">2026-11-21</span>에 지워요. <a href="/privacy/">자세히</a></span></label>
       <p class="small" id="agree-msg" aria-live="polite">두 칸 모두 체크해야 신청돼요. 동의하지 않아도 무료 기능은 그대로 쓸 수 있어요.</p>
     </form>
 
     <div id="step-done" hidden>
       <section class="card" style="margin-top:0">
-        <div class="big">신청됐어요</div>
-        <p style="margin:6px 0 0" class="sub">오픈하면 적어 주신 메일로 창립가 결제 링크를 한 번 보내 드려요. 그 전엔 아무것도 청구되지 않아요.</p>
+        <div class="big">사전 신청됐어요</div>
+        <p style="margin:6px 0 0" class="sub">Pro가 열리면 적어 주신 메일로 결제 링크를 한 번 보내 드려요. 그 전엔 아무것도 청구되지 않아요.</p>
       </section>
       <p class="small" style="margin-top:16px">신청을 취소하거나 이메일을 지우고 싶으면 <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>로 알려 주세요.</p>
     </div>
-    <p class="small" id="send-err" hidden role="alert">전송이 안 됐어요. 잠시 뒤 다시 누르거나 <a href={`mailto:${OPERATOR.email}?subject=${encodeURIComponent('창립 회원 신청')}`}>메일</a>로 「창립 회원 신청」이라고 보내 주세요.</p>
+    <p class="small" id="send-err" hidden role="alert">전송이 안 됐어요. 잠시 뒤 다시 누르거나 <a href={`mailto:${OPERATOR.email}?subject=${encodeURIComponent('Pro 사전 신청')}`}>메일</a>로 「Pro 사전 신청」이라고 보내 주세요.</p>
   </div>
-  <div class="cta-bar"><button class="cta" id="next" type="button" style="width:100%;border:0;font-family:inherit;cursor:pointer">창립가로 먼저 신청 · 지금 0원</button></div>
+  <div class="cta-bar"><button class="cta" id="next" type="button" style="width:100%;border:0;font-family:inherit;cursor:pointer">월 19,900원 Pro 열리면 쓰겠다 · 사전 신청</button></div>
 </Layout>
 <style>
   #pro { padding-bottom: 112px; } /* 하단 고정 버튼(56px+여백 24px)이 마지막 줄을 가리지 않게 */
@@ -109,11 +115,13 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
   input[type='email'] { width: 100%; height: 56px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 18px; padding: 0 16px; font-family: inherit; }
   .check { display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: 16px; background: var(--card); margin-bottom: 12px; font-size: 15px; cursor: pointer; }
   .check input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--btn); }
+  .needs { border: 0; padding: 0; margin: 0 0 24px; }
+  .needs legend { font-weight: 600; font-size: 15px; color: var(--sub); margin-bottom: 8px; padding: 0; }
   .warn { color: var(--no); }
   .nw { white-space: nowrap; }
 </style>
 <script>
-  import { assignArm, PRICE_ARMS, formatWon, type PriceArm } from '../domain/pricing.ts';
+  import { PRICE_ARMS, formatWon, type PriceArm } from '../domain/pricing.ts';
   import { validatePaymentRequest } from '../domain/paymentRequest.ts';
   import { funnelPath, type FunnelEvent } from '../application/funnel.ts';
   import { proNextStep } from '../domain/checker.ts';
@@ -133,7 +141,8 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
       return fresh();
     }
   }
-  const arm: PriceArm = assignArm(visitorKey());
+  visitorKey();
+  const arm: PriceArm = 'H1'; // 사전 신청은 가격 하나만(10/26)
   const sent = new Set<FunnelEvent>();
   // 계측 = 같은 출처 비콘(서버 접근 로그로 센다). 사건마다 1회, 경로에 입력값 없음.
   function track(e: FunnelEvent) {
@@ -149,7 +158,7 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
 
   const steps = ['step-intro', 'step-email', 'step-agree', 'step-done'];
   let step = 0;
-  const labels = ['창립가로 먼저 신청 · 지금 0원', '다음', '신청하기', '공고 둘러보기'];
+  const labels = ['월 19,900원 Pro 열리면 쓰겠다 · 사전 신청', '다음', '사전 신청하기', '공고 둘러보기'];
   function go(n: number) {
     steps.forEach((id, i) => ($(id).hidden = i !== n));
     step = n;
@@ -165,10 +174,11 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
       arm,
       pledge: $<HTMLInputElement>('pledge').checked,
       consent: $<HTMLInputElement>('consent').checked,
+      need: (document.querySelector('input[name="need"]:checked') as HTMLInputElement | null)?.value,
     };
     const v = validatePaymentRequest(body);
     if (!v.ok) {
-      if (v.errors.includes('email')) return go(1);
+      if (v.errors.includes('email') || v.errors.includes('need')) return go(1);
       $('agree-msg').textContent = '두 칸 모두 체크해 주세요.';
       $('agree-msg').classList.add('warn');
       return;
@@ -195,6 +205,8 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
 
   $('next').addEventListener('click', () => {
     const emailOk = validatePaymentRequest({ email: $<HTMLInputElement>('email').value.trim(), arm, pledge: true, consent: true }).ok;
+    const needOk = !!document.querySelector('input[name="need"]:checked');
+    if (step === 1 && emailOk && !needOk) { $('need-msg').textContent = '가장 필요한 기능을 하나 골라 주세요.'; $('need-msg').classList.add('warn'); return; }
     const act = proNextStep(step, { emailOk, agreeOk: true });
     if ('submit' in act) return void submit();
     if ('home' in act) { location.href = '/'; return; }

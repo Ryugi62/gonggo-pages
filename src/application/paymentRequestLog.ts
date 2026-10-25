@@ -1,11 +1,12 @@
 import type { PriceArm } from '../domain/pricing.ts';
-import { validatePaymentRequest, type PaymentRequest } from '../domain/paymentRequest.ts';
+import { validatePaymentRequest, type PaymentRequest, type ProNeed } from '../domain/paymentRequest.ts';
 
 // UC: 결제 요청 저장 파일(nginx escape=json 로그, 줄마다 {"t","body"}) → 검증 통과 요청 목록(SPEC §12 AC-29).
 export interface StoredPaymentRequest {
   t: string;
   email: string;
   arm: PriceArm;
+  need?: ProNeed;
 }
 
 export function parsePaymentRequestLog(text: string): { valid: StoredPaymentRequest[]; rejected: number; byArm: Record<PriceArm, number> } {
@@ -23,7 +24,7 @@ export function parsePaymentRequestLog(text: string): { valid: StoredPaymentRequ
       }
       const email = body.email.toLowerCase();
       byEmail.delete(email); // 같은 이메일은 마지막 1건(순서도 마지막 위치로)
-      byEmail.set(email, { t: outer.t, email, arm: body.arm });
+      byEmail.set(email, body.need ? { t: outer.t, email, arm: body.arm, need: body.need } : { t: outer.t, email, arm: body.arm });
     } catch {
       rejected++;
     }

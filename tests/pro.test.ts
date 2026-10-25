@@ -105,3 +105,16 @@ describe('§14 AC-43 고객 원문 목록', () => {
     expect(CUSTOMER_VOICES[0].quote).toBe('쳇지피티는 받을수 있다는데 영 못믿겠어서요!');
   });
 });
+
+describe('사전 신청 need 필드(10/26)', () => {
+  const base = { email: 'a@example.com', arm: 'H1' as const, pledge: true, consent: true };
+  it('need 없음(옛 신청)·허용 값은 통과, 모르는 값은 need 오류', () => {
+    expect(validatePaymentRequest(base).ok).toBe(true);
+    expect(validatePaymentRequest({ ...base, need: 'score' }).ok).toBe(true);
+    expect(validatePaymentRequest({ ...base, need: 'x' as any }).errors).toEqual(['need']);
+  });
+  it('로그 집계가 need를 보존한다', () => {
+    const raw = JSON.stringify({ t: '2026-10-26T01:00:00+09:00', body: JSON.stringify({ ...base, need: 'fix' }) });
+    expect(parsePaymentRequestLog(raw).valid).toEqual([{ t: '2026-10-26T01:00:00+09:00', email: 'a@example.com', arm: 'H1', need: 'fix' }]);
+  });
+});

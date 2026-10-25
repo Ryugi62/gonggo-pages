@@ -36,15 +36,15 @@ describe.skipIf(!aws)('§12 /pro/ 산출물 (AWS)', () => {
     expect(pro).toContain(`<link rel="canonical" href="${PRO_ORIGIN}/pro/"`);
     expect(pro).toContain('name="viewport"');
   });
-  it('AC-26 가격안 카드 2장(하나만 보이게 숨김) · 첫 요소 = 큰 숫자', () => {
+  it('AC-26 가격 카드 1장 H1 월 19,900원(사전 신청 10/26 — H2는 숨김 아니라 없음) · 첫 요소 = 큰 숫자', () => {
     expect(pro).toMatch(/<section[^>]*data-arm="H1"[^>]*hidden[^>]*>\s*<div class="big[^"]*"[^>]*>월 19,900원<\/div>/);
-    expect(pro).toMatch(/<section[^>]*data-arm="H2"[^>]*hidden[^>]*>\s*<div class="big[^"]*"[^>]*>월 49,000원<\/div>/);
+    expect(pro).not.toContain('data-arm="H2"');
   });
   it('스켈레톤·스텝의 hidden 이 display 규칙에 지지 않는다(390 캡처에서 스켈레톤이 남던 회귀)', () => {
     expect(pro).toMatch(/#pro[^{}]*\[hidden\]\{display:none!important\}/);
   });
   it('AC-27 결제 0 고지·대필 아님 고지 · 카드 입력/결제 버튼 0', () => {
-    expect(pro).toContain('결제는 오픈 때 · 창립가 고정 · 30일 무조건 환불 · 지금은 돈이 나가지 않아요');
+    expect(pro).toContain('월 19,900원 Pro가 열리면 쓰겠다 — 사전 신청이에요 · 결제 약속이 아니고 지금은 돈이 나가지 않아요');
     expect(pro).toContain('계획서는 본인이 씁니다 — 공고콕은 조항 판독·배점 채점·보완 제안만');
     expect(pro).not.toMatch(/결제하기|카드\s*번호|autocomplete="cc-/);
   });
@@ -102,11 +102,11 @@ describe.skipIf(!aws)('§14 /pro 첫 화면 v2 (AWS)', async () => {
     expect(text).toContain('찾지 못했어요');
     expect(pro).toContain('협약서·운영지침');
   });
-  it('AC-42 첫 화면 버튼 = 「창립가로 먼저 신청 · 지금 0원」, 이후 스텝 문구 유지', () => {
-    expect(pro).toMatch(/<button[^>]*id="next"[^>]*>창립가로 먼저 신청 · 지금 0원<\/button>/);
+  it('AC-42 첫 화면 버튼 = 「월 19,900원 Pro 열리면 쓰겠다 · 사전 신청」, 이후 스텝 문구 유지', () => {
+    expect(pro).toMatch(/<button[^>]*id="next"[^>]*>월 19,900원 Pro 열리면 쓰겠다 · 사전 신청<\/button>/);
     // 스텝 문구 배열(번들은 템플릿 리터럴로 인라인) — 첫 칸도 새 문구, 나머지 유지
     const bundle = pro + (pro.match(/src="(\/_astro\/pro[^"]+\.js)"/g) ?? []).map((m) => read('dist' + m.slice(5, -1))).join('');
-    expect(bundle).toMatch(/[`"']창립가로 먼저 신청 · 지금 0원[`"'],[`"']다음[`"'],[`"']신청하기[`"'],[`"']공고 둘러보기[`"']/);
+    expect(bundle).toMatch(/[`"']월 19,900원 Pro 열리면 쓰겠다 · 사전 신청[`"'],[`"']다음[`"'],[`"']사전 신청하기[`"'],[`"']공고 둘러보기[`"']/);
   });
 });
 
