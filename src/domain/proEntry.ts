@@ -15,7 +15,7 @@ const ASK: Record<Category, string> = {
   대외활동: '참가해도 되나?',
 };
 const PROMISE = '답마다 근거가 된 공고 원문 조항을 붙여 드려요 (Pro) →';
-const SUB = '오픈 준비 중 · 창립 회원 신청은 돈이 나가지 않아요';
+const SUB = '오픈 준비 중 · 사전 신청은 돈이 나가지 않아요';
 
 export function proEntry(from: ProEntryFrom, category?: Category): ProEntry {
   const head =
