@@ -279,3 +279,21 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-72: Given 공고 목록 When `weeklyDigest(listings, today)` Then 위 규칙대로 ≤8건이 나온다(범위 밖·상금 없음·영문명·청소년·중복 제외).
 - AC-73: Given 빌드 When `/digest/<generatedAt>/`를 보면 Then 항목 수 = `weeklyDigest` 수, 항목마다 공고 상세 링크 + 원문 URL + 마감일, sitemap 포함, 금지 토큰 0, 글 끝에 /pro 안내 1줄(AWS 빌드만, `from=digest` 아닌 기존 `from=week`).
 **비목표**: 메일 발송 · 개인 계정 게시 · 새 판정.
+
+## 21. 실험 A — 「무료 공고 판독 요청」 입구 (v1.3, 2026-10-29 — 볼트 `raw/2026-10-29-리서치-공고콕-새판로.md` §4, track-stall 2026-W44)
+**목적**: 착지한 사람 대부분이 AI 답변에서 건너온 정보 확인형이라 /pro 가격 카드(돈 약속)는 문턱이 높다. 돈 약속 없이 「내가 가진 이 공고의 원문 조항을 읽어 주세요」를 남길 수 있는 입구를 첫 화면에 하나 두고, 요청 내용 자체를 Pro 수요 신호로 센다. 처리는 운영자(메인 세션)가 접수 24시간 안에 원문 조항 인용으로 정리해 그 이메일 1통으로만 답한다.
+**저장**: 새 백엔드 없음 — 기존 `POST /api/pro-request`(§12 P3, nginx 한 줄 기록, ≤1KB, 분당 5회)와 `/intent/` 비콘을 그대로 쓴다. 구분은 본문 키 `kind: "read"` 하나. AWS 빌드에서만 입구가 생긴다(저장 경로가 AWS에만 있음).
+**숫자 성공 조건**
+- R1 입구: AWS 빌드의 공고 상세·`/clauses/ai/`·`/clauses/duplicate/` 페이지마다 입구 정확히 1개(`data-read-entry`), 기본(Vercel) 빌드 0개. 가격 숫자(19,900·49,000) 0, 카드 입력·결제 버튼 0.
+- R2 폼 3칸: 공고 링크 1 + 이메일 1 + 개인정보 동의 1뿐. 본문 키 = `kind`·`link`·`email`·`consent` 4개(그 밖 키는 버린다). 직렬화 최대 길이 ≤ 1KB(링크 ≤ 400자 ASCII, 이메일 ≤ 254자).
+- R3 계측: 입구 펼침 `/intent/read/click`, 저장 204 뒤 `/intent/read/request`, 사건마다 1회, 경로에 입력값 0.
+- R4 고지: 개인정보처리방침에 수집 목적 「공고 판독 요청」 1줄(공고 링크·이메일, 답신 1통에만 사용, 2026-11-21 파기). 입구 문구에 「무료」「24시간 안 메일 1통」「가격·광고 안내 없음」.
+- R5 성공(7일): 시작 후 7일 안 유효 제출 ≥ 1(확장 판정 ≥ 3) — 운영자·자체 테스트·같은 이메일 중복 제외. Kill: 입구 클릭 < 3이면 위치·문구 문제, 클릭 ≥ 3인데 제출 0이면 폼 1칸으로 축소, 두 번 연속 제출 0이면 「정보 확인형 유입은 접촉을 안 만든다」로 기록(볼트 실험 대장이 정본).
+**용어**: 판독 요청 `ReadRequest{kind,link,email,consent}` · 저장 줄 `StoredReadRequest{t,email,link}` · 입구 `ReadRequestEntry` · 집계 `parseReadRequestLog`.
+- AC-74: Given 판독 요청 When `validateReadRequest` Then 링크가 http(s) URL(≤400자 ASCII)·이메일 형식·동의 true·허용 키 4개일 때만 통과하고, 항목별 오류(`link`·`email`·`consent`·`kind`·`extra`)를 돌려준다. 최대 길이 입력의 JSON ≤ 1024바이트.
+- AC-75: Given 저장 파일 When `parseReadRequestLog(text, {exclude})` Then 검증 통과 줄만, 같은 이메일은 처음 1건, 제외 이메일은 센 수만 따로 돌려준다. 깨진 줄은 버린 수로 센다. 결제 요청 집계(`parsePaymentRequestLog`)는 `kind:"read"` 줄을 결제 요청으로도 버린 줄로도 세지 않는다.
+- AC-76: Given 이벤트 When `readFunnelPath` Then `/intent/read/click`·`/intent/read/request`이고 입력값 자리가 없다.
+- AC-77: Given AWS 빌드 When 상세·모음 페이지를 보면 Then 입구가 1개씩 있고 폼 입력은 3칸(링크·이메일·동의)이며 기본 빌드엔 0개. 입구 문구에 과장 낱말 0.
+- AC-78: Given 개인정보처리방침 Then 「공고 판독 요청」 목적 1줄이 있고 보관 기한은 기존과 같다.
+- AC-79: Given nginx 설정 Then 기존 `/api/pro-request`·`/intent/` 블록이 그대로이고 새 location·프로세스가 없다.
+**비목표**: 결제·PG·카드 입력 · 계정·로그인 · 메일 자동 발송(답신은 메인 세션 손, 접수에 대한 응답 1통) · 새 서버 앱·데몬·DB · 답신에 Pro 가격·광고 문구(별도 동의 없이) · 원문 전문 복제 · 외부 게시.
