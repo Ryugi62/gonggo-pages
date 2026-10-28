@@ -271,3 +271,11 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-70: Given 빌드 When 상세 전부를 보면 Then 미리보기 줄 수 = `clausePreview`가 null이 아닌 공고 수이고, AWS에서만 `from=gp` 링크가 줄 안에 1개.
 - AC-71: Given 공고 목록 When `clauseCollections` Then ai.allowed/forbidden, duplicate.allow/limit가 근거 있는 것만 마감 순으로 나온다. 빌드에 `/clauses/ai/`·`/clauses/duplicate/`가 있고 sitemap에 포함, 항목 수 일치.
 **비목표**: 새 판정·분류기 수정(`clause.ts` 불일치 8건은 원천 수정 대상으로 메인에 넘김) · 결제·가격 · 외부 게시 · 서버 API.
+
+
+## 20. 주간 마감 임박 요약 글 `/digest/<날짜>/` (v1.2, 2026-10-28)
+**왜**: 자체 채널 주 3건 게시(볼트 공고콕-Pro 상태판 jarvis_channel). 목록 페이지와 달리 「이번 주 마감 대학생·청년 공고 상위 8건」을 한 글로 묶어 검색·AI 인용 착지를 늘린다.
+**규칙**: 오늘+1 ~ 오늘+10일 마감 ∧ 태그 대학생|청년 ∧ 분류 공모전|해커톤|지원사업 ∧ 상금 문구에 원화 금액 ∧ 한글 공고명 ∧ 이름에 「청소년」 없음. (마감, 상금 큰 순) 정렬, 같은 (마감, 상금)은 1건만, 상위 8건.
+- AC-72: Given 공고 목록 When `weeklyDigest(listings, today)` Then 위 규칙대로 ≤8건이 나온다(범위 밖·상금 없음·영문명·청소년·중복 제외).
+- AC-73: Given 빌드 When `/digest/<generatedAt>/`를 보면 Then 항목 수 = `weeklyDigest` 수, 항목마다 공고 상세 링크 + 원문 URL + 마감일, sitemap 포함, 금지 토큰 0, 글 끝에 /pro 안내 1줄(AWS 빌드만, `from=digest` 아닌 기존 `from=week`).
+**비목표**: 메일 발송 · 개인 계정 게시 · 새 판정.

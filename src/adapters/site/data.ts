@@ -2,6 +2,7 @@
 import file from '../../../data/listings.json';
 import { buildSiteIndex } from '../../application/buildSiteIndex.ts';
 import { founderWeek } from '../../application/founderWeek.ts';
+import { weeklyDigest } from '../../application/weeklyDigest.ts';
 import { buildCalendarFeeds } from '../../application/calendarFeeds.ts';
 import { FEED_ORIGIN, SITE_URL } from '../../infrastructure/config.ts';
 import { CATEGORIES, TAGS } from '../../domain/category.ts';
@@ -15,6 +16,7 @@ export const categories = CATEGORIES.filter((c) => index.byCategory.get(c.name)?
 export const tags = TAGS.filter((t) => index.byTag.get(t.name)?.length);
 export const weeks = [...index.byWeek.keys()];
 export const week = founderWeek(listings, generatedAt);
+export const digest = weeklyDigest(listings, generatedAt);
 export const collections = clauseCollections(listings);
 export const calendarFeeds = buildCalendarFeeds(listings, generatedAt, { site: SITE_URL.replace(/\/$/, '') });
 export const feedUrl = (slug: string) => `${FEED_ORIGIN.replace(/\/$/, '')}/cal/${slug}.ics`;
@@ -26,6 +28,7 @@ export function sitePaths(): string[] {
     '/check/',
     '/about/',
     '/week/',
+    ...(digest.length ? [`/digest/${generatedAt}/`] : []),
     ...COLLECTION_PATHS,
     ...categories.map((c) => `/c/${c.slug}/`),
     ...tags.map((t) => `/t/${t.slug}/`),

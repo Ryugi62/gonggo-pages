@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { digest, generatedAt } from '../../adapters/site/data.ts';
+import { formatDate, dDayLabel } from '../../domain/format.ts';
+import { proEntry } from '../../domain/proEntry.ts';
+import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
+export function getStaticPaths() {
+  return [{ params: { date: generatedAt } }];
+}
+const heading = `이번 주 마감 임박 대학생·청년 공고 ${digest.length}선`;
+const pro = proEntry('week');
+const title = `${heading} (${formatDate(generatedAt)} 기준) | ${SITE_NAME}`;
+const description = `${formatDate(generatedAt)} 기준 열흘 안에 마감하는 대학생·청년 대상 상금 공고 ${digest.length}건. 마감일과 상금, 원문 링크를 한 번에 정리했어요.`;
+const path = `/digest/${generatedAt}/`;
+const site = Astro.site!.href.replace(/\/$/, '');
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'ItemList', numberOfItems: digest.length,
+  itemListElement: digest.map((l, i) => ({ '@type': 'ListItem', position: i + 1, url: `${site}/g/${l.slug}/`, name: l.name })) }];
+---
+<Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={{ href: '/check/', label: '내가 낼 수 있는 공고 찾기' }}>
+  <nav class="crumb" aria-label="위치"><a href="/">홈</a></nav>
+  <h1>{heading}</h1>
+  <p class="sub">{formatDate(generatedAt)} 기준, 열흘 안에 마감하고 상금이 있는 공고 중 대학생·청년이 낼 수 있는 것을 마감 순으로 골랐어요. 지원 전 원문 공고에서 자격과 마감을 꼭 다시 확인해 주세요.</p>
+  <ol class="digest">
+    {digest.map((l) => (
+      <li style="margin:16px 0">
+        <b><a href={`/g/${l.slug}/`}>{l.name}</a></b><br />
+        <span class="sub">{formatDate(l.deadline!)} 마감 ({dDayLabel(l.deadline, generatedAt)}) · {l.category} · {l.prize}</span><br />
+        <a href={l.url} rel="noopener nofollow" target="_blank">원문 공고 보기</a>
+      </li>
+    ))}
+  </ol>
+  <p class="sub">공고 목록은 매주 새로 만들어요. 전체 목록은 <a href="/week/">이번 주 마감 공고</a>에서 볼 수 있어요.</p>
+  {IS_AWS && <section><a class="tile" href={pro.href}><b>{pro.title}</b><span>{pro.sub}</span></a></section>}
+</Layout>

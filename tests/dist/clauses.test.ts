@@ -38,3 +38,18 @@ describe('AC-71 모음 페이지', () => {
     });
   }
 });
+
+// AC-73 (SPEC §20) 주간 마감 임박 요약 글
+import { weeklyDigest } from '../../src/application/weeklyDigest.ts';
+describe('AC-73 digest', () => {
+  const d = weeklyDigest(ls as any, data.generatedAt);
+  it('항목 수·링크·sitemap·금지 토큰', () => {
+    expect(d.length).toBeGreaterThan(0);
+    const h = readFileSync(`dist/digest/${data.generatedAt}/index.html`, 'utf8');
+    expect((h.match(/<li style="margin:16px 0">/g) ?? []).length).toBe(d.length);
+    for (const l of d) { expect(h).toContain(`/g/${l.slug}/`); expect(h).toContain('원문 공고 보기'); }
+    expect(readFileSync('dist/sitemap.xml', 'utf8')).toContain(`/digest/${data.generatedAt}/`);
+    expect(findForbidden(h.replace(/<[^>]+>/g, ' '))).toEqual([]);
+    expect((h.match(/href="\/pro\/\?from=week"/g) ?? []).length).toBe(aws ? 1 : 0);
+  });
+});
