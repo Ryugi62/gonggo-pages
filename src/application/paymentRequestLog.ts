@@ -18,6 +18,7 @@ export function parsePaymentRequestLog(text: string): { valid: StoredPaymentRequ
     try {
       const outer = JSON.parse(line) as { t?: unknown; body?: unknown };
       const body = JSON.parse(String(outer.body)) as PaymentRequest;
+      if (body && typeof body === 'object' && (body as { kind?: unknown }).kind === 'read') continue; // 판독 요청(SPEC §21)은 readRequestLog 몫
       if (typeof outer.t !== 'string' || !body || typeof body !== 'object' || !validatePaymentRequest(body).ok) {
         rejected++;
         continue;

@@ -1,0 +1,80 @@
+---
+// SPEC §21 — 무료 공고 판독 요청 입구(AWS 빌드에서만 호출). 폼 3칸: 공고 링크 · 이메일 · 개인정보 동의.
+// 저장은 기존 POST /api/pro-request(kind:"read"), 계측은 /intent/read/{click,request}.
+---
+<section class="read-entry card" data-read-entry aria-labelledby="read-h">
+  <h2 id="read-h">다른 공고도 원문 조항을 읽어 드려요</h2>
+  <p class="sub">무료예요. 공고 링크와 이메일을 남기면 24시간 안에 AI 사용·중복 수상·자격 조항을 원문 문장 그대로 정리해 메일 1통으로 답해요. 가격이나 광고 안내는 넣지 않아요.</p>
+  <button class="btn secondary block" id="read-open" type="button" aria-expanded="false" aria-controls="read-form">공고 읽어 달라고 요청하기</button>
+  <form id="read-form" hidden novalidate onsubmit="return false">
+    <label class="rf"><span>공고 링크</span>
+      <input id="read-link" type="url" inputmode="url" autocomplete="off" maxlength="400" placeholder="예: https://…" />
+    </label>
+    <label class="rf"><span>답장 받을 이메일</span>
+      <input id="read-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="예: me@example.com" />
+    </label>
+    <label class="rc"><input id="read-consent" type="checkbox" /><span>[필수] 개인정보 수집·이용 동의 — 공고 링크와 이메일을 이 답장 1통에만 쓰고 <span class="nw">2026-11-21</span>에 지워요. <a href="/privacy/">자세히</a></span></label>
+    <button class="btn block" id="read-send" type="button">읽어 달라고 보내기</button>
+    <p class="small" id="read-msg" role="status" aria-live="polite">동의하지 않아도 무료 기능은 그대로 쓸 수 있어요.</p>
+  </form>
+  <p id="read-done" hidden role="status"><strong>접수됐어요.</strong> 24시간 안에 적어 주신 메일로 공고 원문 조항을 정리해 답할게요.</p>
+</section>
+<style>
+  .read-entry h2 { font-size: 18px; margin-bottom: 8px; }
+  .read-entry [hidden] { display: none !important; }
+  .read-entry .block { margin-top: 12px; width: 100%; min-height: 48px; }
+  #read-form { margin-top: 8px; }
+  .rf { display: block; margin-top: 14px; }
+  .rf > span { display: block; font-weight: 600; font-size: 14px; color: var(--sub); margin-bottom: 6px; }
+  .rf input { width: 100%; height: 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 16px; padding: 0 14px; font-family: inherit; }
+  .rc { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; font-size: 14px; cursor: pointer; }
+  .rc input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--btn); }
+  .warn { color: var(--no); }
+  .nw { white-space: nowrap; }
+</style>
+<script>
+  import { validateReadRequest, READ_KIND, type ReadRequest } from '../domain/readRequest.ts';
+  import { readFunnelPath, type ReadFunnelEvent } from '../application/funnel.ts';
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const sent = new Set<ReadFunnelEvent>();
+  function track(e: ReadFunnelEvent) {
+    if (sent.has(e)) return;
+    sent.add(e);
+    try { fetch(readFunnelPath(e), { keepalive: true, cache: 'no-store', credentials: 'omit' }).catch(() => {}); } catch {}
+  }
+  const msg = (t: string, warn = false) => { $('read-msg').textContent = t; $('read-msg').classList.toggle('warn', warn); };
+
+  $('read-open').addEventListener('click', () => {
+    $('read-form').hidden = false;
+    $('read-open').setAttribute('aria-expanded', 'true');
+    $('read-open').hidden = true;
+    track('CLICK');
+    $<HTMLInputElement>('read-link').focus();
+  });
+
+  $('read-send').addEventListener('click', async () => {
+    let link = $<HTMLInputElement>('read-link').value.trim();
+    try { link = new URL(link).href; } catch {}
+    const body: ReadRequest = { kind: READ_KIND, link, email: $<HTMLInputElement>('read-email').value.trim(), consent: $<HTMLInputElement>('read-consent').checked };
+    const v = validateReadRequest(body);
+    if (!v.ok) {
+      const first = v.errors[0];
+      msg(first === 'link' ? '공고 링크(https://…)를 확인해 주세요. 400자 안쪽이어야 해요.' : first === 'email' ? '이메일 형식을 확인해 주세요. 예: me@example.com' : '개인정보 수집·이용에 동의해 주세요.', true);
+      return;
+    }
+    const btn = $<HTMLButtonElement>('read-send');
+    btn.disabled = true;
+    try {
+      const r = await fetch('/api/pro-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'omit' });
+      if (r.status !== 204 && !r.ok) throw new Error(String(r.status));
+      track('REQUEST');
+      $('read-form').hidden = true;
+      $('read-done').hidden = false;
+    } catch {
+      msg('전송이 안 됐어요. 잠시 뒤 다시 눌러 주세요.', true);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>

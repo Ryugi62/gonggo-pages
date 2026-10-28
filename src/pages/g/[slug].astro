@@ -5,6 +5,7 @@ import { index, listings, generatedAt } from '../../adapters/site/data.ts';
 import { categorySlug, tagSlug } from '../../domain/category.ts';
 import { dDayLabel, formatDate } from '../../domain/format.ts';
 import type { PublicListing } from '../../domain/listing.ts';
+import ReadRequestEntry from '../../components/ReadRequestEntry.astro';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
 import { CLAUSE_LABEL } from '../../domain/clause.ts';
 import { deadlineEvent, googleAddUrl } from '../../domain/ics.ts';
@@ -58,6 +59,8 @@ const jsonLd = [
     {l.deadline ? <div class="big" data-deadline={l.deadline}>{dDayLabel(l.deadline, generatedAt)}</div> : <div class="big">상시</div>}
     <p style="margin:6px 0 0;font-size:16px">{deadlineText} 마감{l.prize ? ` · ${l.prize}` : ''}</p>
   </section>
+
+  {IS_AWS && <ReadRequestEntry />}
 
   <section>
     <h2>누가 낼 수 있나요?</h2>
