@@ -106,6 +106,8 @@ describe('추출 잡음 제거', () => {
   it('주최 자리표시(n/a·미노출)는 버린다', () => {
     expect(extractOrganizer('주최:n/a · 분야:', '')).toBeNull();
     expect(extractOrganizer('주최:미노출 · 분야:', '')).toBeNull();
+    expect(extractOrganizer('주최:None · 분야:', '')).toBeNull();
+    expect(extractOrganizer('주최: null', '')).toBeNull();
     expect(extractOrganizer('', 'K-Startup 창업교육 · 주관 한국특허정보원')).toBe('한국특허정보원');
   });
   it('0원 상금은 버린다', () => {

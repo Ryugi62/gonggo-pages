@@ -33,7 +33,7 @@ export function extractOrganizer(note: string, why: string): string | null {
   for (const m of why.matchAll(/(?:주최|주관)\s*[:：]?\s+([^·\n「」\[\]|]{2,40}?)\s*(?=·|\n|\||$)/g)) cands.push(m[1]);
   for (const c of cands) {
     const o = squash(c).replace(/[,，]+$/, '');
-    if (o.length < 2 || /^(?:-|n\/a|미노출|미표기|미상|없음|미기재|비공개)$/i.test(o) || /^\d+$/.test(o) || !isClean(o)) continue;
+    if (o.length < 2 || /^(?:-|n\/a|none|null|미노출|미표기|미상|없음|미기재|비공개)$/i.test(o) || /^\d+$/.test(o) || !isClean(o)) continue;
     return o;
   }
   return null;
