@@ -297,3 +297,16 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-78: Given 개인정보처리방침 Then 「공고 판독 요청」 목적 1줄이 있고 보관 기한은 기존과 같다.
 - AC-79: Given nginx 설정 Then 기존 `/api/pro-request`·`/intent/` 블록이 그대로이고 새 location·프로세스가 없다.
 **비목표**: 결제·PG·카드 입력 · 계정·로그인 · 메일 자동 발송(답신은 메인 세션 손, 접수에 대한 응답 1통) · 새 서버 앱·데몬·DB · 답신에 Pro 가격·광고 문구(별도 동의 없이) · 원문 전문 복제 · 외부 게시.
+
+## 22. 「AI 활용 허용 · 마감 임박 공고」 주간 목록 `/ai-ok/<날짜>/` (v1.4, 2026-10-30 — 볼트 `projects/공고콕-Pro-2026` jarvis_channel)
+**목적**: 「AI로 만들어도 되는 공모전」을 찾는 검색·AI 답변 질문에 착지하는 새 목록 1장. 원문에 AI 활용을 허용하는 문장이 있는 공고만, 마감 순으로, 원문 인용 1줄과 원문 링크를 붙인다. 기존 `/g/`·`/digest/` 유형이 못 낸 새 URL을 주 1장 만든다.
+**규칙**: `aiUse = ALLOWED` ∧ AI_USE 조항 인용이 있음 ∧ 상시 아님 ∧ 오늘 ≤ 마감 ≤ 오늘+14일. (마감, 공고명) 정렬. 인용은 160자까지(넘으면 「…」), 원문 전문 복제 없음.
+**숫자 성공 조건**
+- A1 항목 수 = `aiOkList` 수(0이면 페이지·sitemap 항목 모두 만들지 않는다). 항목마다 상세 링크 1 + 원문 링크 1 + 마감일 + 원문 인용 1줄.
+- A2 AI 허용 문장 없는 공고(UNSTATED·FORBIDDEN)·마감 지난 공고·범위 밖·상시 공고 0건.
+- A3 금지 토큰 0, sitemap 포함, AWS 빌드에서만 /pro 입구 정확히 1개 `href="/pro/?from=ai-ok"`(기본 빌드 0).
+- A4 라이브 `https://gonggo.oaksoo.com/ai-ok/<날짜>/` 200.
+**용어**: AI 허용 목록 `aiOkList` · 입구 출처 `ProEntryFrom`에 `ai-ok` 추가.
+- AC-80: Given 공고 목록 When `aiOkList(listings, today)` Then A2 규칙대로 걸러져 마감순으로 나오고 각 항목에 인용이 있다.
+- AC-81: Given 빌드 When `/ai-ok/<generatedAt>/`를 보면 Then A1·A3을 만족한다.
+**비목표**: 새 판정 · 메일 발송 · 개인 계정 게시 · 원문 전문 복제 · 사용자 전용 공고 전략 기능(반대편 분석·모의 심사) 노출.

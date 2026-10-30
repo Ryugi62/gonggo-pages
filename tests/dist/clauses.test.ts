@@ -53,3 +53,19 @@ describe('AC-73 digest', () => {
     expect((h.match(/href="\/pro\/\?from=week"/g) ?? []).length).toBe(aws ? 1 : 0);
   });
 });
+
+// AC-81 (SPEC §22) AI 활용 허용 · 마감 임박 목록
+import { aiOkList } from '../../src/application/aiOkList.ts';
+describe('AC-81 ai-ok', () => {
+  const r = aiOkList(ls as any, data.generatedAt);
+  it('항목 수·링크·인용·sitemap·금지 토큰·/pro 입구', () => {
+    expect(r.length).toBeGreaterThan(0);
+    const h = readFileSync(`dist/ai-ok/${data.generatedAt}/index.html`, 'utf8');
+    expect((h.match(/<li style="margin:16px 0">/g) ?? []).length).toBe(r.length);
+    for (const x of r) { expect(h).toContain(`/g/${x.listing.slug}/`); expect(h).toContain('원문 공고 보기'); }
+    expect((h.match(/<q>/g) ?? []).length).toBe(r.length);
+    expect(readFileSync('dist/sitemap.xml', 'utf8')).toContain(`/ai-ok/${data.generatedAt}/`);
+    expect(findForbidden(h.replace(/<[^>]+>/g, ' '))).toEqual([]);
+    expect((h.match(/href="\/pro\/\?from=ai-ok"/g) ?? []).length).toBe(aws ? 1 : 0);
+  });
+});

@@ -3,7 +3,7 @@
 import type { Category } from './category.ts';
 
 /** 입구 출처 — /pro/?from= 값. 상세 페이지는 이미 `g`. */
-export type ProEntryFrom = 'home' | 'c' | 'week';
+export type ProEntryFrom = 'home' | 'c' | 'week' | 'ai-ok';
 
 export interface ProEntry { href: string; title: string; sub: string }
 
@@ -20,6 +20,7 @@ const SUB = '오픈 준비 중 · 사전 신청은 돈이 나가지 않아요';
 export function proEntry(from: ProEntryFrom, category?: Category): ProEntry {
   const head =
     from === 'c' && category ? `이 ${category} 공고, 나 ${ASK[category]}`
+    : from === 'ai-ok' ? 'AI로 만들어도 되는 이 공고들, 나 내도 되나?'
     : from === 'week' ? '마감 앞둔 이 공고들, 나 내도 되나?'
     : '「이 공고, 나 내도 되나?」';
   return { href: `/pro/?from=${from}`, title: `${head} ${PROMISE}`, sub: SUB };
