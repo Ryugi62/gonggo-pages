@@ -18820,7 +18820,7 @@
    "url": "https://dorahacks.io/hackathon/hskchainindia",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": null,
+   "eligibilityQuote": "Open to individuals and teams worldwide.",
    "tags": [],
    "constraints": {
     "minAge": null,
@@ -18830,7 +18830,13 @@
     "business": null,
     "open": false
    },
-   "clauses": [],
+   "clauses": [
+    {
+     "kind": "ONSITE",
+     "quote": "Teams that can conduct an in-person demo in Mumbai will have priority",
+     "source": "https://dorahacks.io/hackathon/hskchainindia"
+    }
+   ],
    "aiUse": "UNSTATED"
   },
   {

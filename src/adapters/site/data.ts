@@ -4,6 +4,7 @@ import { buildSiteIndex } from '../../application/buildSiteIndex.ts';
 import { founderWeek } from '../../application/founderWeek.ts';
 import { weeklyDigest } from '../../application/weeklyDigest.ts';
 import { aiOkList } from '../../application/aiOkList.ts';
+import { soloList, SOLO_MIN } from '../../application/soloList.ts';
 import { buildCalendarFeeds } from '../../application/calendarFeeds.ts';
 import { FEED_ORIGIN, SITE_URL } from '../../infrastructure/config.ts';
 import { CATEGORIES, TAGS } from '../../domain/category.ts';
@@ -19,6 +20,8 @@ export const weeks = [...index.byWeek.keys()];
 export const week = founderWeek(listings, generatedAt);
 export const digest = weeklyDigest(listings, generatedAt);
 export const aiOk = aiOkList(listings, generatedAt);
+const soloAll = soloList(listings, generatedAt);
+export const solo = soloAll.length >= SOLO_MIN ? soloAll : []; // 3건 미만이면 게시하지 않는다(SPEC §23)
 export const collections = clauseCollections(listings);
 export const calendarFeeds = buildCalendarFeeds(listings, generatedAt, { site: SITE_URL.replace(/\/$/, '') });
 export const feedUrl = (slug: string) => `${FEED_ORIGIN.replace(/\/$/, '')}/cal/${slug}.ics`;
@@ -32,6 +35,7 @@ export function sitePaths(): string[] {
     '/week/',
     ...(digest.length ? [`/digest/${generatedAt}/`] : []),
     ...(aiOk.length ? [`/ai-ok/${generatedAt}/`] : []),
+    ...(solo.length ? [`/solo/${generatedAt}/`] : []),
     ...COLLECTION_PATHS,
     ...categories.map((c) => `/c/${c.slug}/`),
     ...tags.map((t) => `/t/${t.slug}/`),

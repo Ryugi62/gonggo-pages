@@ -1,0 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { solo, generatedAt } from '../../adapters/site/data.ts';
+import { formatDate, dDayLabel } from '../../domain/format.ts';
+import { proEntry } from '../../domain/proEntry.ts';
+import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
+export function getStaticPaths() {
+  return [{ params: { date: generatedAt } }];
+}
+const heading = `11월에 마감하는, 혼자 낼 수 있는 공고 ${solo.length}건`;
+const pro = proEntry('solo');
+const title = `${heading} (${formatDate(generatedAt)} 기준) | ${SITE_NAME}`;
+const description = `${formatDate(generatedAt)} 기준 11월에 마감하는 공모전·해커톤 중, 원문에 개인(1인) 참가가 가능하다고 적힌 공고 ${solo.length}건. 원문 인용 한 줄과 원문 링크를 마감 순으로 정리했어요.`;
+const path = `/solo/${generatedAt}/`;
+const site = Astro.site!.href.replace(/\/$/, '');
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'ItemList', numberOfItems: solo.length,
+  itemListElement: solo.map((x, i) => ({ '@type': 'ListItem', position: i + 1, url: `${site}/g/${x.listing.slug}/`, name: x.listing.name })) }];
+---
+<Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={{ href: '/check/', label: '내가 낼 수 있는 공고 찾기' }}>
+  <nav class="crumb" aria-label="위치"><a href="/">홈</a></nav>
+  <h1>{heading}</h1>
+  <p class="sub">{formatDate(generatedAt)} 기준, 11월에 마감하는 공모전·해커톤 중 원문에 개인으로도 낼 수 있다고 적힌 것만 마감 순으로 모았어요. 인용은 원문 일부이고, 조건과 마감은 원문 공고가 기준이니 지원 전에 꼭 다시 확인해 주세요.</p>
+  <ol class="digest">
+    {solo.map((x) => (
+      <li style="margin:16px 0">
+        <b><a href={`/g/${x.listing.slug}/`}>{x.listing.name}</a></b><br />
+        <span class="sub">{formatDate(x.listing.deadline!)} 마감 ({dDayLabel(x.listing.deadline, generatedAt)}) · {x.listing.category}</span><br />
+        <q>{x.quote}</q><br />
+        <a href={x.listing.url} rel="noopener nofollow" target="_blank">원문 공고 보기</a>
+      </li>
+    ))}
+  </ol>
+  <p class="sub">공고 목록은 매주 새로 만들어요. 마감 임박 대학생·청년 공고는 <a href={`/digest/${generatedAt}/`}>이번 주 요약</a>, AI 활용이 허용된 공고는 <a href={`/ai-ok/${generatedAt}/`}>AI 허용 목록</a>에서 볼 수 있어요.</p>
+  {IS_AWS && <section><a class="tile" href={pro.href}><b>{pro.title}</b><span>{pro.sub}</span></a></section>}
+</Layout>

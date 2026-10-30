@@ -69,3 +69,19 @@ describe('AC-81 ai-ok', () => {
     expect((h.match(/href="\/pro\/\?from=ai-ok"/g) ?? []).length).toBe(aws ? 1 : 0);
   });
 });
+
+// AC-84 (SPEC §23) 1인 참가 가능 · 11월 마감 목록
+import { soloList, SOLO_MIN } from '../../src/application/soloList.ts';
+describe('AC-84 solo', () => {
+  const r = soloList(ls as any, data.generatedAt);
+  it('항목 수·링크·인용·sitemap·금지 토큰·/pro 입구', () => {
+    expect(r.length).toBeGreaterThanOrEqual(SOLO_MIN);
+    const h = readFileSync(`dist/solo/${data.generatedAt}/index.html`, 'utf8');
+    expect((h.match(/<li style="margin:16px 0">/g) ?? []).length).toBe(r.length);
+    for (const x of r) { expect(h).toContain(`/g/${x.listing.slug}/`); expect(h).toContain('원문 공고 보기'); }
+    expect((h.match(/<q>/g) ?? []).length).toBe(r.length);
+    expect(readFileSync('dist/sitemap.xml', 'utf8')).toContain(`/solo/${data.generatedAt}/`);
+    expect(findForbidden(h.replace(/<[^>]+>/g, ' '))).toEqual([]);
+    expect((h.match(/href="\/pro\/\?from=solo"/g) ?? []).length).toBe(aws ? 1 : 0);
+  });
+});
