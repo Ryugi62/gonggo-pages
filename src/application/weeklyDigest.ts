@@ -15,6 +15,12 @@ function addDays(date: string, n: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+// 최소 2인 이상 팀 구성을 요구하면 개인 응모 불가 — 요약 글에서 뺀다.
+export function teamOnly(quote: string | null): boolean {
+  const m = quote?.match(/최소\s*(\d+)\s*인/);
+  return m !== null && m !== undefined && Number(m[1]) >= 2;
+}
+
 export function weeklyDigest(listings: PublicListing[], today: string): PublicListing[] {
   const to = addDays(today, DIGEST_DAYS);
   const rows = listings
@@ -22,6 +28,7 @@ export function weeklyDigest(listings: PublicListing[], today: string): PublicLi
     .filter((l) => l.tags.includes('대학생') || l.tags.includes('청년'))
     .filter((l) => ['공모전', '해커톤', '지원사업'].includes(l.category))
     .filter((l) => /[가-힣]/.test(l.name) && !l.name.includes('청소년') && prizeWon(l.prize) !== null)
+    .filter((l) => !teamOnly(l.eligibilityQuote))
     .sort((a, b) => a.deadline!.localeCompare(b.deadline!) || prizeWon(b.prize)! - prizeWon(a.prize)! || a.name.localeCompare(b.name, 'ko'));
   const seen = new Set<string>();
   const out: PublicListing[] = [];

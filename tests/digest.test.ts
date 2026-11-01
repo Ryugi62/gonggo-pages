@@ -39,4 +39,12 @@ describe('AC-72 weeklyDigest', () => {
     expect(d.map((l) => l.name)).not.toContain('다 중복');
     expect(d.length).toBe(8);
   });
+  it('AC-72b 개인 응모 불가(최소 2인 이상 팀 구성) 공고는 뺀다', () => {
+    const ls = [
+      L({ name: '가 팀전용', eligibilityQuote: '참가 대상: 전국 청년 팀 (최소 5인 ~ 20인 구성)' }),
+      L({ name: '나 개인가능', eligibilityQuote: '참가형태: 1~4인 (개인 또는 팀)' }),
+      L({ name: '다 최소1인', prize: '총상금 90만원', eligibilityQuote: '최소 1인 이상' }),
+    ];
+    expect(weeklyDigest(ls, T).map((l) => l.name)).toEqual(['나 개인가능', '다 최소1인']);
+  });
 });
