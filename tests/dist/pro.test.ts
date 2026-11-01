@@ -110,6 +110,36 @@ describe.skipIf(!aws)('§14 /pro 첫 화면 v2 (AWS)', async () => {
   });
 });
 
+describe.skipIf(!aws)('§24 AC-86 /pro 첫 화면 v3 (AWS)', async () => {
+  const pro = aws ? read('dist/pro/index.html') : '';
+  const { PRO_SAMPLE, PRO_ACCURACY, PRO_COMPARE } = await import('../../src/infrastructure/proCopy.ts');
+  const intro = pro.slice(pro.indexOf('id="step-intro"'), pro.indexOf('id="step-email"'));
+  const text = intro.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ');
+  it('V1·V2·V3 순서: 가격 카드 → 샘플 → 정확도 → 비교', () => {
+    const i = [intro.indexOf('data-arm="H1"'), intro.indexOf('id="sample"'), intro.indexOf('id="accuracy"'), intro.indexOf('id="compare"')];
+    expect(i.every((n) => n > 0)).toBe(true);
+    expect([...i].sort((a, b) => a - b)).toEqual(i);
+  });
+  it('샘플 문구·인용·원문 링크·찾지 못했어요', () => {
+    for (const r of PRO_SAMPLE.rows) {
+      expect(text, r.q).toContain(r.q);
+      if (r.quote) expect(text, r.quote).toContain(r.quote);
+    }
+    expect(intro).toMatch(new RegExp(`id="sample"[\\s\\S]*href="${PRO_SAMPLE.url.replace(/[.?]/g, '\\$&')}"[^>]*rel="noopener`));
+    expect(text).toContain('찾지 못했어요');
+  });
+  it('정확도 1줄·비교 2열 문구', () => {
+    expect(text).toContain(PRO_ACCURACY);
+    for (const it of [...PRO_COMPARE.free.items, ...PRO_COMPARE.pro.items]) expect(text, it).toContain(it);
+    expect(intro).toMatch(/id="compare"[\s\S]*무료[\s\S]*Pro/);
+  });
+  it('가격·환불 문구 불변 · 과장 낱말 0 · ≤ 40KB', () => {
+    expect(pro).toContain('월 19,900원 Pro가 열리면 쓰겠다 — 사전 신청이에요 · 결제 약속이 아니고 지금은 돈이 나가지 않아요');
+    expect(text).not.toMatch(/모든 공고|100\s*%|완벽|정확히|합격 보장|대신 판단/);
+    expect(Buffer.byteLength(pro)).toBeLessThanOrEqual(40 * 1024);
+  });
+});
+
 // §16 목록 페이지 /pro 맥락 입구(AC-52)
 describe('AC-52 홈·분류·주간 /pro 입구', () => {
   const pages: [string, string][] = [

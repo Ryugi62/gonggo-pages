@@ -5,7 +5,7 @@ import Layout from '../layouts/Layout.astro';
 import { PRICE_ARMS, PRO_PLAN, formatWon, type PriceArm } from '../domain/pricing.ts';
 import { PRO_NEEDS } from '../domain/paymentRequest.ts';
 import { PRO_ORIGIN, OPERATOR } from '../infrastructure/config.ts';
-import { CUSTOMER_VOICES } from '../infrastructure/proCopy.ts';
+import { CUSTOMER_VOICES, PRO_SAMPLE, PRO_ACCURACY, PRO_COMPARE } from '../infrastructure/proCopy.ts';
 
 const arms: PriceArm[] = ['H1']; // 10/26 사전 신청 — 가격 하나(월 19,900원)만 보여 「사겠다」를 센다
 const [lead, ...rest] = CUSTOMER_VOICES;
@@ -23,6 +23,21 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
       {arms.map((arm) => (
         <section class="card price" data-arm={arm} hidden aria-label="Pro 창립가"><div class="big">월 {formatWon(PRICE_ARMS[arm])}원</div><p class="price-note">창립가 — 창립 회원은 구독하는 동안 이 가격 그대로예요</p><ul class="feat">{PRO_PLAN[arm].map((f) => <li>{f}</li>)}</ul></section>
       ))}
+      <section class="sample" id="sample" aria-labelledby="sample-h">
+        <h2 id="sample-h">실제 공고 1건을 이렇게 읽어요</h2>
+        <p class="small" style="margin:0 0 12px">{PRO_SAMPLE.listing} · 마감 {PRO_SAMPLE.deadline} · 원문 확인 {PRO_SAMPLE.checked}</p>
+        <ul class="srows">
+          {PRO_SAMPLE.rows.map((r) => (
+            <li class:list={[r.quote === null && 'nf']}><b>{r.q}</b><span>{r.answer}</span>{r.quote && <q>{r.quote}</q>}</li>
+          ))}
+        </ul>
+        <p class="small" style="margin:8px 0 0"><a href={PRO_SAMPLE.url} target="_blank" rel="noopener nofollow">공고 원문 보기</a> · 원문과 다르면 원문이 맞아요</p>
+      </section>
+      <p class="acc" id="accuracy">{PRO_ACCURACY}</p>
+      <section class="cmp" id="compare" aria-label="무료와 Pro 비교">
+        <div class="col"><h3>{PRO_COMPARE.free.title}</h3><ul>{PRO_COMPARE.free.items.map((i) => <li>{i}</li>)}</ul></div>
+        <div class="col pro"><h3>{PRO_COMPARE.pro.title}</h3><ul>{PRO_COMPARE.pro.items.map((i) => <li>{i}</li>)}</ul></div>
+      </section>
       <p class="sub">답 옆에 공고 원문 조항을 그대로 옮겨 둬서 맞는지 직접 대조할 수 있어요. AI 사용·중복 수혜·업력·본인 창작 서약 조항은 따로 찾아 보여 주고, 원문에서 못 찾으면 「찾지 못했어요」라고 말해요.</p>
 
       <section class="asks" aria-labelledby="asks-h">
@@ -102,6 +117,21 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
   .voice cite, .asks cite { display: block; margin-top: 6px; font-size: 13px; font-weight: 400; font-style: normal; color: var(--muted); }
   .asks ul { margin: 8px 0 0; padding: 0; list-style: none; }
   .asks li { padding: 12px 16px; border-radius: 16px; background: var(--card); margin-bottom: 8px; font-size: 15px; }
+  .sample { margin-top: 20px; }
+  .srows { margin: 0; padding: 0; list-style: none; }
+  .srows li { padding: 12px 16px; border-radius: 16px; background: var(--card); margin-bottom: 8px; font-size: 15px; }
+  .srows b { display: block; font-size: 15px; }
+  .srows span { display: block; margin-top: 2px; color: var(--sub); }
+  .srows q { display: block; margin-top: 6px; font-size: 14px; }
+  .srows .nf { border: 1px dashed var(--line); background: transparent; }
+  .acc { margin: 12px 0 0; font-size: 14px; color: var(--sub); }
+  .cmp { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cmp .col { padding: 14px; border-radius: 16px; background: var(--card); }
+  .cmp .col.pro { border: 2px solid var(--btn); }
+  .cmp h3 { margin: 0 0 8px; font-size: 15px; }
+  .cmp ul { margin: 0; padding-left: 18px; font-size: 14px; }
+  .cmp li { margin-bottom: 6px; }
+  @media (max-width: 420px) { .cmp { grid-template-columns: 1fr; } }
   .price-note { margin: 6px 0 0; font-size: 15px; color: var(--sub); }
   .feat { margin: 16px 0 0; padding-left: 20px; font-size: 15px; }
   .feat li { margin-bottom: 4px; }

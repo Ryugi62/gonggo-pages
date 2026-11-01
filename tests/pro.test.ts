@@ -118,3 +118,29 @@ describe('사전 신청 need 필드(10/26)', () => {
     expect(parsePaymentRequestLog(raw).valid).toEqual([{ t: '2026-10-26T01:00:00+09:00', email: 'a@example.com', arm: 'H1', need: 'fix' }]);
   });
 });
+
+describe('§24 AC-85 /pro 판독 샘플·정확도·비교 문구', () => {
+  it('샘플: 행 ≥ 3 · 찾지 못함 1 · 인용 「」 없는 순수 문장 · 원문 링크 https · 확인일 ISO', async () => {
+    const { PRO_SAMPLE } = await import('../src/infrastructure/proCopy.ts');
+    expect(PRO_SAMPLE.rows.length).toBeGreaterThanOrEqual(3);
+    expect(PRO_SAMPLE.rows.filter((r) => r.quote === null).length).toBe(1);
+    for (const r of PRO_SAMPLE.rows) if (r.quote) expect(r.quote).not.toMatch(/[「」]/);
+    expect(PRO_SAMPLE.url).toMatch(/^https:\/\//);
+    expect(PRO_SAMPLE.checked).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+  it('정확도: 볼트 정본 숫자(10건 중 10건·2026-10-06)만, 퍼센트·과장 0, 표본 작다는 말 포함', async () => {
+    const { PRO_ACCURACY } = await import('../src/infrastructure/proCopy.ts');
+    expect(PRO_ACCURACY).toContain('10건 중 10건');
+    expect(PRO_ACCURACY).toContain('2026-10-06');
+    expect(PRO_ACCURACY).toContain('표본');
+    expect(PRO_ACCURACY).not.toMatch(/%|퍼센트|완벽|정확히|보장/);
+  });
+  it('비교: 무료·Pro 각 ≥ 2 · 무료 = 공고 1건씩 조항 판독 · Pro = 내 조건 선별 + 배점 채점', async () => {
+    const { PRO_COMPARE } = await import('../src/infrastructure/proCopy.ts');
+    expect(PRO_COMPARE.free.items.length).toBeGreaterThanOrEqual(2);
+    expect(PRO_COMPARE.pro.items.length).toBeGreaterThanOrEqual(2);
+    expect(PRO_COMPARE.free.items.join(' ')).toContain('공고 1건씩');
+    expect(PRO_COMPARE.pro.items.join(' ')).toContain('내 조건');
+    expect(PRO_COMPARE.pro.items.join(' ')).toContain('배점');
+  });
+});
