@@ -19,7 +19,7 @@ export function parseReadRequestLog(text: string, opts: { exclude?: string[] } =
     try {
       const outer = JSON.parse(line) as { t?: unknown; body?: unknown };
       const body = JSON.parse(String(outer.body)) as ReadRequest;
-      if (body && typeof body === 'object' && (body as { kind?: unknown }).kind === undefined) continue; // 결제 요청
+      if (body && typeof body === 'object' && [undefined, 'sub'].includes((body as { kind?: unknown }).kind as string | undefined)) continue; // 결제 요청·구독(§25)
       if (typeof outer.t !== 'string' || !body || typeof body !== 'object' || !validateReadRequest(body).ok || body.kind !== READ_KIND) {
         rejected++;
         continue;

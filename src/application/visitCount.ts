@@ -117,3 +117,23 @@ export function countLandings(text: string, o: CountOptions): Landings {
   r.visitors = visitors.size;
   return r;
 }
+
+// 마감 임박 메일 구독 단계(SPEC §25 U4) — 폼 펼침(click)·저장 완료(request) 비콘. 같은 (IP, UA, KST 날짜)는 1명.
+const SUB_INTENT = /^(\S+) (.+?) "GET \/intent\/sub\/(click|request) HTTP\/[\d.]+" (\d{3}) "([^"]*)" "([^"]*)"$/;
+export interface SubVisits { click: number; request: number }
+export function countSubSteps(text: string, o: CountOptions): SubVisits {
+  const self = new Set(o.selfIps);
+  const seen = { click: new Set<string>(), request: new Set<string>() };
+  for (const line of text.split('\n')) {
+    const m = SUB_INTENT.exec(line.trim());
+    if (!m) continue;
+    const [, t, xff, step, status, , ua] = m;
+    const at = new Date(t);
+    if (Number.isNaN(at.getTime())) continue;
+    const day = kstDay(at);
+    const ip = firstIp(xff);
+    if (status !== '204' || day < o.since || self.has(ip) || !isHumanUserAgent(ua)) continue;
+    seen[step as 'click' | 'request'].add(`${ip}|${ua}|${day}`);
+  }
+  return { click: seen.click.size, request: seen.request.size };
+}

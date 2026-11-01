@@ -1,0 +1,86 @@
+---
+// SPEC §25 — 마감 임박 메일 구독 입구(AWS 빌드에서만 호출). 폼 3칸: 이메일 · 관심 분야 1개 · 개인정보 동의.
+// 저장은 기존 POST /api/pro-request(kind:"sub"), 계측은 /intent/sub/{click,request}.
+import { SUB_TOPICS, SUB_TOPIC_LABEL } from '../domain/subscribe.ts';
+---
+<section class="sub-entry card" data-sub-entry aria-labelledby="sub-h">
+  <h2 id="sub-h">마감 임박 공고, 주 1회 메일로 받기</h2>
+  <p class="sub">무료예요. 이메일과 관심 분야를 남기면 7일 안에 마감하는 공고를 골라 주 1회 메일로 보내요. 가격이나 광고 안내는 넣지 않아요.</p>
+  <button class="btn secondary block" id="sub-open" type="button" aria-expanded="false" aria-controls="sub-form">메일로 받아보기</button>
+  <form id="sub-form" hidden novalidate onsubmit="return false">
+    <label class="rf"><span>받을 이메일</span>
+      <input id="sub-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="예: me@example.com" />
+    </label>
+    <label class="rf"><span>관심 분야 (하나만 골라요)</span>
+      <select id="sub-topic">
+        {SUB_TOPICS.map((t) => <option value={t}>{SUB_TOPIC_LABEL[t]}</option>)}
+      </select>
+    </label>
+    <label class="rc"><input id="sub-consent" type="checkbox" /><span>[필수] 개인정보 수집·이용 동의 — 이메일과 관심 분야를 주 1회 마감 임박 공고 메일을 보내는 데에만 쓰고, 구독을 끊는 날(답장으로 「수신 거부」) 또는 <span class="nw">2027-11-02</span> 중 빠른 날 지워요. 동의를 거부해도 무료 기능은 그대로 쓸 수 있고, 메일 구독만 못 해요. <a href="/privacy/">자세히</a></span></label>
+    <button class="btn block" id="sub-send" type="button">구독하기</button>
+    <p class="small" id="sub-msg" role="status" aria-live="polite">동의해야 구독할 수 있어요.</p>
+  </form>
+  <p id="sub-done" hidden role="status"><strong>구독 신청이 접수됐어요.</strong> 7일 안에 마감하는 공고를 골라 첫 메일을 보낼게요. 끊고 싶으면 그 메일에 「수신 거부」라고 답장해 주세요.</p>
+</section>
+<style>
+  .sub-entry h2 { font-size: 18px; margin-bottom: 8px; }
+  .sub-entry [hidden] { display: none !important; }
+  .sub-entry .block { margin-top: 12px; width: 100%; min-height: 48px; }
+  #sub-form { margin-top: 8px; }
+  .sub-entry .rf { display: block; margin-top: 14px; }
+  .sub-entry .rf > span { display: block; font-weight: 600; font-size: 14px; color: var(--sub); margin-bottom: 6px; }
+  .sub-entry .rf input, .sub-entry .rf select { width: 100%; height: 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 16px; padding: 0 14px; font-family: inherit; }
+  .sub-entry .rc { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; font-size: 14px; cursor: pointer; }
+  .sub-entry .rc input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--btn); }
+  .sub-entry .warn { color: var(--no); }
+  .sub-entry .nw { white-space: nowrap; }
+</style>
+<script>
+  import { validateSubscribeRequest, SUB_KIND, type SubscribeRequest, type SubscribeTopic } from '../domain/subscribe.ts';
+  import { subFunnelPath, type SubFunnelEvent } from '../application/funnel.ts';
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const sent = new Set<SubFunnelEvent>();
+  function track(e: SubFunnelEvent) {
+    if (sent.has(e)) return;
+    sent.add(e);
+    try { fetch(subFunnelPath(e), { keepalive: true, cache: 'no-store', credentials: 'omit' }).catch(() => {}); } catch {}
+  }
+  const msg = (t: string, warn = false) => { $('sub-msg').textContent = t; $('sub-msg').classList.toggle('warn', warn); };
+
+  $('sub-open').addEventListener('click', () => {
+    $('sub-form').hidden = false;
+    $('sub-open').setAttribute('aria-expanded', 'true');
+    $('sub-open').hidden = true;
+    track('CLICK');
+    $<HTMLInputElement>('sub-email').focus();
+  });
+
+  $('sub-send').addEventListener('click', async () => {
+    const body: SubscribeRequest = {
+      kind: SUB_KIND,
+      email: $<HTMLInputElement>('sub-email').value.trim(),
+      topic: $<HTMLSelectElement>('sub-topic').value as SubscribeTopic,
+      consent: $<HTMLInputElement>('sub-consent').checked,
+    };
+    const v = validateSubscribeRequest(body);
+    if (!v.ok) {
+      const first = v.errors[0];
+      msg(first === 'email' ? '이메일 형식을 확인해 주세요. 예: me@example.com' : first === 'topic' ? '관심 분야를 하나 골라 주세요.' : '개인정보 수집·이용에 동의해 주세요.', true);
+      return;
+    }
+    const btn = $<HTMLButtonElement>('sub-send');
+    btn.disabled = true;
+    try {
+      const r = await fetch('/api/pro-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'omit' });
+      if (r.status !== 204 && !r.ok) throw new Error(String(r.status));
+      track('REQUEST');
+      $('sub-form').hidden = true;
+      $('sub-done').hidden = false;
+    } catch {
+      msg('전송이 안 됐어요. 잠시 뒤 다시 눌러 주세요.', true);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>

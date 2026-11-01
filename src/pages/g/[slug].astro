@@ -6,6 +6,7 @@ import { categorySlug, tagSlug } from '../../domain/category.ts';
 import { dDayLabel, formatDate } from '../../domain/format.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import ReadRequestEntry from '../../components/ReadRequestEntry.astro';
+import SubscribeEntry from '../../components/SubscribeEntry.astro';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
 import { CLAUSE_LABEL } from '../../domain/clause.ts';
 import { deadlineEvent, googleAddUrl } from '../../domain/ics.ts';
@@ -117,6 +118,8 @@ const jsonLd = [
     <button class="btn secondary block" type="button" id="alert-btn" data-slug={l.slug}>마감 알림 받기 (준비 중)</button>
     <p class="small" id="alert-note" style="margin:8px 0 0">아직 알림을 보내지 않아요. 누르면 이 브라우저에만 관심 표시가 남고, 어디에도 전송되지 않아요.</p>
   </section>
+
+  {IS_AWS && <SubscribeEntry />}
 
   {IS_AWS && (
     <section>

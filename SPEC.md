@@ -112,6 +112,7 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - v0.7 2026-10-08 §15 검색 유입 장치 — 고객 말 제목·설명·FAQ 구조화 데이터·IndexNow·사람 방문 계측(AC-44~50).
 - v1.1 2026-10-15 §11 C2 — 피드 설명에서 원문 주소·주최 제외(공고당 ~555→423B, 전체 1,233,494→940,570B), 1MB 초과 시 창 자동 축소(공고 2배 가정 시 90→14일, 984,238B). 상한 1MB는 유지.
 - v0.8 2026-10-08 §16 목록 페이지 /pro 맥락 입구 — 분류·주간·홈에 `?from=c|week|home` 링크 1개, 출처별 /pro 방문 집계(AC-51~53). §15 비목표 「무료 페이지 CTA 개편」 중 목록 페이지 입구 1개만 해제.
+- v1.7 2026-11-02 §25 마감 임박 메일 구독 입구 v0 — 구독 폼 1개(AWS 빌드 전용)·저장은 기존 `POST /api/pro-request`에 `kind:"sub"` 1키 추가(§21과 같은 방식, 새 location·프로세스 0). 해제 범위: §1 비목표 「알림 실제 발송 없음」과 §11 「이메일 알림 발송 없음」은 그대로 — 이 절은 **주소 수집만** 연다(발송은 메인 세션 주 1회 손, 코드 발송 0). 「서버 API 없음」은 §12가 이미 푼 nginx 한 줄 저장 경로 재사용이라 추가 해제 없음.
 
 ## 11. 성장 장치 ① 마감 캘린더 루프 (v0.3, 2026-10-06 — 볼트 `projects/자동성장-서비스-2026` ④)
 **목적**: 사용 행위(「내 캘린더에 마감 넣기」·「분류 구독」)가 곧 재방문·전파가 되는 루프. 캘린더 일정 1건 = 우리 상세 페이지 링크 1개(`?from=cal`)가 사용자 캘린더에 박혀, 마감 알림이 울릴 때마다 사람 손 0으로 재방문이 생긴다. 구독 링크는 동아리·단톡방에 그대로 공유된다.
@@ -333,3 +334,24 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-85: Given `PRO_SAMPLE`·`PRO_ACCURACY`·`PRO_COMPARE` When 시험 Then V1~V3 규칙 충족. AC-86: Given AWS 빌드 When `dist/pro/index.html` Then V1·V2·V3·V4.
 **용어**: 판독 샘플 `PRO_SAMPLE` · 표본 정확도 `PRO_ACCURACY` · 무료/Pro 비교 `PRO_COMPARE`.
 **비목표**: 가격·결제·환불·무료 체험 정책 변경 · 책임 보장 문구 · 퍼센트 환산.
+
+## 25. 마감 임박 메일 구독 입구 v0 (v1.7, 2026-11-02 — 볼트 `projects/공고콕-Pro-2026` channels 3번째)
+**목적**: 무료 착지 16명·/pro 방문 5·결제 요청 0(10/28)의 병목 = 무료 → 유료 입구. 돈 약속 없이 「마감 임박 공고를 주 1회 메일로」만 남기게 해 재방문 접촉을 쌓는다. 발송은 코드가 아니라 메인 세션이 주 1회(받는 사람 ≤ 수십 명 규모에서) 손으로 한다.
+**저장**: 새 백엔드·가입·데몬 0. 기존 `POST /api/pro-request`(§12 P3)에 본문 키 `kind: "sub"` 하나로 구분(§21 방식). AWS 빌드에서만 폼이 생긴다.
+**숫자 성공 조건**
+- U1 폼: AWS 빌드의 공고 상세 전부 + `/week/` + `/digest/<날짜>/` 페이지마다 폼 정확히 1개(`data-sub-entry`), 기본(Vercel) 빌드 0개. 입력 3개(이메일 · 관심 분야 선택 1 · 동의 체크). 동의 안 하면 제출 불가(오류 문구, 전송 0).
+- U2 본문 키 = `kind`·`email`·`topic`·`consent` 4개뿐, 직렬화 최대 ≤ 1KB. `topic` ∈ {contest, support, scholarship, all}.
+- U3 동의 문구에 항목(이메일·관심 분야)·목적(주 1회 마감 임박 공고 메일)·보유 기간·거부 권리(거부해도 무료 기능 그대로)가 모두 있다. 처리방침에 「마감 임박 메일 구독」 목적 1줄 + 보유 기간(구독을 끊는 날 또는 2027-11-02 중 빠른 날).
+- U4 계측: 폼 펼침 `/intent/sub/click`, 저장 204 뒤 `/intent/sub/request`, 사건마다 1회, 경로에 입력값 0. `visits.ts`가 구독 단계 수를 센다.
+- U5 집계: `parseSubscribeLog` — 검증 통과 줄만, 같은 이메일은 마지막 1건(관심 분야 변경 반영), `example.com`/`.test`/`.invalid` 예약 도메인은 시험 제출로 따로 센다. 결제 요청·판독 요청 집계는 `kind:"sub"` 줄을 버린 줄로 세지 않는다.
+- U6 문안: `npm run sub:digest`가 오늘~7일 안 마감 공고 5건을 뽑아 본문 초안을 출력한다(발송 0). 본문에 수신 거부 안내·운영자 고지·가격/광고 문구 0.
+- U7 라이브: 배포 뒤 외부 curl로 폼 있는 페이지 200, 시험 제출 `test+gonggo@example.com` 1건이 서버 `logs/pro-requests.jsonl`에 쌓임(삭제 대신 예약 도메인 규칙으로 시험 표시), 390px 가로 넘침 0.
+- 결과 지표(7일, 2026-11-09): 폼 펼침 ≥ 5(자체 제외) · 유효 구독 ≥ 1. 두 번 연속 0이면 위치(첫 화면)부터 바꾼다.
+**용어**: 구독 요청 `SubscribeRequest{kind,email,topic,consent}` · 관심 분야 `SubscribeTopic` · 입구 `SubscribeEntry` · 집계 `parseSubscribeLog` · 주간 추출 `pickDeadlineSoon`.
+- AC-87: Given 구독 요청 When `validateSubscribeRequest` Then kind·이메일 형식·topic 4종·동의 true·허용 키 4개일 때만 통과하고 항목별 오류(`kind`·`email`·`topic`·`consent`·`extra`)를 돌려준다. 최대 길이 JSON ≤ 1024바이트.
+- AC-88: Given 저장 파일 When `parseSubscribeLog(text)` Then 유효 줄·같은 이메일 마지막 1건·시험 제출 수·버린 줄 수를 돌려준다. 결제·판독 집계는 sub 줄을 세지 않는다.
+- AC-89: Given 이벤트 When `subFunnelPath` Then `/intent/sub/click`·`/intent/sub/request`.
+- AC-90: Given AWS 빌드 When 상세·주간·digest를 보면 Then 폼 1개·입력 3개·동의 문구 4요소, 기본 빌드엔 0. 가격 숫자·카드·결제 문구 0.
+- AC-91: Given 처리방침 Then 「마감 임박 메일 구독」 목적 1줄과 보유 기간이 있다. Given nginx Then 새 location 0(기존 7개 그대로).
+- AC-92: Given 공고 목록·오늘 When `pickDeadlineSoon` Then 오늘~7일 안 마감만 마감순 최대 5건, 상시·마감 미상 제외, 팀 전용(최소 2인) 제외.
+**비목표**: 메일 코드 발송·발송 서비스 가입·데몬·cron · 계정·로그인 · 자동 수신 거부 링크(수신 거부는 답장 1통 → 메인 세션이 그 줄을 파기 기록) · 가격·광고 문구 · 결제.

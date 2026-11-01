@@ -11,6 +11,8 @@
     "test:dist": "vitest run tests/dist",
     "release": "bash scripts/release.sh",
     "pro:requests": "node scripts/pro-requests.ts",
+    "sub:requests": "node scripts/sub-requests.ts",
+    "sub:digest": "node scripts/sub-digest.ts",
     "deploy:aws": "DEPLOY_TARGET=aws npm run build && DEPLOY_TARGET=aws npm run test:dist && bash deploy/aws/deploy.sh",
     "visits": "node scripts/visits.ts",
     "indexnow": "node scripts/indexnow.ts",
