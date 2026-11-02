@@ -133,6 +133,17 @@ describe.skipIf(!aws)('§24 AC-86 /pro 첫 화면 v3 (AWS)', async () => {
     for (const it of [...PRO_COMPARE.free.items, ...PRO_COMPARE.pro.items]) expect(text, it).toContain(it);
     expect(intro).toMatch(/id="compare"[\s\S]*무료[\s\S]*Pro/);
   });
+  it('AC-93 비교는 표: <table> 1개·열 머리 무료/Pro·행 ≥ 3·행마다 칸 3개', () => {
+    const cmp = intro.slice(intro.indexOf('id="compare"'));
+    const tbl = cmp.match(/<table[\s\S]*?<\/table>/)?.[0] ?? '';
+    expect(tbl).not.toBe('');
+    expect(intro.match(/<table/g)?.length).toBe(1);
+    expect(tbl).toMatch(/<th[^>]*scope="col"[^>]*>\s*무료/);
+    expect(tbl).toMatch(/<th[^>]*scope="col"[^>]*>\s*Pro/);
+    const rows = tbl.match(/<tbody[\s\S]*?<\/tbody>/)![0].match(/<tr[\s\S]*?<\/tr>/g)!;
+    expect(rows.length).toBeGreaterThanOrEqual(3);
+    for (const r of rows) expect((r.match(/<t[dh][\s>]/g) ?? []).length).toBe(3);
+  });
   it('가격·환불 문구 불변 · 과장 낱말 0 · ≤ 40KB', () => {
     expect(pro).toContain('월 19,900원 Pro가 열리면 쓰겠다 — 사전 신청이에요 · 결제 약속이 아니고 지금은 돈이 나가지 않아요');
     expect(text).not.toMatch(/모든 공고|100\s*%|완벽|정확히|합격 보장|대신 판단/);

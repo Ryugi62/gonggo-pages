@@ -60,7 +60,16 @@ export const PRO_SAMPLE = {
 export const PRO_ACCURACY =
   '조항 판독 표본 10건을 공고 원문과 대조했어요 — 10건 중 10건 일치(2026-10-06, 2건은 첨부문서·공식 페이지에서 확인). 표본이 작아서 전체 공고의 정확도를 말해 주는 숫자는 아니에요.';
 
+// 무료 열 = 지금 라이브 기능(공고 상세 조항 판독·/check/ 거르기)만. Pro 열 = pricing.ts PRO_PLAN H1과 같은 약속(오픈 준비 중).
+const COMPARE_ROWS = [
+  { topic: '조항 판독', free: '공고 1건씩 열어 조항 판독 보기', pro: '답마다 근거 원문 조항 인용(자격·AI 사용·중복 수혜·업력·서약)' },
+  { topic: '내 조건으로 거르기', free: '나이·학생·지역·사업자로 거르기', pro: '내 조건(나이·지역·업력)으로 공고 전체를 한 번에 선별' },
+  { topic: '계획서 채점', free: '없음', pro: '내 계획서를 그 공고 배점표로 채점(월 5회)' },
+  { topic: '원문 대조', free: '원문 인용과 원문 링크로 직접 대조', pro: '원문 인용과 원문 링크로 직접 대조' },
+];
+
 export const PRO_COMPARE = {
-  free: { title: '무료 · 지금 쓸 수 있어요', items: ['공고 1건씩 열어 조항 판독 보기', '원문 인용과 원문 링크로 직접 대조'] },
-  pro: { title: 'Pro · 오픈 준비 중', items: ['내 조건(나이·지역·업력)으로 공고 전체를 한 번에 선별', '내 계획서를 그 공고 배점표로 채점'] },
+  rows: COMPARE_ROWS,
+  free: { title: '무료 · 지금 쓸 수 있어요', items: COMPARE_ROWS.map((r) => r.free) },
+  pro: { title: 'Pro · 오픈 준비 중', items: COMPARE_ROWS.map((r) => r.pro) },
 };

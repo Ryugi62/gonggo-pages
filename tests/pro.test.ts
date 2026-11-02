@@ -142,5 +142,8 @@ describe('§24 AC-85 /pro 판독 샘플·정확도·비교 문구', () => {
     expect(PRO_COMPARE.free.items.join(' ')).toContain('공고 1건씩');
     expect(PRO_COMPARE.pro.items.join(' ')).toContain('내 조건');
     expect(PRO_COMPARE.pro.items.join(' ')).toContain('배점');
+    expect(PRO_COMPARE.rows.length).toBeGreaterThanOrEqual(3);
+    for (const r of PRO_COMPARE.rows) expect([r.topic, r.free, r.pro].every((x) => x.length > 0)).toBe(true);
+    expect(PRO_COMPARE.pro.title).toContain('준비 중');
   });
 });

@@ -34,9 +34,12 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
         <p class="small" style="margin:8px 0 0"><a href={PRO_SAMPLE.url} target="_blank" rel="noopener nofollow">공고 원문 보기</a> · 원문과 다르면 원문이 맞아요</p>
       </section>
       <p class="acc" id="accuracy">{PRO_ACCURACY}</p>
-      <section class="cmp" id="compare" aria-label="무료와 Pro 비교">
-        <div class="col"><h3>{PRO_COMPARE.free.title}</h3><ul>{PRO_COMPARE.free.items.map((i) => <li>{i}</li>)}</ul></div>
-        <div class="col pro"><h3>{PRO_COMPARE.pro.title}</h3><ul>{PRO_COMPARE.pro.items.map((i) => <li>{i}</li>)}</ul></div>
+      <section class="cmp" id="compare" aria-labelledby="compare-h">
+        <h2 id="compare-h">무료와 Pro, 이렇게 달라요</h2>
+        <table>
+          <thead><tr><th scope="col"><span class="sr">항목</span></th><th scope="col">{PRO_COMPARE.free.title}</th><th scope="col" class="pro">{PRO_COMPARE.pro.title}</th></tr></thead>
+          <tbody>{PRO_COMPARE.rows.map((r) => <tr><th scope="row">{r.topic}</th><td>{r.free}</td><td class="pro">{r.pro}</td></tr>)}</tbody>
+        </table>
       </section>
       <p class="sub">답 옆에 공고 원문 조항을 그대로 옮겨 둬서 맞는지 직접 대조할 수 있어요. AI 사용·중복 수혜·업력·본인 창작 서약 조항은 따로 찾아 보여 주고, 원문에서 못 찾으면 「찾지 못했어요」라고 말해요.</p>
 
@@ -125,13 +128,14 @@ const description = '「이 공고, 나 내도 되나」에 결론만 말하지 
   .srows q { display: block; margin-top: 6px; font-size: 14px; }
   .srows .nf { border: 1px dashed var(--line); background: transparent; }
   .acc { margin: 12px 0 0; font-size: 14px; color: var(--sub); }
-  .cmp { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .cmp .col { padding: 14px; border-radius: 16px; background: var(--card); }
-  .cmp .col.pro { border: 2px solid var(--btn); }
-  .cmp h3 { margin: 0 0 8px; font-size: 15px; }
-  .cmp ul { margin: 0; padding-left: 18px; font-size: 14px; }
-  .cmp li { margin-bottom: 6px; }
-  @media (max-width: 420px) { .cmp { grid-template-columns: 1fr; } }
+  .cmp { margin-top: 20px; }
+  .cmp table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .cmp th, .cmp td { padding: 10px 8px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  .cmp thead th { font-size: 14px; }
+  .cmp thead th.pro { color: var(--blue-text); }
+  .cmp tbody th { font-weight: 600; width: 22%; }
+  .cmp td.pro { background: var(--card); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .price-note { margin: 6px 0 0; font-size: 15px; color: var(--sub); }
   .feat { margin: 16px 0 0; padding-left: 20px; font-size: 15px; }
   .feat li { margin-bottom: 4px; }
