@@ -4,12 +4,13 @@ import { join } from 'node:path';
 import { exportPublicListings } from '../src/application/exportPublicListings.ts';
 import { readSourceRows } from '../src/adapters/jsonlSourceReader.ts';
 import { writeListings } from '../src/adapters/listingWriter.ts';
+import { readFill } from '../src/adapters/fillStore.ts';
 import { LISTINGS_PATH, todayKst } from '../src/infrastructure/config.ts';
 
 const source = process.env.OPPS_PATH ?? join(homedir(), 'jarvis/_system/data/opportunities.jsonl');
 const today = process.env.TODAY ?? todayKst();
 const rows = readSourceRows(source);
-const { listings, stats } = exportPublicListings(rows, today);
+const { listings, stats } = exportPublicListings(rows, today, readFill('data/fill.jsonl'));
 writeListings(LISTINGS_PATH, today, listings);
 
 const by = (k: (l: (typeof listings)[number]) => string) =>

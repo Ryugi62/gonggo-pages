@@ -1,6 +1,6 @@
 import { classify } from '../domain/category.ts';
 import { parseConstraints, tagsFor } from '../domain/eligibility.ts';
-import { cleanName, decodeEntities, extractEligibility, extractOrganizer, extractPrize } from '../domain/extract.ts';
+import { cleanName, decodeEntities, extractEligibility, extractOrganizer, extractPrize, sanitizeQuote } from '../domain/extract.ts';
 import type { PublicListing, SourceRow } from '../domain/listing.ts';
 import { findForbidden, isClean } from '../domain/privacy.ts';
 import { makeSlug } from '../domain/slug.ts';
@@ -24,7 +24,8 @@ export interface ExportResult {
 }
 
 /** UC-1: 원천 행 → 공개 공고. today = YYYY-MM-DD(KST) */
-export function exportPublicListings(rows: SourceRow[], today: string): ExportResult {
+/** fill = 원문 받기로 모은 보강 인용(url → 인용, SPEC §27). note에서 자격 인용을 못 뽑은 행에만 쓴다. */
+export function exportPublicListings(rows: SourceRow[], today: string, fill: ReadonlyMap<string, string> = new Map()): ExportResult {
   const dropped: Record<DropReason, number> = { state: 0, kind: 0, expired: 0, nodate: 0, url: 0, name: 0, duplicate: 0 };
   const out: PublicListing[] = [];
   const seenUrl = new Set<string>();
@@ -55,7 +56,7 @@ export function exportPublicListings(rows: SourceRow[], today: string): ExportRe
     const note = decodeEntities(String(r.note ?? ''));
     const why = decodeEntities(String(r.why ?? ''));
     const timeM = deadline ? (r.due ?? '').match(/^\d{4}-\d{2}-\d{2}\s+(\d{1,2}:\d{2})/) : null;
-    const eligibilityQuote = extractEligibility(note);
+    const eligibilityQuote = extractEligibility(note) ?? (fill.has(url) ? sanitizeQuote(fill.get(url)!) : null);
     const constraints = parseConstraints(eligibilityQuote ?? '', name);
     const reading = readClauses({ name, note, gateQuote: r.gate_quote == null ? null : String(r.gate_quote), gate: r.gate == null ? null : String(r.gate), gateEvidence: r.gate_evidence == null ? null : String(r.gate_evidence), url });
 

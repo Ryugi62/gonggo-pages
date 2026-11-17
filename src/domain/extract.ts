@@ -18,11 +18,17 @@ function clip(s: string, max: number): string {
   return `${(sp > max * 0.6 ? cut.slice(0, sp) : cut).trim()}…`;
 }
 
+/** 자격 인용 후보 한 줄을 공개 가능한 꼴로: 공백 정리 → 내부 메모 흔적·금지 토큰 거름 → MAX_QUOTE로 자름. 못 쓰면 null. */
+export function sanitizeQuote(raw: string): string | null {
+  const q = squash(raw);
+  if (q.length < 2 || INTERNAL_QUOTE_RE.test(q) || !isClean(q)) return null;
+  return clip(q, MAX_QUOTE);
+}
+
 export function extractEligibility(note: string): string | null {
   for (const m of note.matchAll(ELIG_RE)) {
-    const q = squash(m[1]);
-    if (q.length < 2 || INTERNAL_QUOTE_RE.test(q) || !isClean(q)) continue;
-    return clip(q, MAX_QUOTE);
+    const q = sanitizeQuote(m[1]);
+    if (q) return q;
   }
   return null;
 }

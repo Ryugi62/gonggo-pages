@@ -361,3 +361,13 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-93: Given AWS 빌드 When `dist/pro/index.html` Then `#compare` 안에 `<table>` 1개, 열 머리 「무료」「Pro」, 본문 행 ≥ 3, 행마다 칸 3개. 과장 낱말 0·≤ 40KB 유지.
 **비목표**: 가격 변경 · 책임 보장 문구 · 새 기능 약속.
 **변경 이력**: v1.8 2026-11-03 §26 표 비교 추가.
+
+## 27. 자격 인용 보강 — 원문 받기(fill quote) (v1.9, 2026-11-17 — 볼트 `.scratch/data-fill-1117`)
+**목적**: 공개 내보내기 1,634건 중 854건이 자격 인용(eligibilityQuote)이 없다(메모에서 정규식으로만 뽑기 때문). 서버 렌더에 자격 칸이 있는 4곳(contestkorea·thinkcontest·linkareer·bizinfo)의 원문 마크업에서 자격 문장 인용 1개(보강 인용, **fill quote**)를 결정적으로 뽑아 채운다.
+**용어(유비쿼터스)**: 보강 인용 = fill quote · 보강 파일 = `data/fill.jsonl`(url·quote·site·fetchedAt) · 원문 받기 = `scripts/fill-eligibility.ts`(빌드와 따로 도는 일회성 수집, 런타임 아님) · 로컬 캐시 = `.cache/fill/`(원문 전문, 커밋 안 함).
+**성공 조건(숫자)**: 4곳 대상 합계 348건 중 채움 ≥ 150건(예측 목표: 보유 780 → 1,080 이상, 달성 시 사실대로 보고 · 미달이면 미달로 기록). 표본 20건 인용이 받은 원문 글자(태그 뺀)에 20/20 들어 있음.
+- AC-94: Given 사이트별 저장 마크업 조각 When `extractFillQuote(site, html)` Then contestkorea=`<h2>`(참가자격·응시자격·참여대상) 다음 `<p>` · thinkcontest=`.tit`가 참가자격인 칸의 `<li>` 이음 · linkareer=`참여대상` dt의 dd · bizinfo=사업개요 안 첫 `☞` 문장, 자격 칸이 없으면 null.
+- AC-95: Given note에서 자격 인용을 못 뽑은 행과 같은 url의 fill 행 When 내보내기 Then eligibilityQuote = fill quote(isClean·INTERNAL_QUOTE_RE·clip(MAX_QUOTE)·assertPublicSafe 통과분만). note에서 뽑았으면 fill을 쓰지 않는다.
+- AC-96: domain 추출기는 I/O를 모른다(입력 글자 → 문자열|null), 받기·파일은 scripts/adapters.
+**비목표**: AI 조항 추출 · allforyoung·unstop(앱 셸·자유 본문) · 로그인·가입·발신 · 원문 전문 커밋 · 런타임 스크래핑. 충돌 점검: 저장하는 것은 자격 문장 인용 1개와 url뿐(원문 전문 복제 없음), 빌드는 fill.jsonl만 읽는다.
+**변경 이력**: v1.9 2026-11-17 §27 추가.
