@@ -6,6 +6,7 @@ import { categorySlug, tagSlug } from '../../domain/category.ts';
 import { dDayLabel, formatDate } from '../../domain/format.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import ReadRequestEntry from '../../components/ReadRequestEntry.astro';
+import TossMiniappLink from '../../components/TossMiniappLink.astro';
 import SubscribeEntry from '../../components/SubscribeEntry.astro';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
 import { CLAUSE_LABEL } from '../../domain/clause.ts';
@@ -130,6 +131,8 @@ const jsonLd = [
   <section>
     <a class="tile" href="/check/"><b>내 조건으로 낼 수 있는 공고 찾기 →</b><span>나이·학생·지역·사업자 여부만 고르면 돼요. 입력값은 브라우저 밖으로 나가지 않아요.</span></a>
   </section>
+
+  <TossMiniappLink />
 
   {related.length > 0 && (
     <section>

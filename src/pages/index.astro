@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import ListingList from '../components/ListingList.astro';
 import CalendarSubscribe from '../components/CalendarSubscribe.astro';
+import TossMiniappLink from '../components/TossMiniappLink.astro';
 import { index, listings, categories, tags, weeks, week, generatedAt } from '../adapters/site/data.ts';
 import { weekLabel } from '../domain/format.ts';
 import { deadlineWeek } from '../application/buildSiteIndex.ts';
@@ -43,6 +44,8 @@ const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SI
     <h2>마감 임박</h2>
     <ListingList items={soon} />
   </section>
+
+  <TossMiniappLink />
 
   <section>
     <h2>누구를 위한 공고인가요</h2>

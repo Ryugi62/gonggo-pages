@@ -1,0 +1,7 @@
+---
+// SPEC §28 — 토스 미니앱 열기 링크 줄(타일 1개). 새 요청·스크립트·이미지 0.
+import { TOSS_MINIAPP_URL, TOSS_MINIAPP_COPY } from '../domain/tossLink.ts';
+---
+<section>
+  <a class="tile" href={TOSS_MINIAPP_URL} target="_blank" rel="noopener"><b>{TOSS_MINIAPP_COPY.title}</b><span>{TOSS_MINIAPP_COPY.sub}</span></a>
+</section>
