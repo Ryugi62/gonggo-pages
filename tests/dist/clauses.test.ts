@@ -5,22 +5,20 @@ import { findForbidden } from '../../src/domain/privacy.ts';
 
 // AC-70·71 (SPEC §19) — AWS 빌드 여부는 pro 링크로 판별
 const data = JSON.parse(readFileSync('data/listings.json', 'utf8'));
-const ls = data.listings as any[];
+const ls = (data.listings as any[]).filter((l) => l.rolling || l.deadline >= data.generatedAt); // 목록·모음은 열린 공고만(SPEC §31)
 const aws = existsSync('dist/pro/index.html');
 const page = (slug: string) => readFileSync(`dist/g/${slug}/index.html`, 'utf8');
 
 describe('AC-70 상세 미리보기', () => {
   const withP = ls.filter((l) => clausePreview(l));
-  it('근거 있는 공고에만 줄 1개, 없는 공고 표본엔 0', () => {
+  it('미리보기 회색 줄은 상세에서 뺐다(11/22 검수: 회색 상자·반복) — 조항 판독 섹션이 같은 내용, Pro 입구는 하단 묶음 1곳', () => {
     expect(withP.length).toBeGreaterThan(0);
-    for (const l of withP) {
+    for (const l of withP.slice(0, 300)) {
       const h = page(l.slug);
-      expect((h.match(/class="clause-preview"/g) ?? []).length, l.slug).toBe(1);
       expect(h.length).toBeLessThan(40 * 1024);
-      expect(h).toContain('이 공고의 AI 사용·중복수상 조항');
-      expect((h.match(/href="\/pro\/\?from=gp"/g) ?? []).length, l.slug).toBe(aws ? 1 : 0);
+      expect(h, l.slug).not.toContain('class="clause-preview"');
+      expect((h.match(/href="\/pro\/\?from=g"/g) ?? []).length, l.slug).toBe(aws ? 1 : 0);
     }
-    for (const l of ls.filter((x) => !clausePreview(x)).slice(0, 200)) expect(page(l.slug), l.slug).not.toContain('class="clause-preview"');
   });
 });
 

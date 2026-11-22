@@ -11,7 +11,7 @@ import Chevron from '../../components/Chevron.astro';
 import { readCardOf } from '../../adapters/site/readCards.ts';
 import SubscribeEntry from '../../components/SubscribeEntry.astro';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
-import { CLAUSE_LABEL } from '../../domain/clause.ts';
+import { CLAUSE_LABEL, dedupeClauses } from '../../domain/clause.ts';
 import { deadlineEvent, googleAddUrl } from '../../domain/ics.ts';
 import { searchTitle, searchDescription, listingFaq, faqJsonLd, aiUseSentence, CLAUSE_QUESTION } from '../../domain/searchLanding.ts';
 
@@ -31,9 +31,7 @@ const faq = listingFaq(l);
 const dd = l.deadline ? dDay(l.deadline, generatedAt) : null;
 const heroTone = dd === null ? '' : dd < 0 ? 'closed' : dd <= 3 ? 'soon' : '';
 // 자격 인용과 같은 문장(말줄임만 다른 경우 포함)은 조항 판독에서 한 번 더 싣지 않는다
-const norm = (t: string) => t.replace(/…$/, '').replace(/\s+/g, ' ').trim();
-const eq = l.eligibilityQuote ? norm(l.eligibilityQuote) : '';
-const clauses = l.clauses.filter((c) => !eq || !(norm(c.quote).startsWith(eq.slice(0, 40)) || eq.startsWith(norm(c.quote).slice(0, 40))));
+const clauses = dedupeClauses(l.clauses, l.eligibilityQuote);
 const heroMeta = [l.organizer, l.prize].filter(Boolean).join(' · ');
 const catSlug = categorySlug(l.category);
 const openCat = index.byCategory.get(l.category)?.length ? `/c/${catSlug}/` : '/';
@@ -85,7 +83,7 @@ const jsonLd = [
   )}
 
   <section>
-    <h2>{closed ? '누가 낼 수 있었나요?' : '누가 낼 수 있나요?'}</h2>
+    <h2>누가 낼 수 있나요?</h2>
     {l.tags.length > 0 && (
       <ul class="chips">{l.tags.map((t) => <li><a class="chip" href={`/t/${tagSlug(t)}/`}>{t}</a></li>)}</ul>
     )}

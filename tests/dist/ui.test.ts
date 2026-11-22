@@ -44,10 +44,10 @@ describe('SPEC §8 UI 수용기준 — 자동 검사 가능 항목', () => {
   });
   it('6 숫자 먼저: 상세 첫 카드 = D-n(.big ≥28px)', () => {
     const s = read(pages.detail);
-    const card = s.indexOf('aria-label="마감까지 남은 날"');
+    const card = s.indexOf('class="hero-d"');
     expect(card).toBeGreaterThan(0);
-    expect(s.slice(card, card + 300)).toMatch(/class="big"/);
-    expect(css(s)).toMatch(/\.big\{[^}]*font-size:32px/);
+    expect(s.slice(card, card + 300)).toMatch(/class="bd lg/); // 회색 큰 글자 대신 Badge(11/22 검수)
+    expect(css(s)).toMatch(/\.bd\{[^}]*border-radius:8px/);
   });
   it('6 숫자 먼저(/pro): 가격 카드가 질문 목록보다 앞 — 첫 화면 안', () => {
     if (!aws) return;

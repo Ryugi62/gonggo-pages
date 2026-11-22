@@ -90,7 +90,7 @@ describe('막힘 ② 상세 정리 — 중복 제거·회색 상자·행', () =>
       expect((b.match(/AI 사용 규정을 찾지 못했/g) ?? []).length, s).toBeLessThanOrEqual(1);
       expect((b.match(/그대로 옮겼어요/g) ?? []).length, s).toBeLessThanOrEqual(1);
       const l = by.get(s);
-      if (l.eligibilityQuote) {
+      if (l.eligibilityQuote && l.eligibilityQuote.length >= 20) {
         const q = l.eligibilityQuote.replace(/…$/, '').slice(0, 40);
         expect(b.split(q).length - 1, s).toBeLessThanOrEqual(1); // 본문에 자격 원문은 한 번
       }

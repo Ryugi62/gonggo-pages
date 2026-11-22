@@ -2,6 +2,7 @@
 // 답은 공고 원문 인용이나 「찾지 못했어요」뿐 — 우리가 지어낸 결론은 싣지 않는다.
 import type { PublicListing } from './listing.ts';
 import type { AiUseVerdict, ClauseKind } from './clause.ts';
+import { dedupeClauses } from './clause.ts';
 import type { Category } from './category.ts';
 
 export interface FaqItem { q: string; a: string }
@@ -81,7 +82,7 @@ export function listingFaq(l: PublicListing): FaqItem[] {
   const ai = l.clauses.find((c) => c.kind === 'AI_USE');
   out.push({ q: CLAUSE_QUESTION.AI_USE, a: ai ? `${aiUseSentence(l.aiUse)} ${quoted(ai.quote)}` : aiUseSentence(l.aiUse) });
   const seen = new Set<ClauseKind>(['ELIGIBILITY', 'AI_USE']);
-  for (const c of l.clauses) {
+  for (const c of dedupeClauses(l.clauses, l.eligibilityQuote)) {
     if (seen.has(c.kind)) continue;
     seen.add(c.kind);
     out.push({ q: CLAUSE_QUESTION[c.kind], a: quoted(c.quote) });

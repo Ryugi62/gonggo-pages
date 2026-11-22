@@ -152,3 +152,15 @@ export function readClauses(src: ClauseSource): ClauseReading {
   }
   return { clauses, aiUse: deriveAiUse(clauses) };
 }
+
+const normQuote = (t: string) => t.replace(/…$/, '').replace(/\s+/g, ' ').trim();
+/** 자격 인용과 같은 문장(말줄임만 다른 경우 포함)인 조항은 한 번 더 싣지 않는다 — AI 사용 조항은 늘 남긴다(SPEC §31, 11/22 검수 3/3: 팀 구성 = 자격 원문 되풀이) */
+export function dedupeClauses<T extends { kind: string; quote: string }>(clauses: T[], eligibilityQuote: string | null): T[] {
+  const eq = eligibilityQuote ? normQuote(eligibilityQuote) : '';
+  if (!eq) return clauses;
+  return clauses.filter((c) => {
+    if (c.kind === 'AI_USE') return true;
+    const q = normQuote(c.quote);
+    return !(q.startsWith(eq.slice(0, 40)) || eq.startsWith(q.slice(0, 40)));
+  });
+}

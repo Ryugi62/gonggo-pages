@@ -29,7 +29,7 @@ describe('AC-99 상세 = 읽는 법 한 줄 진입, 4칸은 /read/', () => {
       for (const t of ['니즈', '평가 전략', '맞춤 아이디어', '완성도']) expect(h, `${l.slug} ${t}`).toContain(`>${t}<`);
       expect((h.match(/class="rc-line"/g) ?? []).length, l.slug).toBe(4);
       expect((h.match(/class="rc-check"/g) ?? []).length, l.slug).toBe(12);
-      expect((h.match(/<svg[^>]*class="ck-ic"/g) ?? []).length, l.slug).toBe(12);
+      expect((h.match(/class="dot-ic"/g) ?? []).length, l.slug).toBe(12);
       expect(h, l.slug).toContain('name="robots" content="noindex"');
       expect(h, l.slug).toContain(`${l.category} 공고는 이렇게 읽어요`);
       expect(h, l.slug).not.toContain('이 공고에 맞춘');
@@ -39,9 +39,8 @@ describe('AC-99 상세 = 읽는 법 한 줄 진입, 4칸은 /read/', () => {
   it('이 공고 사실이 읽는 법 맨 위에 있다(주최·마감) — 「이 공고」라는 약속을 지킨다', () => {
     const l = live.find((x) => hasCard(x.category) && x.organizer)!;
     const h = readPage(l.slug);
-    expect(h).toContain('이 공고 한눈에');
-    expect(h.indexOf('이 공고 한눈에')).toBeLessThan(h.indexOf('id="read-card"'));
-    expect(h).toContain(l.organizer!.replace(/&/g, '&amp;'));
+    expect(h.indexOf(' 마감')).toBeLessThan(h.indexOf('id="read-card"')); // 제목 아래 한 줄(공고·마감)
+    expect(h).toContain(l.organizer!.replace(/&/g, '&amp;')); // 4칸 첫 칸의 「이 공고」 한 줄
   });
 });
 

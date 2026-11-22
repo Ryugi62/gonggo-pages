@@ -94,7 +94,8 @@ describe('Pro §5 조항 판독 블록', () => {
     const q = l.clauses.find((c: any) => c.kind === 'ORIGINALITY_PLEDGE' || c.kind === 'AI_USE').quote;
     expect(page).toContain(q.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;').slice(0, 20));
     // 배지가 D-day 카드보다 앞(첫 화면)
-    expect(page.indexOf('AI 초안 사용 불가')).toBeLessThan(page.indexOf('aria-label="마감까지 남은 날"'));
+    expect(page.indexOf('AI 초안 사용 불가')).toBeGreaterThan(page.indexOf('class="hero-d"'));
+    expect(page.indexOf('AI 초안 사용 불가')).toBeLessThan(page.indexOf('누가 낼 수 있나요?', page.indexOf('<body')));
   });
   it('§5-2 AI 문장 없는 공고: 단정하지 않는 문구, 「허용」 표시 없음', () => {
     const l = data.listings.find((x: any) => x.aiUse === 'UNSTATED' && x.clauses.length > 0);
@@ -156,12 +157,10 @@ describe('AC-48 IndexNow 키 파일', () => {
 describe('AC-55·56·57 AI 검색 인용 장치(SPEC §17)', () => {
   const ls = data.listings as any[];
   const unesc = (s: string) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
-  it('상세 100%: h1 다음 첫 p.lead = leadSummary, AI 질문 FAQ 100%', () => {
+  it('상세 100%: 제목 되풀이 리드 없음(11/22 검수), AI 질문 FAQ 100%', () => {
     for (const l of ls) {
       const page = readFileSync(`dist/g/${l.slug}/index.html`, 'utf8');
-      const m = /<\/h1>\s*<p class="lead">([^<]*)<\/p>/.exec(page);
-      expect(m, l.slug).not.toBeNull();
-      expect(unesc(m![1]), l.slug).toBe(leadSummary(l).join(' '));
+      expect(page, l.slug).not.toContain('class="lead"');
       const faq = JSON.parse([...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((x) => x[1]).find((x) => x.includes('FAQPage'))!);
       const names = faq.mainEntity.map((q: any) => q.name);
       expect(names, l.slug).toContain('AI(챗GPT)로 쓴 내용을 내도 되나요?');
