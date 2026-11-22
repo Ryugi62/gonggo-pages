@@ -63,7 +63,7 @@ describe('AC-78 처리방침 · AC-79 nginx', () => {
   it('개인정보처리방침에 공고 판독 요청 목적 1줄', () => {
     const s = readFileSync('src/pro/privacy.astro', 'utf8');
     expect(s.match(/공고 판독 요청/g)?.length).toBe(1);
-    expect(s).toContain('2026-11-21');
+    expect(s).toContain('받은 날부터 30일 뒤');
   });
   it('nginx에 새 location 없음', () => {
     const n = readFileSync('deploy/aws/nginx.conf', 'utf8');

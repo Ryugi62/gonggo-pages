@@ -1,4 +1,4 @@
-import { listings, generatedAt } from '../../../adapters/site/data.ts';
+import { allListings as listings, generatedAt } from '../../../adapters/site/data.ts';
 import { deadlineEvent, serializeCalendar } from '../../../domain/ics.ts';
 import type { PublicListing } from '../../../domain/listing.ts';
 

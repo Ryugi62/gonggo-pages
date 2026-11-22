@@ -1,0 +1,20 @@
+---
+// SPEC §31 — 비슷한 공고: 회색 카드가 아니라 구분선 목록 행(TDS ListRow) + 왼쪽 D-day 배지. 열린 공고만 넘겨받는다.
+import type { PublicListing } from '../domain/listing.ts';
+import { dDay, dDayLabel, formatDate } from '../domain/format.ts';
+import { generatedAt } from '../adapters/site/data.ts';
+interface Props { items: PublicListing[] }
+const { items } = Astro.props;
+const tone = (l: PublicListing) => (l.deadline ? (dDay(l.deadline, generatedAt) < 0 ? 'closed' : dDay(l.deadline, generatedAt) <= 3 ? 'soon' : '') : '');
+const meta = (l: PublicListing) => [l.category, l.deadline ? `${formatDate(l.deadline)} 마감` : '상시 모집', l.prize].filter(Boolean).join(' · ');
+---
+<ul class="rel rows">
+  {items.map((l) => (
+    <li>
+      <a class="row" href={`/g/${l.slug}/`}>
+        {l.deadline ? <span class={`bd ${tone(l)}`} data-deadline={l.deadline}>{dDayLabel(l.deadline, generatedAt)}</span> : <span class="bd">상시</span>}
+        <span class="rt"><b>{l.name}</b><span>{meta(l)}</span></span>
+      </a>
+    </li>
+  ))}
+</ul>

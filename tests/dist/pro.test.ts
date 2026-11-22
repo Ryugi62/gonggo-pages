@@ -62,7 +62,7 @@ describe.skipIf(!aws)('§12 /pro/ 산출물 (AWS)', () => {
   });
   it('AC-31 처리방침·환불·약관 필수 항목', () => {
     const pv = read('dist/privacy/index.html');
-    for (const w of ['이메일', '접속 기록', '2026-11-21', 'Amazon Web Services', '서울', '열람', '삭제']) expect(pv, w).toContain(w);
+    for (const w of ['이메일', '접속 기록', '받은 날부터 30일', 'Amazon Web Services', '서울', '열람', '삭제']) expect(pv, w).toContain(w);
     const rf = read('dist/refund/index.html');
     for (const w of ['30일', '무조건', '지금은 돈이 나가지 않아요']) expect(rf, w).toContain(w);
     expect(read('dist/terms/index.html')).toContain('계획서는 본인이 씁니다');

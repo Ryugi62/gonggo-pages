@@ -2,17 +2,19 @@
 // SPEC §29·§30 — 「공모 읽는 법」 4칸. 읽는 법 화면(/g/<slug>/read/) 전용 — 상세엔 넣지 않는다(한 화면 한 과업).
 import type { ReadCard } from '../domain/readCard.ts';
 import { AXES } from '../domain/readCard.ts';
-interface Props { card: ReadCard }
-const { card } = Astro.props;
+import type { Axis } from '../domain/readCard.ts';
+interface Props { card: ReadCard; facts?: Record<Axis, string> }
+const { card, facts } = Astro.props;
 ---
 <section id="read-card" aria-labelledby="rc-h">
   <h2 id="rc-h">4칸으로 훑어봐요</h2>
   {AXES.map((a) => (
     <div class="rc-axis">
       <h3>{a.label}</h3>
+      {facts && <p class="rc-fact">{facts[a.key]}</p>}
       <p class="rc-line">{card.axes[a.key].line}</p>
       <ul>{card.axes[a.key].check.map((t) => (
-        <li class="rc-check"><svg class="ck-ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>{t}</span></li>
+        <li class="rc-check"><span class="dot-ic" aria-hidden="true"></span><span>{t}</span></li>
       ))}</ul>
     </div>
   ))}
@@ -23,5 +25,6 @@ const { card } = Astro.props;
   .rc-line { margin: 0 0 8px; font-size: 15px; line-height: 1.55; color: var(--sub); }
   .rc-axis ul { margin: 0; padding: 0; list-style: none; }
   .rc-check { display: flex; align-items: center; gap: 8px; min-height: 32px; color: var(--muted); font-size: 13px; }
-  .ck-ic { flex: none; color: var(--blue); }
+  .dot-ic { flex: none; width: 4px; height: 4px; border-radius: 50%; background: var(--muted); margin: 0 8px; }
+  .rc-fact { margin: 0 0 8px; font-size: 15px; line-height: 1.55; font-weight: 600; color: var(--text); }
 </style>

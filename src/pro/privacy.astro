@@ -3,7 +3,7 @@
 import Layout from '../layouts/Layout.astro';
 import { PRO_ORIGIN, OPERATOR } from '../infrastructure/config.ts';
 ---
-<Layout title="개인정보처리방침 | 공고콕" description="공고콕이 받는 개인정보(이메일 1개·접속 기록), 쓰는 곳, 보관 기간(2026-11-21 파기)을 안내해요." path="/privacy/" origin={PRO_ORIGIN} analytics={false} legal>
+<Layout title="개인정보처리방침 | 공고콕" description="공고콕이 받는 개인정보(이메일 1개·접속 기록), 쓰는 곳, 보관 기간(받은 날부터 30일 뒤 파기)을 안내해요." path="/privacy/" origin={PRO_ORIGIN} analytics={false} legal>
   <article class="doc">
     <h1>개인정보처리방침</h1>
     <p class="small">시행일 2026-10-07 · 운영자 {OPERATOR.name}</p>
@@ -24,7 +24,7 @@ import { PRO_ORIGIN, OPERATOR } from '../infrastructure/config.ts';
     </ul>
 
     <h2>3. 보관 기간과 파기</h2>
-    <p>이메일과 접속 기록은 <strong>2026-11-21</strong>까지 보관하고 지체 없이 지워요. 단 메일 구독의 이메일·관심 분야는 구독을 끊는 날(답장으로 「수신 거부」라고 보내면 그날 지워요) 또는 <strong>2027-11-02</strong> 중 빠른 날까지 보관해요. 신청 취소나 삭제를 요청하면 그날 바로 지워요. Pro 결제로 이어지면 결제 때 따로 다시 동의를 받아요. 지울 때는 서버 파일에서 해당 줄을 복구할 수 없게 삭제해요.</p>
+    <p>이메일과 접속 기록은 <strong>받은 날부터 30일</strong> 동안만 보관하고 지체 없이 지워요. 단 메일 구독의 이메일·관심 분야는 구독을 끊는 날(답장으로 「수신 거부」라고 보내면 그날 지워요) 또는 <strong>2027-11-02</strong> 중 빠른 날까지 보관해요. 신청 취소나 삭제를 요청하면 그날 바로 지워요. Pro 결제로 이어지면 결제 때 따로 다시 동의를 받아요. 지울 때는 서버 파일에서 해당 줄을 복구할 수 없게 삭제해요.</p>
 
     <h2>4. 제3자 제공</h2>
     <p>다른 회사나 사람에게 제공하지 않아요.</p>

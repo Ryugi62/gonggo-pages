@@ -51,7 +51,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
   <header class="top">
     <div class="wrap top-in">
       <a class="brand" href="/" aria-label={`${SITE_NAME} 홈`}><span class="dot" aria-hidden="true"></span>{SITE_NAME}</a>
-      <nav aria-label="주요 메뉴"><a href="/check/">내가 낼 수 있나?</a></nav>
+      <nav aria-label="주요 메뉴"><a href="/check/">내가 낼 수 있나요?</a></nav>
     </div>
   </header>
   <main class="wrap">
@@ -83,7 +83,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
     document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-intent]');if(!a)return;try{window.va&&window.va('pageview',{route:'/intent/cal',path:a.getAttribute('data-intent')})}catch(x){}});
   </script>
   <script is:inline>
-    (function(){var t=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date());var at=function(d){return Date.parse(d+'T12:00:00Z')};document.querySelectorAll('[data-deadline]').forEach(function(el){var n=Math.round((at(el.getAttribute('data-deadline'))-at(t))/864e5);el.textContent=n<0?'마감':n===0?'D-day':'D-'+n;if(n<0)el.classList.add('closed')})})();
+    (function(){var t=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date());var at=function(d){return Date.parse(d+'T12:00:00Z')};document.querySelectorAll('[data-deadline]').forEach(function(el){var n=Math.round((at(el.getAttribute('data-deadline'))-at(t))/864e5);if(!(el.classList.contains('lg')&&n<0))el.textContent=n<0?'마감':n===0?'D-day':'D-'+n;el.classList.toggle('closed',n<0);el.classList.toggle('soon',n>=0&&n<=3)})})();
   </script>
 </body>
 </html>
@@ -132,8 +132,9 @@ const ogImage = new URL('/og.png', Astro.site).href;
   .badge { display: inline-block; padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 700; margin: 0; }
   .badge.no { background: var(--no-bg); color: var(--no-fg); }
   .badge.ok { background: var(--ok-bg); color: var(--ok-fg); }
-  .clauses { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .clauses li { background: var(--card); border-radius: 16px; padding: 16px; }
+  .clauses { list-style: none; margin: 0; padding: 0; }
+  .clauses li { padding: 16px 0; border-top: 1px solid var(--line); }
+  .clauses li:first-child { border-top: 0; }
   .clauses .ck { display: block; font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 4px; }
   .clauses q { quotes: '「' '」'; }
   .cq { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
@@ -144,7 +145,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
   .item .dd.closed { color: var(--muted); }
   .item .t { font-weight: 600; font-size: 16px; line-height: 1.4; display: block; }
   .item .m { font-size: 13px; color: var(--muted); display: block; margin-top: 4px; }
-  blockquote { margin: 12px 0 0; padding: 16px 20px; border-left: 4px solid var(--blue); background: var(--card); border-radius: 0 16px 16px 0; font-size: 16px; }
+  blockquote { margin: 12px 0 0; padding: 0 0 0 16px; border-left: 4px solid var(--blue); font-size: 16px; }
   dl.facts { display: grid; grid-template-columns: 88px 1fr; gap: 8px 12px; margin: 0; }
   dl.facts dt { color: var(--muted); font-size: 15px; }
   dl.facts dd { margin: 0; font-size: 16px; }
@@ -164,6 +165,24 @@ const ogImage = new URL('/og.png', Astro.site).href;
   .foot p { margin: 0 0 8px; }
   .foot strong { color: var(--sub); }
   .foot a { color: var(--muted); }
+  /* Badge(TDS) — D-day·마감 상태. 임박(≤3일)은 빨강, 마감은 흐린 회색 */
+  .bd { display: inline-flex; justify-content: center; align-items: center; flex: none; min-width: 56px; padding: 4px 8px; border-radius: 8px; font-size: 13px; font-weight: 700; line-height: 1.4; background: var(--blue-weak); color: var(--blue-text); }
+  .bd.soon { background: var(--no-bg); color: var(--no-fg); }
+  .bd.closed { background: var(--card); color: var(--muted); }
+  .bd.lg { font-size: 15px; padding: 4px 12px; }
+  /* 마감 요약 — 회색 상자 없이 배지 + 한 줄 */
+  .hero-d { margin-top: 16px; }
+  .hero-d .hd-t { margin: 8px 0 0; font-size: 17px; line-height: 1.5; }
+  .hero-d .hd-t b { display: block; }
+  .hero-d .hd-t span { display: block; font-size: 14px; color: var(--sub); }
+  .hd-cal { display: flex; flex-wrap: wrap; gap: 0 16px; margin: 0; }
+  .tl { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; text-decoration: none; }
+  .rel { list-style: none; padding: 0; margin: 0; }
+  .rel .row .rt b { font-size: 16px; }
+  summary { list-style: none; justify-content: space-between; }
+  summary::-webkit-details-marker { display: none; }
+  summary .go { color: var(--muted); transition: transform .15s ease; }
+  details[open] summary .go { transform: rotate(90deg); }
   /* ListRow — 하단 「더 해 볼 수 있어요」 묶음·읽는 법 진입 (TDS ListRow 대응: 제목 16 · 보조 13 · 오른쪽 화살표 24) */
   .rows { margin: 24px 0 0; }
   #more-h + .rows { margin-top: 0; }

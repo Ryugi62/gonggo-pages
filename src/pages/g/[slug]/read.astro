@@ -3,12 +3,13 @@
 // 검색 착지는 상세(/g/<slug>/)가 맡으므로 이 화면은 noindex.
 import Layout from '../../../layouts/Layout.astro';
 import ReadCard from '../../../components/ReadCard.astro';
-import { listings, generatedAt } from '../../../adapters/site/data.ts';
+import { allListings as listings, generatedAt } from '../../../adapters/site/data.ts';
 import { readCardOf } from '../../../adapters/site/readCards.ts';
 import { appLinkOf } from '../../../adapters/site/appSlugs.ts';
 import { readCardTitle, APP_CARD_PING } from '../../../domain/readCard.ts';
 import { TOSS_MINIAPP_URL, TOSS_APP_COPY } from '../../../domain/tossLink.ts';
 import { formatDate } from '../../../domain/format.ts';
+import { axisFacts } from '../../../domain/readFacts.ts';
 import type { PublicListing } from '../../../domain/listing.ts';
 
 export function getStaticPaths() {
@@ -20,6 +21,7 @@ const card = readCardOf(l.category)!;
 const title = readCardTitle(card.kind);
 const deep = appLinkOf(l.slug);
 const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
+const facts = axisFacts(l, generatedAt);
 const cta = {
   href: TOSS_MINIAPP_URL,
   label: deep ? TOSS_APP_COPY.specific : TOSS_APP_COPY.generic,
@@ -28,22 +30,18 @@ const cta = {
 };
 ---
 <Layout title={`${title} — ${l.name}`} description={`${l.name}를 읽을 때 볼 4칸 — 니즈·평가 전략·맞춤 아이디어·완성도.`} path={`/g/${l.slug}/read/`} noindex bottomCta={cta}>
-  <nav class="crumb" aria-label="위치"><a href={`/g/${l.slug}/`}>공고 상세로 돌아가기</a></nav>
+  <nav class="crumb back" aria-label="위치"><a href={`/g/${l.slug}/`} data-back>공고 상세로 돌아가기</a></nav>
   <img class="hero" src="https://static.toss.im/3d-emojis/u1F4DD.png" alt="" width="40" height="40" decoding="async" />
   <h1>{title}</h1>
+  <p class="sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{l.name}</a> · {deadlineText} 마감{l.prize ? ` · ${l.prize}` : ''}</p>
 
-  <section aria-labelledby="fact-h">
-    <h2 id="fact-h">이 공고 한눈에</h2>
-    <dl class="facts">
-      <dt>공고</dt><dd><a href={`/g/${l.slug}/`}>{l.name}</a></dd>
-      {l.organizer && (<><dt>주최</dt><dd>{l.organizer}</dd></>)}
-      <dt>마감</dt><dd>{deadlineText}</dd>
-      <dt>상금</dt><dd>{l.prize ?? '원문에서 확인'}</dd>
-    </dl>
-  </section>
-
-  <ReadCard card={card} />
+  <ReadCard card={card} facts={facts} />
 </Layout>
+<script is:inline>
+  // 돌아가기 = 브라우저 뒤로(보던 위치 유지·왕복 고리 없음). 상세에서 온 게 아니면(직접 진입) 상세 링크 그대로.
+  document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-back]');if(!a)return;try{var r=new URL(document.referrer);if(r.origin===location.origin&&r.pathname===new URL(a.href).pathname&&history.length>1){e.preventDefault();history.back()}}catch(x){}});
+</script>
 <style is:global>
   .hero { display: block; margin: 24px 0 0; }
+  .crumb.back a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
 </style>
