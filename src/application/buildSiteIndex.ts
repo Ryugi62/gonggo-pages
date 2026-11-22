@@ -15,7 +15,7 @@ export interface SiteIndex {
   byWeek: Map<string, PublicListing[]>;
   byTag: Map<EligibilityTag, PublicListing[]>;
   rolling: PublicListing[];
-  related: (l: PublicListing) => PublicListing[];
+  related: (l: PublicListing, n?: number) => PublicListing[];
 }
 
 const order = (a: PublicListing, b: PublicListing) =>
@@ -42,8 +42,8 @@ export function buildSiteIndex(listings: PublicListing[]): SiteIndex {
   const rolling = sorted.filter((l) => l.rolling);
 
   const time = (x: PublicListing) => (x.deadline ? Date.parse(`${x.deadline}T12:00:00Z`) : Number.POSITIVE_INFINITY);
-  /** 같은 분류 → 같은 태그 → 전체 순으로, 마감일이 가까운 공고 6개 */
-  const related = (l: PublicListing): PublicListing[] => {
+  /** 같은 분류 → 같은 태그 → 전체 순으로, 마감일이 가까운 공고 n개(기본 6). 색인에 열린 공고만 넣으면 열린 것만 나온다 */
+  const related = (l: PublicListing, n = 6): PublicListing[] => {
     const t0 = time(l);
     const near = (pool: PublicListing[]) =>
       pool
@@ -53,7 +53,7 @@ export function buildSiteIndex(listings: PublicListing[]): SiteIndex {
         .map((p) => p.x);
     const picks: PublicListing[] = [];
     const pools = [byCategory.get(l.category) ?? [], ...l.tags.map((t) => byTag.get(t) ?? []), sorted];
-    for (const pool of pools) for (const x of near(pool)) if (picks.length < 6 && !picks.includes(x)) picks.push(x);
+    for (const pool of pools) for (const x of near(pool)) if (picks.length < n && !picks.includes(x)) picks.push(x);
     return picks;
   };
 

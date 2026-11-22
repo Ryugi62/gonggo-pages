@@ -10,7 +10,7 @@ describe.runIf(existsSync(path))('AC-9 실제 내보내기 파일', () => {
   const data = () => JSON.parse(raw());
   it('금지 토큰 0', () => {
     expect(findForbidden(raw())).toEqual([]);
-  });
+  }, 120_000); // 병합 뒤 3,000건+ — 금지 토큰 검사 13초
   it('허용 키만, 400건 이상', () => {
     expect(data().listings.length).toBeGreaterThanOrEqual(400);
     for (const l of data().listings) expect(Object.keys(l).sort()).toEqual([...PUBLIC_KEYS].sort());
