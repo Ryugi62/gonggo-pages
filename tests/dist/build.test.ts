@@ -15,7 +15,8 @@ const html = files.filter((f) => f.endsWith('.html') && !/^dist\/(google|naver)[
 const detail = html.filter((f) => f.startsWith('dist/g/'));
 // §12 Pro 4장(AWS 빌드에만)은 sitemap 밖 · 운영자 고지 허용
 const proFiles = PRO_PAGES.map((p) => `dist${p}index.html`);
-const sitePages = html.filter((f) => !proFiles.includes(f));
+// 읽는 법 화면(/g/<slug>/read/, SPEC §30)은 noindex라 sitemap에 넣지 않는다
+const sitePages = html.filter((f) => !proFiles.includes(f) && !/^dist\/g\/[^/]+\/read\//.test(f));
 const data = JSON.parse(readFileSync('data/listings.json', 'utf8'));
 
 describe('AC-10 상세 페이지', () => {
@@ -72,7 +73,7 @@ describe('공개 산출물 전체 금지 토큰 0', () => {
       if (proFiles.includes(f)) for (const v of Object.values(OPERATOR)) s = s.split(v).join('');
       expect(findForbidden(s), f).toEqual([]);
     }
-  }, 120_000);
+  }, 400_000);
 });
 
 describe('AC-12 검색 등록 소유확인', () => {

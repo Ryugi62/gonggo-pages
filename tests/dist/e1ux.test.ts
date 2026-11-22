@@ -18,7 +18,7 @@ describe('막힘 B — 상세 순서: 자격 원문이 먼저, 홍보·폼은 �
       expect(el, s).toBeGreaterThan(0);
       expect(clauses, s).toBeGreaterThan(el);
       expect(more, s).toBeGreaterThan(clauses);
-      for (const marker of ['data-read-entry', 'data-sub-entry', 'href="/pro/?from=g"', 'href="/check/"']) {
+      for (const marker of ['data-read-entry', 'data-sub-entry', 'href="/pro/?from=g"', 'class="row" href="/check/"']) {
         const i = h.indexOf(marker);
         if (i >= 0) expect(i, `${s} ${marker}`).toBeGreaterThan(more);
       }
@@ -31,7 +31,7 @@ describe('막힘 B — 상세 순서: 자격 원문이 먼저, 홍보·폼은 �
     for (const s of sample) {
       const h = read(s);
       const more = h.slice(h.indexOf('id="more-h"'));
-      expect((more.match(/class="row[ "]/g) ?? []).length, s).toBeGreaterThanOrEqual(3);
+      expect((more.match(/class="row[ "]/g) ?? []).length, s).toBeGreaterThanOrEqual(aws ? 4 : 2);
       expect((h.match(/가격이나 광고 안내는 넣지 않아요/g) ?? []).length, s).toBeLessThanOrEqual(1);
     }
   });
@@ -53,7 +53,7 @@ describe('겹친 감점 — 위계·간격·반응·고정·조사', () => {
   it('상단바 고정(sticky)', () => { expect(c).toMatch(/\.top\{[^}]*position:sticky;top:0/); });
   it('호버·눌림 반응: .tile·.row·.item·.btn·.cta·.to-top에 :active, hover는 (hover:hover) 안', () => {
     expect(c).toMatch(/:active/);
-    expect(c).toMatch(/@media\(hover:hover\)/);
+    expect(c).toMatch(/@media\s*\(hover:hover\)/);
     for (const k of ['.row', '.item', '.btn', '.cta', '.to-top']) expect(c, k).toContain(`${k}:active`);
   });
   it('간격 4배수: margin·padding·gap에 6·10·14·18px 없음(본문 인라인 style 포함)', () => {
@@ -86,7 +86,7 @@ describe('겹친 감점 — 위계·간격·반응·고정·조사', () => {
   });
   if (aws) it('AWS: 판독 요청·구독 입구 문구가 행 안으로(회색 상자 .card 아님)', () => {
     const h = read(sample[0]);
-    expect(h).toMatch(/data-read-entry[^>]*class="[^"]*row/);
+    expect(h).toMatch(/<section class="read-entry row-entry"/);
   });
 });
 

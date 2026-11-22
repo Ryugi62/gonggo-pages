@@ -1,0 +1,49 @@
+---
+// SPEC §30 — 공고 읽는 법 화면(/g/<slug>/read/): 한 화면 한 과업 = 이 공고 사실 + 4칸을 훑고 토스 앱으로 가기.
+// 검색 착지는 상세(/g/<slug>/)가 맡으므로 이 화면은 noindex.
+import Layout from '../../../layouts/Layout.astro';
+import ReadCard from '../../../components/ReadCard.astro';
+import { listings, generatedAt } from '../../../adapters/site/data.ts';
+import { readCardOf } from '../../../adapters/site/readCards.ts';
+import { appLinkOf } from '../../../adapters/site/appSlugs.ts';
+import { readCardTitle, APP_CARD_PING } from '../../../domain/readCard.ts';
+import { TOSS_MINIAPP_URL, TOSS_APP_COPY } from '../../../domain/tossLink.ts';
+import { formatDate } from '../../../domain/format.ts';
+import type { PublicListing } from '../../../domain/listing.ts';
+
+export function getStaticPaths() {
+  return listings.filter((l) => readCardOf(l.category)).map((l) => ({ params: { slug: l.slug }, props: { l } }));
+}
+interface Props { l: PublicListing }
+const { l } = Astro.props;
+const card = readCardOf(l.category)!;
+const title = readCardTitle(card.kind);
+const deep = appLinkOf(l.slug);
+const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
+const cta = {
+  href: TOSS_MINIAPP_URL,
+  label: deep ? TOSS_APP_COPY.specific : TOSS_APP_COPY.generic,
+  external: true,
+  attrs: { ping: APP_CARD_PING, 'data-intoss': deep ?? undefined },
+};
+---
+<Layout title={`${title} — ${l.name}`} description={`${l.name}를 읽을 때 볼 4칸 — 니즈·평가 전략·맞춤 아이디어·완성도.`} path={`/g/${l.slug}/read/`} noindex bottomCta={cta}>
+  <nav class="crumb" aria-label="위치"><a href={`/g/${l.slug}/`}>공고 상세로 돌아가기</a></nav>
+  <img class="hero" src="https://static.toss.im/3d-emojis/u1F4DD.png" alt="" width="40" height="40" decoding="async" />
+  <h1>{title}</h1>
+
+  <section aria-labelledby="fact-h">
+    <h2 id="fact-h">이 공고 한눈에</h2>
+    <dl class="facts">
+      <dt>공고</dt><dd><a href={`/g/${l.slug}/`}>{l.name}</a></dd>
+      {l.organizer && (<><dt>주최</dt><dd>{l.organizer}</dd></>)}
+      <dt>마감</dt><dd>{deadlineText}</dd>
+      <dt>상금</dt><dd>{l.prize ?? '원문에서 확인'}</dd>
+    </dl>
+  </section>
+
+  <ReadCard card={card} />
+</Layout>
+<style is:global>
+  .hero { display: block; margin: 24px 0 0; }
+</style>

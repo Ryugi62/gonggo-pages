@@ -7,7 +7,7 @@ import { dDayLabel, formatDate } from '../../domain/format.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import ReadRequestEntry from '../../components/ReadRequestEntry.astro';
 import TossMiniappLink from '../../components/TossMiniappLink.astro';
-import ReadCard from '../../components/ReadCard.astro';
+import Chevron from '../../components/Chevron.astro';
 import { readCardOf } from '../../adapters/site/readCards.ts';
 import SubscribeEntry from '../../components/SubscribeEntry.astro';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
@@ -23,7 +23,8 @@ export function getStaticPaths() {
 interface Props { l: PublicListing }
 const { l } = Astro.props;
 const related = index.related(l);
-const readCard = readCardOf(l.category); // SPEC §29 — 카드가 있는 유형은 카드 링크가 기존 타일을 대신한다(AC-100)
+const readCard = readCardOf(l.category); // SPEC §30 — 4칸은 /g/<slug>/read/ 별도 화면, 상세엔 한 줄 진입(장학은 4칸 데이터가 없어 진입 행 없음)
+const closed = !!l.deadline && l.deadline < generatedAt; // 마감된 공고는 비슷한 열린 공고를 읽는 법 행보다 먼저 보인다
 const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
 // SPEC §15 — 고객이 검색하는 말(「받을 수 있나요?」「중복 수혜」)로 제목·설명, 화면 질문 = FAQ 구조화 데이터
 const title = searchTitle(l);
@@ -55,17 +56,15 @@ const jsonLd = [
   <nav class="crumb" aria-label="위치"><a href="/">홈</a> › <a href={`/c/${catSlug}/`}>{l.category}</a></nav>
   <h1>{l.name}</h1>
   <p class="lead">{lead}</p>
-  {preview && <p class="clause-preview">{preview}{IS_AWS && <> <a href="/pro/?from=gp">내 계획서로 채점받기 (Pro, 준비 중) →</a></>}</p>}
+  {preview && <p class="clause-preview">{preview}{IS_AWS && <> <a href="/pro/?from=gp">내 계획서로 채점받기 (Pro)</a></>}</p>}
   <p class="sub">신청 자격·조항 원문 정리{l.organizer ? ` · ${l.organizer}` : ''}</p>
   {l.aiUse === 'FORBIDDEN' && <p class="badge no" style="margin-top:12px">AI 초안 사용 불가</p>}
   {l.aiUse === 'ALLOWED' && <p class="badge ok" style="margin-top:12px">원문에 AI 활용 가능 문장이 있어요</p>}
 
   <section class="card" style="margin-top:20px" aria-label="마감까지 남은 날">
     {l.deadline ? <div class="big" data-deadline={l.deadline}>{dDayLabel(l.deadline, generatedAt)}</div> : <div class="big">상시</div>}
-    <p style="margin:6px 0 0;font-size:16px">{deadlineText} 마감{l.prize ? ` · ${l.prize}` : ''}</p>
+    <p style="margin:8px 0 0;font-size:16px">{deadlineText} 마감{l.prize ? ` · ${l.prize}` : ''}</p>
   </section>
-
-  {IS_AWS && <ReadRequestEntry />}
 
   <section>
     <h2>누가 낼 수 있나요?</h2>
@@ -82,6 +81,23 @@ const jsonLd = [
     )}
   </section>
 
+  {closed && related.length > 0 && (
+    <section>
+      <h2>비슷한 공고</h2>
+      <ListingList items={related} />
+    </section>
+  )}
+
+  {readCard && (
+    <section class="rows" aria-label="공고 읽는 법">
+      <a class="row" href={`/g/${l.slug}/read/`}>
+        <img class="ic" src="https://static.toss.im/3d-emojis/u1F4DD.png" alt="" width="40" height="40" loading="lazy" decoding="async" />
+        <span class="rt"><b>{l.category} 공고 읽는 법 4칸</b><span>니즈·평가 전략·맞춤 아이디어·완성도</span></span>
+        <Chevron />
+      </a>
+    </section>
+  )}
+
   <section aria-labelledby="clauses-h">
     <h2 id="clauses-h">조항 판독</h2>
     <p class="cq">{CLAUSE_QUESTION.AI_USE}</p>
@@ -93,7 +109,7 @@ const jsonLd = [
     ) : (
       <p class="small">중복 수혜·현장 참석·팀 구성 같은 조항 문장을 아직 정리하지 못했어요.</p>
     )}
-    <p class="small" style="margin:8px 0 0">공고 원문 문장을 그대로 옮겼어요. 원문과 다르면 원문이 맞아요 — <a href={l.url} target="_blank" rel="noopener">원문 공고 열기</a></p>
+    <p class="small" style="margin:8px 0 0">공고 원문 문장을 그대로 옮겼어요.</p>
   </section>
 
   <section>
@@ -103,7 +119,7 @@ const jsonLd = [
       {l.organizer && (<><dt>주최</dt><dd>{l.organizer}</dd></>)}
       <dt>마감</dt><dd>{deadlineText}</dd>
       <dt>상금</dt><dd>{l.prize ?? '원문에서 확인'}</dd>
-      <dt>원문</dt><dd><a href={l.url} target="_blank" rel="noopener">공고 원문 열기</a></dd>
+      <dt>원문</dt><dd><a href={l.url} target="_blank" rel="noopener">원문 공고 열기</a></dd>
     </dl>
   </section>
 
@@ -114,39 +130,33 @@ const jsonLd = [
         <a class="btn secondary block" href={googleAddUrl(calEvent)} target="_blank" rel="noopener" data-intent={`/intent/cal/add/${l.slug}`}>구글 캘린더</a>
         <a class="btn secondary block" href={`/cal/g/${l.slug}.ics`} data-intent={`/intent/cal/add/${l.slug}`}>애플·아웃룩</a>
       </div>
-      <p class="small" style="margin:8px 0 0">일정에 이 페이지 링크가 같이 들어가요. 애플·아웃룩 파일은 마감 3일 전에 알려 줘요.</p>
+      <p class="small" id="cal-note" role="status" aria-live="polite" style="margin:8px 0 0">일정에 이 페이지 링크가 같이 들어가요. 애플·아웃룩 파일은 마감 3일 전에 알려 줘요.</p>
     </section>
   )}
 
-  <section>
-    <button class="btn secondary block" type="button" id="alert-btn" data-slug={l.slug}>마감 알림 받기 (준비 중)</button>
-    <p class="small" id="alert-note" style="margin:8px 0 0">아직 알림을 보내지 않아요. 누르면 이 브라우저에만 관심 표시가 남고, 어디에도 전송되지 않아요.</p>
-  </section>
-
-  {IS_AWS && <SubscribeEntry />}
-
-  {IS_AWS && (
-    <section>
-      <a class="tile" href="/pro/?from=g"><b>이 공고 배점으로 내 계획서 채점받기 (Pro) →</b><span>오픈 준비 중 · 사전 신청은 돈이 나가지 않아요</span></a>
-    </section>
-  )}
-
-  <section>
-    <a class="tile" href="/check/"><b>내 조건으로 낼 수 있는 공고 찾기 →</b><span>나이·학생·지역·사업자 여부만 고르면 돼요. 입력값은 브라우저 밖으로 나가지 않아요.</span></a>
-  </section>
-
-  {readCard ? <ReadCard card={readCard} /> : <TossMiniappLink />}
-
-  {related.length > 0 && (
+  {!closed && related.length > 0 && (
     <section>
       <h2>비슷한 공고</h2>
       <ListingList items={related} />
     </section>
   )}
 
+  <section aria-labelledby="more-h">
+    <h2 id="more-h">더 해 볼 수 있어요</h2>
+    <div class="rows">
+      {IS_AWS && <ReadRequestEntry />}
+      {IS_AWS && <SubscribeEntry />}
+      {IS_AWS && (
+        <a class="row" href="/pro/?from=g"><span class="rt"><b>이 공고 배점으로 내 계획서 채점받기 (Pro)</b><span>사전 신청은 돈이 나가지 않아요</span></span><Chevron /></a>
+      )}
+      <a class="row" href="/check/"><span class="rt"><b>내 조건으로 낼 수 있는 공고 찾기</b><span>나이·학생·지역·사업자 여부만 고르면 돼요</span></span><Chevron /></a>
+      <TossMiniappLink slug={l.slug} />
+    </div>
+  </section>
+
   <details>
     <summary>이 정리는 어떻게 만들었나요</summary>
-    <p class="sub">{generatedAt} 기준으로 공개된 공고 원문을 보고 마감·상금·자격 문장을 옮겨 정리했어요. 공고는 수정될 수 있으니 지원 전 <a href={l.url} target="_blank" rel="noopener">원문 공고</a>를 꼭 확인해 주세요. <a href="/about/">정리 기준 자세히</a></p>
+    <p class="sub">{generatedAt} 기준으로 공개된 공고 원문을 보고 마감·상금·자격 문장을 옮겨 정리했어요. <a href="/about/">정리 기준 자세히</a></p>
   </details>
 </Layout>
 <script is:inline define:vars={{ slug: l.slug }}>
@@ -154,8 +164,6 @@ const jsonLd = [
   if(/[?&]from=cal(&|$)/.test(location.search))window.addEventListener('load',function(){setTimeout(function(){try{window.va&&window.va('pageview',{route:'/intent/cal',path:'/intent/cal/return/'+slug})}catch(e){}},1500)});
 </script>
 <script is:inline>
-  (function(){var b=document.getElementById('alert-btn');if(!b)return;var k='gk:alert-intent';var s=b.getAttribute('data-slug');
-  function get(){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}}
-  function paint(){if(get().indexOf(s)>=0){b.textContent='관심 표시 저장됨 (알림은 준비 중)';document.getElementById('alert-note').textContent='이 브라우저에만 저장했어요. 알림 기능이 생기면 이 공고부터 알려 드릴게요. 다시 누르면 지워져요.'}else{b.textContent='마감 알림 받기 (준비 중)'}}
-  b.addEventListener('click',function(){var a=get();var i=a.indexOf(s);if(i>=0)a.splice(i,1);else{a.push(s);try{window.va&&window.va('pageview',{route:'/intent/alert',path:'/intent/alert/'+s})}catch(e){}}try{localStorage.setItem(k,JSON.stringify(a))}catch(e){}paint()});paint()})();
+  // .ics를 누르면 파일만 내려받고 화면이 안 바뀐다 — 받은 뒤 안내 한 줄로 바꾼다(11/22 검수)
+  (function(){var n=document.getElementById('cal-note');if(!n)return;document.querySelectorAll('a[href$=".ics"]').forEach(function(a){a.addEventListener('click',function(){n.textContent='캘린더 파일을 받았어요. 열면 마감 일정이 캘린더에 들어가요.'})})})();
 </script>
