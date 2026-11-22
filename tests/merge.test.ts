@@ -76,6 +76,14 @@ describe('AC-113 비슷한 공고는 열린 색인에서 n개', () => {
   });
 });
 
+describe('AC-113 마감 공고의 비슷한 공고는 기준일(오늘+14일) 가까운 열린 공고', () => {
+  it('anchor를 주면 anchor에 가까운 순', () => {
+    const open = [mk('o1', '2026-11-22'), mk('o2', '2026-11-23'), mk('o3', '2026-12-05'), mk('o4', '2026-12-06'), mk('o5', '2027-03-01')];
+    const r = buildSiteIndex(open).related(mk('c', '2026-11-02'), 2, '2026-12-06');
+    expect(r.map((x) => x.slug)).toEqual(['o4', 'o3']);
+  });
+});
+
 describe('실데이터 — 라이브 스냅숏(9617fee) ⊆ 현재 data/listings.json', () => {
   const live = JSON.parse(execFileSync('git', ['show', '9617fee:data/listings.json'], { maxBuffer: 1 << 28 }).toString()).listings as { slug: string }[];
   const cur = JSON.parse(readFileSync('data/listings.json', 'utf8')) as { generatedAt: string; listings: any[] };

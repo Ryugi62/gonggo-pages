@@ -185,7 +185,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
   details[open] summary .go { transform: rotate(90deg); }
   /* ListRow — 하단 「더 해 볼 수 있어요」 묶음·읽는 법 진입 (TDS ListRow 대응: 제목 16 · 보조 13 · 오른쪽 화살표 24) */
   .rows { margin: 24px 0 0; }
-  #more-h + .rows { margin-top: 0; }
+  #more-h + .rows, #rel-h + .rows { margin-top: 0; }
   .row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 16px 0; border: 0; border-top: 1px solid var(--line); background: transparent; color: var(--text); text-decoration: none; font: inherit; text-align: left; cursor: pointer; }
   .rows > :first-child .row, .rows > .row:first-child { border-top: 0; }
   .row .rt { flex: 1; min-width: 0; }

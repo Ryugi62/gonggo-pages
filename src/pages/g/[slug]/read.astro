@@ -33,7 +33,7 @@ const cta = {
   <nav class="crumb back" aria-label="위치"><a href={`/g/${l.slug}/`} data-back>공고 상세로 돌아가기</a></nav>
   <img class="hero" src="https://static.toss.im/3d-emojis/u1F4DD.png" alt="" width="40" height="40" decoding="async" />
   <h1>{title}</h1>
-  <p class="sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{l.name}</a> · {deadlineText} 마감{l.prize ? ` · ${l.prize}` : ''}</p>
+  <p class="sub rd-sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{l.name}</a> · {deadlineText} 마감{l.prize ? ` · ${l.prize}` : ''}</p>
 
   <ReadCard card={card} facts={facts} />
 </Layout>
@@ -43,5 +43,6 @@ const cta = {
 </script>
 <style is:global>
   .hero { display: block; margin: 24px 0 0; }
+  .rd-sub a { color: var(--text); font-weight: 600; text-decoration: none; }
   .crumb.back a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
 </style>

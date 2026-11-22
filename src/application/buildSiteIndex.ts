@@ -15,7 +15,7 @@ export interface SiteIndex {
   byWeek: Map<string, PublicListing[]>;
   byTag: Map<EligibilityTag, PublicListing[]>;
   rolling: PublicListing[];
-  related: (l: PublicListing, n?: number) => PublicListing[];
+  related: (l: PublicListing, n?: number, anchor?: string) => PublicListing[];
 }
 
 const order = (a: PublicListing, b: PublicListing) =>
@@ -43,8 +43,9 @@ export function buildSiteIndex(listings: PublicListing[]): SiteIndex {
 
   const time = (x: PublicListing) => (x.deadline ? Date.parse(`${x.deadline}T12:00:00Z`) : Number.POSITIVE_INFINITY);
   /** 같은 분류 → 같은 태그 → 전체 순으로, 마감일이 가까운 공고 n개(기본 6). 색인에 열린 공고만 넣으면 열린 것만 나온다 */
-  const related = (l: PublicListing, n = 6): PublicListing[] => {
-    const t0 = time(l);
+  /** anchor = 기준 날짜(YYYY-MM-DD). 마감된 공고는 오늘+며칠을 줘서 「오늘 끝나는」 공고만 나오지 않게 한다 */
+  const related = (l: PublicListing, n = 6, anchor?: string): PublicListing[] => {
+    const t0 = anchor ? Date.parse(`${anchor}T12:00:00Z`) : time(l);
     const near = (pool: PublicListing[]) =>
       pool
         .filter((x) => x.slug !== l.slug)

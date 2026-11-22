@@ -21,7 +21,8 @@ export function getStaticPaths() {
 interface Props { l: PublicListing }
 const { l } = Astro.props;
 const closed = !!l.deadline && l.deadline < generatedAt; // 마감된 공고 — 첫 화면이 「마감됐어요 + 지금 열린 비슷한 공고」(SPEC §31, 마감 상세 63%가 막다른 길이던 문제)
-const related = index.related(l, closed ? 3 : 5); // 색인은 열린 공고만이라 마감 공고에도 열린 것만 나온다
+const anchor = new Date(Date.parse(`${generatedAt}T12:00:00Z`) + 14 * 86_400_000).toISOString().slice(0, 10);
+const related = index.related(l, closed ? 3 : 5, closed ? anchor : undefined); // 색인은 열린 공고만이라 마감 공고에도 열린 것만 나온다
 const readCard = readCardOf(l.category); // SPEC §30 — 4칸은 /g/<slug>/read/ 별도 화면, 상세엔 한 줄 진입(장학은 4칸 데이터가 없어 진입 행 없음)
 const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
 // SPEC §15 — 고객이 검색하는 말(「받을 수 있나요?」「중복 수혜」)로 제목·설명, 화면 질문 = FAQ 구조화 데이터
