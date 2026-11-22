@@ -67,3 +67,21 @@ export function findForbidden(text: string): string[] {
 export function isClean(text: string | null | undefined): boolean {
   return text == null || findForbidden(text).length === 0;
 }
+
+/**
+ * 내부 판단 낱말 — 자격·조항 인용(공고 원문이라고 보여 주는 칸)에 들어가면 안 된다(SPEC §32 AC-116, 11/22 3회차 3/3 검수).
+ * 공고 이름·주최처럼 원문 그대로의 칸에는 「정책 제안 공모전」「모의면접」이 정상이라 쓰지 않는다 — 인용 칸 전용.
+ */
+export const INTERNAL_JUDGEMENT_TOKENS: ForbiddenToken[] = [
+  { label: '분석 결과', re: /분석\s*결과/ },
+  { label: '과거 수상작', re: /과거\s*수상작|수상작\s*분석/ },
+  { label: '수상 가능성', re: /수상\s*가능성/ },
+  { label: '& 제안', re: /&\s*제안/ },
+  { label: '우승', re: /우승/ },
+  { label: '블라인드', re: /블라인드/ },
+  { label: '모의 심사', re: /모의\s*(?:심사|평가|채점|공모)/ },
+];
+
+export function findInternalJudgement(text: string): string[] {
+  return INTERNAL_JUDGEMENT_TOKENS.filter((t) => t.re.test(text)).map((t) => t.label);
+}

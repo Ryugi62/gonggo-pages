@@ -1,48 +1,91 @@
 ---
-// SPEC §30 — 공고 읽는 법 화면(/g/<slug>/read/): 한 화면 한 과업 = 이 공고 사실 + 4칸을 훑고 토스 앱으로 가기.
-// 검색 착지는 상세(/g/<slug>/)가 맡으므로 이 화면은 noindex.
+// SPEC §30·§32 — 공고 읽는 법 화면(/g/<slug>/read/): 4칸 + 맨 아래 「더 해 볼 수 있어요」 한 묶음(판독 요청·구독·Pro·조건 찾기·캘린더·토스).
+// 마감 공고면 맨 위에 「마감됐어요」 + 열린 비슷한 공고. 검색 착지는 상세(/g/<slug>/)가 맡으므로 이 화면은 noindex.
 import Layout from '../../../layouts/Layout.astro';
 import ReadCard from '../../../components/ReadCard.astro';
-import { allListings as listings, generatedAt } from '../../../adapters/site/data.ts';
+import RelatedRows from '../../../components/RelatedRows.astro';
+import ReadRequestEntry from '../../../components/ReadRequestEntry.astro';
+import SubscribeEntry from '../../../components/SubscribeEntry.astro';
+import TossMiniappLink from '../../../components/TossMiniappLink.astro';
+import Chevron from '../../../components/Chevron.astro';
+import { allListings as listings, index, generatedAt } from '../../../adapters/site/data.ts';
 import { readCardOf } from '../../../adapters/site/readCards.ts';
 import { appLinkOf } from '../../../adapters/site/appSlugs.ts';
 import { readCardTitle, APP_CARD_PING } from '../../../domain/readCard.ts';
 import { TOSS_MINIAPP_URL, TOSS_APP_COPY } from '../../../domain/tossLink.ts';
 import { formatDate } from '../../../domain/format.ts';
 import { axisFacts } from '../../../domain/readFacts.ts';
+import { isAudition } from '../../../domain/topic.ts';
+import { categorySlug } from '../../../domain/category.ts';
+import { deadlineEvent, googleAddUrl } from '../../../domain/ics.ts';
+import { IS_AWS } from '../../../infrastructure/config.ts';
 import type { PublicListing } from '../../../domain/listing.ts';
 
 export function getStaticPaths() {
-  return listings.filter((l) => readCardOf(l.category)).map((l) => ({ params: { slug: l.slug }, props: { l } }));
+  return listings.filter((l) => readCardOf(l.category) && !isAudition(l)).map((l) => ({ params: { slug: l.slug }, props: { l } }));
 }
 interface Props { l: PublicListing }
 const { l } = Astro.props;
 const card = readCardOf(l.category)!;
 const title = readCardTitle(card.kind);
 const deep = appLinkOf(l.slug);
+const closed = !!l.deadline && l.deadline < generatedAt;
+const anchor = new Date(Date.parse(`${generatedAt}T12:00:00Z`) + 14 * 86_400_000).toISOString().slice(0, 10);
+const related = closed ? index.related(l, 3, anchor) : [];
 const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
 const facts = axisFacts(l, generatedAt);
-const cta = {
-  href: TOSS_MINIAPP_URL,
-  label: deep ? TOSS_APP_COPY.specific : TOSS_APP_COPY.generic,
-  external: true,
-  attrs: { ping: APP_CARD_PING, 'data-intoss': deep ?? undefined },
-};
+const site = Astro.site!.href.replace(/\/$/, '');
+const calEvent = closed ? null : deadlineEvent(l, site);
+const openCat = index.byCategory.get(l.category)?.length ? `/c/${categorySlug(l.category)}/` : '/';
+const cta = closed
+  ? { href: openCat, label: '지금 낼 수 있는 공고 보기' }
+  : { href: TOSS_MINIAPP_URL, label: deep ? TOSS_APP_COPY.specific : TOSS_APP_COPY.generic, external: true, attrs: { ping: APP_CARD_PING, 'data-intoss': deep ?? undefined } };
 ---
 <Layout title={`${title} — ${l.name}`} description={`${l.name}를 읽을 때 볼 4칸 — 니즈·평가 전략·맞춤 아이디어·완성도.`} path={`/g/${l.slug}/read/`} noindex bottomCta={cta}>
   <nav class="crumb back" aria-label="위치"><a href={`/g/${l.slug}/`} data-back>공고 상세로 돌아가기</a></nav>
+  {closed && (
+    <section class="rd-closed" aria-labelledby="rd-cl-h">
+      <span class="bd lg closed">마감됐어요</span>
+      <h2 id="rd-cl-h">지금 낼 수 있는 비슷한 공고</h2>
+      {related.length > 0 ? <RelatedRows items={related} /> : <p class="sub">지금 접수 중인 비슷한 공고가 없어요.</p>}
+    </section>
+  )}
   <img class="hero" src="https://static.toss.im/3d-emojis/u1F4DD.png" alt="" width="40" height="40" decoding="async" />
   <h1>{title}</h1>
-  <p class="sub rd-sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{l.name}</a> · {deadlineText} 마감{l.prize ? ` · ${l.prize}` : ''}</p>
+  <p class="sub rd-sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{l.name}</a> · {deadlineText}{closed || !l.deadline ? '' : ' 마감'}{l.prize ? ` · ${l.prize}` : ''}</p>
 
   <ReadCard card={card} facts={facts} />
+
+  <section aria-labelledby="more-h">
+    <h2 id="more-h">더 해 볼 수 있어요</h2>
+    <div class="rows">
+      {calEvent && (
+        <>
+          <a class="row" href={googleAddUrl(calEvent)} target="_blank" rel="noopener" data-intent={`/intent/cal/add/${l.slug}`}><span class="rt"><b>구글 캘린더에 마감 넣기</b><span>일정에 이 공고 링크가 같이 들어가요</span></span><Chevron /></a>
+          <a class="row" href={`/cal/g/${l.slug}.ics`} data-intent={`/intent/cal/add/${l.slug}`} data-cal-ics><span class="rt"><b>애플·아웃룩 캘린더 파일 받기</b><span id="cal-note" role="status" aria-live="polite">파일은 마감 3일 전에 알려 줘요</span></span><Chevron /></a>
+        </>
+      )}
+      {IS_AWS && <ReadRequestEntry />}
+      {IS_AWS && <SubscribeEntry />}
+      {IS_AWS && (
+        <a class="row" href="/pro/?from=g"><span class="rt"><b>이 공고 배점으로 내 계획서 채점받기 (Pro)</b><span>사전 신청은 돈이 나가지 않아요</span></span><Chevron /></a>
+      )}
+      <a class="row" href="/check/"><span class="rt"><b>내 조건으로 낼 수 있는 공고 찾기</b><span>나이·학생·지역·사업자 여부만 고르면 돼요</span></span><Chevron /></a>
+      {closed && <TossMiniappLink slug={l.slug} />}
+    </div>
+  </section>
 </Layout>
 <script is:inline>
   // 돌아가기 = 브라우저 뒤로(보던 위치 유지·왕복 고리 없음). 상세에서 온 게 아니면(직접 진입) 상세 링크 그대로.
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-back]');if(!a)return;try{var r=new URL(document.referrer);if(r.origin===location.origin&&r.pathname===new URL(a.href).pathname&&history.length>1){e.preventDefault();history.back()}}catch(x){}});
+  // .ics를 누르면 파일만 내려받고 화면이 안 바뀐다 — 받은 뒤 안내 한 줄로 바꾼다(11/22 검수)
+  (function(){var n=document.getElementById('cal-note');if(!n)return;document.querySelectorAll('a[href$=".ics"]').forEach(function(a){a.addEventListener('click',function(){n.textContent='캘린더 파일을 받았어요. 열면 마감 일정이 들어가요.'})})})();
 </script>
 <style is:global>
   .hero { display: block; margin: 24px 0 0; }
   .rd-sub a { color: var(--text); font-weight: 600; text-decoration: none; }
   .crumb.back a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
+  .rd-closed { margin-top: 8px; }
+  .rd-closed h2 { margin: 16px 0 0; font-size: 17px; }
+  .rd-closed .rows { margin-top: 0; }
 </style>

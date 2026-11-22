@@ -5,10 +5,13 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 const aws = process.env.DEPLOY_TARGET === 'aws';
 const slugs = readdirSync('dist/g').filter((f) => existsSync(`dist/g/${f}/index.html`));
 const digest = existsSync('dist/digest') ? readdirSync('dist/digest').map((d) => `dist/digest/${d}/index.html`).filter(existsSync) : [];
-const pages = [...slugs.map((s) => `dist/g/${s}/index.html`), 'dist/week/index.html', ...digest];
+// SPEC §32: 구독 입구는 읽는 법 화면(/read/) 맨 아래 묶음 — 상세엔 0개
+const readPages = slugs.filter((s) => existsSync(`dist/g/${s}/read/index.html`)).map((s) => `dist/g/${s}/read/index.html`);
+const pages = [...readPages, 'dist/week/index.html', ...digest];
 const entry = (h: string) => h.match(/<section class="sub-entry[\s\S]*?<\/section>/)?.[0] ?? '';
 
 describe('AC-90 구독 입구', () => {
+  it('상세에는 폼 0개', () => { for (const s of slugs.slice(0, 300)) expect(readFileSync(`dist/g/${s}/index.html`, 'utf8'), s).not.toContain('data-sub-entry'); });
   it(aws ? 'AWS 빌드: 상세·주간·digest에 폼 1개' : '기본 빌드: 폼 0개', () => {
     expect(slugs.length).toBeGreaterThan(0);
     for (const p of pages) {

@@ -26268,7 +26268,7 @@
    "url": "https://www.contestkorea.com/sub/view.php?int_gbn=1&str_no=202610080009",
    "organizer": null,
    "prize": "총상금 860만원",
-   "eligibilityQuote": "3. 주최 측 성격, 행사 취지, 참여 대상 고려, 기존 수상작 분석, 차별화 전략, 참신한 아이디어, 주제와의 연관성, 깊이 있는 내용, 설득력 있는 구성, 진정성. 첨부파일 : --> [붙임3]2026 한양의시선_부문별 공모표준양식 4부.zip",
+   "eligibilityQuote": null,
    "tags": [],
    "constraints": {
     "minAge": null,
@@ -26278,13 +26278,7 @@
     "business": null,
     "open": false
    },
-   "clauses": [
-    {
-     "kind": "ELIGIBILITY",
-     "quote": "3. 주최 측 성격, 행사 취지, 참여 대상 고려, 기존 수상작 분석, 차별화 전략, 참신한 아이디어, 주제와의 연관성, 깊이 있는 내용, 설득력 있는 구성, 진정성. 첨부파일 : --> [붙임3]2026 한양의시선_부문별 공모표준양식 4부.zip…",
-     "source": "https://www.contestkorea.com/sub/view.php?int_gbn=1&str_no=202610080009"
-    }
-   ],
+   "clauses": [],
    "aiUse": "UNSTATED"
   },
   {
@@ -27807,7 +27801,7 @@
    "url": "https://www.contestkorea.com/sub/view.php?int_gbn=1&str_no=202610170003",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "3. 참가 대상별 연령 구분, 작품 크기 규정, 상장 수여 및 온라인 전시, 출품비는 현금 동봉. AI 과거 수상작 분석 결과 & 제안 1. ACEL 전국 청소년 미술 공모전, 제1회 개최로 수상작 분석 불가",
+   "eligibilityQuote": null,
    "tags": [],
    "constraints": {
     "minAge": null,
@@ -44658,7 +44652,7 @@
    "url": "https://www.contestkorea.com/sub/view.php?int_gbn=1&Txt_bcode=030110001&str_no=202609160009",
    "organizer": "SM문학그룹샘문, MH한용운문학 /SM샘문그룹",
    "prize": "총상금 500만원",
-   "eligibilityQuote": "3. 총 상금 500만원, 참가 자격은 17세 이상 전국 시낭송 애호가 AI 과거 수상작 분석 결과 & 제안 1. 한용운 시 낭송, 감성 표현, 메시지 전달 집중하면 수상 가능성 높음. 2. 주최 기관의 문학적 성향 파악, 작품 선정 시 깊이 있는 해석과 진정성 담는 것 중요.",
+   "eligibilityQuote": "참가 자격은 17세 이상 전국 시낭송 애호가",
    "tags": [],
    "constraints": {
     "minAge": 17,
@@ -74502,17 +74496,15 @@
    "url": "https://www.contestkorea.com/sub/view.php?int_gbn=1&str_no=202610010002",
    "organizer": null,
    "prize": "총상금 200만원",
-   "eligibilityQuote": "2. 상반기 접수, 제한 없는 응모 자격, 수상 시 100만원 고료 지급 3. 전자우편 접수, 블라인드 심사, 여름호 발표, 수상 취소 규정 명시 AI 과거 수상작 분석 결과 & 제안",
-   "tags": [
-    "누구나"
-   ],
+   "eligibilityQuote": null,
+   "tags": [],
    "constraints": {
     "minAge": null,
     "maxAge": null,
     "studentOnly": false,
     "region": null,
     "business": null,
-    "open": true
+    "open": false
    },
    "clauses": [],
    "aiUse": "UNSTATED"

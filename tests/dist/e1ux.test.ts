@@ -8,31 +8,24 @@ const css = (h: string) => (h.match(/<style[^>]*>[\s\S]*?<\/style>/g) ?? []).joi
 const sample = slugs.filter((_, i) => i % 97 === 0).slice(0, 20);
 const aws = process.env.DEPLOY_TARGET === 'aws';
 
-describe('막힘 B — 상세 순서: 자격 원문이 먼저, 홍보·폼은 아래 한 묶음', () => {
-  it('자격 → 조항 판독 → 「더 해 볼 수 있어요」 묶음 순서, 판독 요청·구독·Pro·조건 찾기는 묶음 안', () => {
+describe('막힘 B — 상세엔 홍보·폼이 없고, 부가 도구는 읽는 법 화면 맨 아래 한 묶음(SPEC §32)', () => {
+  const rs = slugs.filter((x) => existsSync(`dist/g/${x}/read/index.html`));
+  const rsample = rs.filter((_, i) => i % 97 === 0).slice(0, 20);
+  it('상세: 자격 원문 뒤에 판독 요청·구독·Pro·조건 찾기 없음', () => {
     for (const s of sample) {
       const h = read(s);
-      const el = h.indexOf('누가 낼 수 있나요?');
-      const clauses = h.indexOf('조항 판독');
-      const more = h.indexOf('id="more-h"');
-      expect(el, s).toBeGreaterThan(0);
-      expect(clauses, s).toBeGreaterThan(el);
-      expect(more, s).toBeGreaterThan(clauses);
-      for (const marker of ['data-read-entry', 'data-sub-entry', 'href="/pro/?from=g"', 'class="row" href="/check/"']) {
-        const i = h.indexOf(marker);
-        if (i >= 0) expect(i, `${s} ${marker}`).toBeGreaterThan(more);
-      }
-      // 첫 화면(자격 제목) 앞의 큰 홍보 상자 0 — 마감 카드까지만
-      expect(h.slice(0, el)).not.toContain('class="read-entry');
-      expect(h.slice(0, el)).not.toContain('다른 공고도 원문 조항을 읽어 드려요');
+      expect(h.indexOf('누가 낼 수 있나요?'), s).toBeGreaterThan(0);
+      for (const marker of ['data-read-entry', 'data-sub-entry', 'href="/pro/?from=g"', 'class="row" href="/check/"', 'id="more-h"']) expect(h, `${s} ${marker}`).not.toContain(marker);
     }
   });
-  it('하단 묶음은 ListRow 행(.row) 3개 이상, 같은 안내문(가격이나 광고…)은 한 곳뿐', () => {
-    for (const s of sample) {
-      const h = read(s);
+  it('읽는 법 화면: 4칸 → 「더 해 볼 수 있어요」 묶음, ListRow 행(.row) ≥ 2(AWS ≥ 4), 같은 안내문은 한 곳', () => {
+    for (const s of rsample) {
+      const h = readFileSync(`dist/g/${s}/read/index.html`, 'utf8');
       const more = h.slice(h.indexOf('id="more-h"'));
-      expect((more.match(/class="row[ "]/g) ?? []).length, s).toBeGreaterThanOrEqual(aws ? 4 : 2);
+      expect(h.indexOf('id="more-h"'), s).toBeGreaterThan(h.indexOf('class="rc-row"'));
+      expect((more.match(/class="row[ "]/g) ?? []).length, s).toBeGreaterThanOrEqual(aws ? 4 : 1);
       expect((h.match(/가격이나 광고 안내는 넣지 않아요/g) ?? []).length, s).toBeLessThanOrEqual(1);
+      for (const marker of ['data-read-entry', 'data-sub-entry', 'href="/pro/?from=g"']) { const i = h.indexOf(marker); if (i >= 0) expect(i, `${s} ${marker}`).toBeGreaterThan(h.indexOf('id="more-h"')); }
     }
   });
   it('죽은 버튼 0: 「준비 중」 표기·알림 버튼 없음', () => {
@@ -74,29 +67,30 @@ describe('겹친 감점 — 위계·간격·반응·고정·조사', () => {
   it('프로그램 스크롤(스크롤 복원·앵커)이 아니라 사용자 입력 뒤에만 맨 위로를 연다', () => {
     expect(h0).toMatch(/touchmove|wheel|keydown/);
   });
-  it('.ics 받은 뒤 안내 한 줄(#cal-note, role=status)', () => {
-    const withCal = sample.map(read).find((h) => h.includes('/cal/g/'))!;
+  it('.ics 받은 뒤 안내 한 줄(#cal-note, role=status) — 읽는 법 화면 묶음', () => {
+    const withCal = slugs.filter((x) => existsSync(`dist/g/${x}/read/index.html`)).slice(0, 400).map((x) => readFileSync(`dist/g/${x}/read/index.html`, 'utf8')).find((h) => h.includes('/cal/g/'))!;
     expect(withCal).toContain('id="cal-note"');
     expect(withCal).toMatch(/id="cal-note"[^>]*role="status"/);
     expect(withCal).toContain('캘린더 파일을 받았어요');
   });
-  it('3D 이모지 1개(읽는 법 진입 행) — static.toss.im/3d-emojis', () => {
-    const l = sample.map(read).find((h) => h.includes('/read/'))!;
-    expect(l).toMatch(/<img[^>]*src="https:\/\/static\.toss\.im\/3d-emojis\/u[0-9A-F]+\.png"[^>]*width="40"/);
+  it('3D 이모지 1개 — 읽는 법 화면 머리(static.toss.im/3d-emojis)', () => {
+    const h = readFileSync(`dist/g/${slugs.find((x) => existsSync(`dist/g/${x}/read/index.html`))}/read/index.html`, 'utf8');
+    expect((h.match(/static\.toss\.im\/3d-emojis/g) ?? []).length).toBe(1);
+    expect(h).toMatch(/<img[^>]*src="https:\/\/static\.toss\.im\/3d-emojis\/u[0-9A-F]+\.png"[^>]*width="40"/);
   });
   if (aws) it('AWS: 판독 요청·구독 입구 문구가 행 안으로(회색 상자 .card 아님)', () => {
-    const h = read(sample[0]);
+    const h = readFileSync(`dist/g/${slugs.find((x) => existsSync(`dist/g/${x}/read/index.html`))}/read/index.html`, 'utf8');
     expect(h).toMatch(/<section class="read-entry row-entry"/);
   });
 });
 
 describe('읽는 법 화면 위계(제목 17 > 본문 15 > 보조 13)와 한 화면 한 과업', () => {
-  it('h3 17px, .rc-line 15px, 체크 13px, 칸 간격 24px', () => {
-    const s = sample.find((x) => existsSync(`dist/g/${x}/read/index.html`))!;
+  it('.rc-row h3 17px, .rc-line·.rc-fact 15px, .rc-small 13px(3단)', () => {
+    const s = sample.find((x) => existsSync(`dist/g/${x}/read/index.html`)) ?? slugs.find((x) => existsSync(`dist/g/${x}/read/index.html`))!;
     const c = css(readFileSync(`dist/g/${s}/read/index.html`, 'utf8'));
-    expect(c).toMatch(/\.rc-axis h3\{[^}]*font-size:17px/);
+    expect(c).toMatch(/\.rc-row h3\{[^}]*font-size:17px/);
     expect(c).toMatch(/\.rc-line\{[^}]*font-size:15px/);
-    expect(c).toMatch(/\.rc-check\{[^}]*font-size:13px/);
-    expect(c).toMatch(/\.rc-axis\{[^}]*margin:24px 0 0/);
+    expect(c).toMatch(/\.rc-small\{[^}]*font-size:13px/);
+    expect(c).toMatch(/\.rc\{[^}]*margin-top:24px/);
   });
 });

@@ -2,7 +2,7 @@ import { classify } from '../domain/category.ts';
 import { parseConstraints, tagsFor } from '../domain/eligibility.ts';
 import { cleanName, decodeEntities, extractEligibility, extractOrganizer, extractPrize, sanitizeQuote } from '../domain/extract.ts';
 import type { PublicListing, SourceRow } from '../domain/listing.ts';
-import { findForbidden, isClean } from '../domain/privacy.ts';
+import { findForbidden, findInternalJudgement, isClean } from '../domain/privacy.ts';
 import { makeSlug } from '../domain/slug.ts';
 import { readClauses } from '../domain/clause.ts';
 
@@ -94,6 +94,8 @@ export function assertPublicSafe(listings: PublicListing[]): void {
   const hits = findForbidden(JSON.stringify(listings));
   if (hits.length) throw new Error(`공개 내보내기에 금지 토큰: ${hits.join(', ')}`);
   for (const l of listings) {
+    const hit = findInternalJudgement([l.eligibilityQuote ?? '', ...l.clauses.map((c) => c.quote)].join(' \n '));
+    if (hit.length) throw new Error(`자격·조항 인용에 내부 판단 낱말: ${l.slug} ${hit.join(', ')}`);
     const extra = Object.keys(l).filter((k) => !(PUBLIC_KEYS as readonly string[]).includes(k));
     if (extra.length) throw new Error(`허용 밖 키: ${extra.join(', ')}`);
   }

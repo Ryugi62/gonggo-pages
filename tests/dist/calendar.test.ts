@@ -18,8 +18,11 @@ const bytes = (s: string) => Buffer.byteLength(s, 'utf8');
 describe('C1 상세 페이지 캘린더 추가', () => {
   it('마감일 있는 공고 100%에 구글 템플릿 링크·.ics 파일', () => {
     let ok = 0;
+    // SPEC §32: 캘린더 링크는 읽는 법 화면 맨 아래 묶음 — 읽는 법 화면이 없는 공고(장학·오디션)는 .ics 파일만 있다
     for (const l of dated) {
-      const page = readFileSync(`dist/g/${l.slug}/index.html`, 'utf8');
+      const rp = `dist/g/${l.slug}/read/index.html`;
+      if (!existsSync(rp)) { if (existsSync(`dist/cal/g/${l.slug}.ics`)) ok++; continue; }
+      const page = readFileSync(rp, 'utf8');
       const d = l.deadline.replace(/-/g, '');
       if (page.includes('calendar.google.com/calendar/render?action=TEMPLATE') && page.includes(`dates=${d}%2F`) && page.includes(`/cal/g/${l.slug}.ics`) && existsSync(`dist/cal/g/${l.slug}.ics`)) ok++;
     }
@@ -27,7 +30,7 @@ describe('C1 상세 페이지 캘린더 추가', () => {
   });
   it('상시 공고 페이지엔 없다', () => {
     for (const l of listings.filter((x) => !x.deadline)) {
-      expect(readFileSync(`dist/g/${l.slug}/index.html`, 'utf8')).not.toContain('내 캘린더에 마감 넣기');
+      expect(readFileSync(`dist/g/${l.slug}/index.html`, 'utf8')).not.toContain('캘린더에');
     }
   });
 });

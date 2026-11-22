@@ -58,7 +58,7 @@ describe('막힘 ① 마감 공고 — 막다른 길 없음', () => {
       const rel = h.indexOf('id="rel-h"');
       expect(rel, s).toBeGreaterThan(0);
       if (h.includes('/read/')) expect(h.indexOf('aria-label="공고 읽는 법"'), s).toBeGreaterThan(rel);
-      expect(h.indexOf('id="clauses-h"'), s).toBeGreaterThan(rel);
+      expect(h.indexOf('id="clauses"'), s).toBeGreaterThan(rel);
     }
   });
   it('열린 상세: 주 버튼은 원문 공고 보기, 비슷한 공고는 열린 것만', () => {
@@ -104,14 +104,15 @@ describe('막힘 ② 상세 정리 — 중복 제거·회색 상자·행', () =>
       expect([...i].sort((a, b) => a - b), s).toEqual(i);
     }
   });
-  it('캘린더 두 링크는 마감 요약 안(텍스트 링크 44px), 열린 공고에만', () => {
-    const s = open.find((x) => html(x).includes('/cal/g/'))!;
-    const h = body(html(s));
-    expect(h.indexOf('/cal/g/')).toBeLessThan(h.indexOf('누가 낼 수 있나요?'));
-    expect(h).toContain('class="tl"');
+  it('캘린더 두 링크는 읽는 법 화면 맨 아래 묶음(SPEC §32), 열린 공고에만 — 상세엔 없다', () => {
+    const s = open.find((x) => existsSync(`dist/g/${x}/read/index.html`) && readFileSync(`dist/g/${x}/read/index.html`, 'utf8').includes('/cal/g/'))!;
+    expect(s).toBeTruthy();
+    const h = body(readFileSync(`dist/g/${s}/read/index.html`, 'utf8'));
+    expect(h.indexOf('/cal/g/')).toBeGreaterThan(h.indexOf('id="more-h"'));
     expect(h).toContain('id="cal-note"');
+    expect(html(s)).not.toContain('/cal/g/');
   });
-  it('「더 해 볼 수 있어요」 묶음 + 설명 열기는 셰브런 행', () => {
+  it('설명 열기(조항 판독)는 셰브런 행', () => {
     const h = html(pick(open, 5)[0]);
     expect(h).toMatch(/<summary>[^<]*<svg class="go"/);
   });
@@ -130,7 +131,7 @@ describe('막힘 ③ 읽는 법 화면 — 돌아가기·공고별 한 줄', () 
   it('4칸 모두 「이 공고」 한 줄, 체크 아이콘 없음, 「이 공고 한눈에」 섹션 없음', () => {
     for (const s of pick(rs, 40)) {
       const h = readFileSync(`dist/g/${s}/read/index.html`, 'utf8');
-      expect((h.match(/class="rc-fact"/g) ?? []).length, s).toBe(4);
+      expect((h.match(/class="rc-fact"/g) ?? []).length, s).toBeGreaterThanOrEqual(1); // 마감 칸은 항상, 못 뽑은 칸은 줄째 감춘다(SPEC §32)
       expect(h, s).not.toContain('ck-ic');
       expect(h, s).not.toContain('이 공고 한눈에');
     }
@@ -160,8 +161,8 @@ describe('문구 — 해요체·상대 표현', () => {
     expect(h).not.toContain('내가 낼 수 있나?');
   });
   it('동의 문구에 지난 날짜(2026-11-21) 없음 — 상대 표현', () => {
-    const files = ['pro/index.html', 'privacy/index.html', `g/${open[0]}/index.html`].filter((f) => existsSync(`dist/${f}`));
+    const files = ['pro/index.html', 'privacy/index.html', `g/${open.find((x) => existsSync(`dist/g/${x}/read/index.html`))}/read/index.html`].filter((f) => existsSync(`dist/${f}`));
     for (const f of files) expect(readFileSync(`dist/${f}`, 'utf8'), f).not.toContain('2026-11-21');
-    if (process.env.DEPLOY_TARGET === 'aws') expect(readFileSync(`dist/g/${open[0]}/index.html`, 'utf8')).toMatch(/받은 날부터 30일|30일 뒤에 지워요/);
+    if (process.env.DEPLOY_TARGET === 'aws') expect(readFileSync(`dist/g/${open.find((x) => existsSync(`dist/g/${x}/read/index.html`))}/read/index.html`, 'utf8')).toMatch(/받은 날부터 30일|30일 뒤에 지워요/);
   });
 });

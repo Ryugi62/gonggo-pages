@@ -39,7 +39,7 @@ describe('SPEC §8 UI 수용기준 — 자동 검사 가능 항목', () => {
   it('5 하단 고정 CTA: 상세 = 「원문 공고 보기」 1개, btn primary 0 (캘린더는 보조)', () => {
     const s = read(pages.detail);
     expect((s.match(/class="cta"/g) ?? []).length).toBe(1);
-    expect(s).toContain('원문 공고 보기');
+    expect(s).toMatch(/class="cta"[^>]*>(?:원문 공고 보기|지금 낼 수 있는 공고 보기)</); // 열림=원문, 마감=열린 공고 목록(SPEC §32)
     expect(s).not.toMatch(/class="btn primary/);
   });
   it('6 숫자 먼저: 상세 첫 카드 = D-n(.big ≥28px)', () => {

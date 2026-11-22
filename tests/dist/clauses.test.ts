@@ -17,7 +17,7 @@ describe('AC-70 상세 미리보기', () => {
       const h = page(l.slug);
       expect(h.length).toBeLessThan(40 * 1024);
       expect(h, l.slug).not.toContain('class="clause-preview"');
-      expect((h.match(/href="\/pro\/\?from=g"/g) ?? []).length, l.slug).toBe(aws ? 1 : 0);
+      expect((h.match(/href="\/pro\/\?from=g"/g) ?? []).length, l.slug).toBe(0); // SPEC §32: Pro 입구는 읽는 법 화면 묶음으로 이동
     }
   });
 });

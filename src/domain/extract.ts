@@ -1,4 +1,5 @@
 import { isClean } from './privacy.ts';
+import { scrubQuote } from './quoteScrub.ts';
 
 // 원천 행의 자유 메모(note·why)에서 「공고 원문에서 따온 공개 사실」만 좁은 패턴으로 뽑는다(허용 목록 방식).
 // 메모 본문을 통째로 옮기지 않는다 — 패턴에 안 맞으면 버린다.
@@ -20,7 +21,8 @@ function clip(s: string, max: number): string {
 
 /** 자격 인용 후보 한 줄을 공개 가능한 꼴로: 공백 정리 → 내부 메모 흔적·금지 토큰 거름 → MAX_QUOTE로 자름. 못 쓰면 null. */
 export function sanitizeQuote(raw: string): string | null {
-  const q = squash(raw);
+  const q0 = squash(raw);
+  const q = q0.length >= 2 ? scrubQuote(q0) ?? '' : q0; // 내부 분석 메모 문단은 버린다(SPEC §32)
   if (q.length < 2 || INTERNAL_QUOTE_RE.test(q) || !isClean(q)) return null;
   return clip(q, MAX_QUOTE);
 }

@@ -71,9 +71,11 @@ describe.skipIf(!aws)('§12 /pro/ 산출물 (AWS)', () => {
     const xml = read('dist/sitemap.xml');
     for (const p of PRO_PAGES) expect(xml).not.toContain(`${p}</loc>`);
   });
-  it('상세 페이지 하단에서 /pro/로 들어가는 입구(AWS 빌드만)', () => {
+  it('읽는 법 화면 맨 아래 묶음에서 /pro/로 들어가는 입구(AWS 빌드만, SPEC §32 — 상세엔 없음)', () => {
     const data = JSON.parse(read('data/listings.json'));
-    expect(read(`dist/g/${data.listings[0].slug}/index.html`)).toContain('href="/pro/?from=g"');
+    const open = data.listings.find((l: any) => l.deadline >= data.generatedAt && ['공모전', '해커톤', '지원사업', '대외활동'].includes(l.category) && !/오디션|캐스팅|아역/.test(l.name));
+    expect(read(`dist/g/${open.slug}/read/index.html`)).toContain('href="/pro/?from=g"');
+    expect(read(`dist/g/${data.listings[0].slug}/index.html`)).not.toContain('href="/pro/?from=g"');
   });
 });
 

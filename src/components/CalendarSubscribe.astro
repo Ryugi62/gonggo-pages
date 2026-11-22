@@ -12,5 +12,10 @@ const url = feedUrl(feed);
     <a class="btn secondary block" href={googleSubscribeUrl(url)} target="_blank" rel="noopener" data-intent={`/intent/cal/sub/${feed}`}>구글 캘린더</a>
     <a class="btn secondary block" href={webcalUrl(url)} data-intent={`/intent/cal/sub/${feed}`}>애플·아웃룩</a>
   </div>
-  <p class="small" style="margin:10px 0 0;word-break:break-all">구독 주소(동아리·단톡방에 그대로 공유해도 돼요): {url}</p>
+  <p class="small" id={`cal-sub-note-${feed}`} role="status" aria-live="polite" style="margin:8px 0 0"></p>
+  <p class="small" style="margin:8px 0 0;word-break:break-all">구독 주소(동아리·단톡방에 그대로 공유해도 돼요): {url}</p>
 </section>
+<script is:inline>
+  // 애플·아웃룩(webcal:)은 PC 브라우저에선 눌러도 화면이 안 바뀐다 — 눌렀다는 것과 안 열릴 때 할 일을 바로 알려 준다(11/22 walk)
+  document.querySelectorAll('a[href^="webcal:"]').forEach(function(a){a.addEventListener('click',function(){var n=a.closest('section').querySelector('[role=status]');if(n)n.textContent='캘린더 앱을 열고 있어요. 안 열리면 아래 구독 주소를 캘린더에 직접 추가해요.'})});
+</script>

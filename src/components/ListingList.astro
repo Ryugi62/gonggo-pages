@@ -1,7 +1,8 @@
 ---
+// SPEC §32 — 목록도 상세의 「비슷한 공고」와 같은 모양(구분선 행 + D-day 배지). 회색 카드 목록 폐지.
 import type { PublicListing } from '../domain/listing.ts';
-import ListingItem from './ListingItem.astro';
+import RelatedRows from './RelatedRows.astro';
 interface Props { items: PublicListing[] }
 const { items } = Astro.props;
 ---
-<ul class="list">{items.map((l) => <ListingItem l={l} />)}</ul>
+<RelatedRows items={items} />
