@@ -70,6 +70,10 @@ const ogImage = new URL('/og.png', Astro.site).href;
       <a class="cta" href={bottomCta.href} {...(bottomCta.external ? { target: '_blank', rel: 'noopener' } : {})}>{bottomCta.label}</a>
     </div>
   )}
+  <button type="button" class="to-top" aria-label="맨 위로" hidden>↑</button>
+  <script is:inline>
+    (function(){var b=document.querySelector('.to-top');if(!b)return;var y0=window.scrollY,vh=window.innerHeight;window.addEventListener('scroll',function(){var y=window.scrollY;b.hidden=!(y>vh&&y<y0);y0=y},{passive:true});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});b.hidden=true})})();
+  </script>
   <script is:inline>
     document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-intent]');if(!a)return;try{window.va&&window.va('pageview',{route:'/intent/cal',path:a.getAttribute('data-intent')})}catch(x){}});
   </script>
@@ -91,6 +95,9 @@ const ogImage = new URL('/og.png', Astro.site).href;
       --ok-bg: #12382b; --ok-fg: #3ecf8e; --no-bg: #3a1a20; --no-fg: #ff8a95; }
   }
   * { box-sizing: border-box; }
+  .to-top { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 20px; line-height: 1; cursor: pointer; z-index: 20; }
+  .to-top[hidden] { display: none; }
+  body:has(.cta-bar) .to-top { bottom: calc(88px + env(safe-area-inset-bottom)); }
   html { -webkit-text-size-adjust: 100%; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Malgun Gothic', system-ui, sans-serif; word-break: keep-all; overflow-wrap: anywhere; }
   body.has-cta { padding-bottom: 92px; }

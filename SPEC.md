@@ -394,5 +394,6 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-102: Given 데이터·산출물 Then `privacy.ts` 금지 토큰·장부 id(`L0xxx`)·「모의」「블라인드」「우승게이트」 0. 카드 문장은 교훈 장부를 일반화해 새로 쓴 지원자 문장(원문 복사 0).
 - AC-103: Given `domain/readCard.ts` Then fs·astro·adapters import 0. 카드 섹션 ≤ 3KB, 상세 ≤ 40KB.
 - AC-104: Given 배포 When `npm run visits` Then 「앱 카드 클릭」 줄(`/intent/app-card` POST·GET, 같은 IP·UA·날 1명, 운영자·봇 제외). Firefox는 ping 기본 꺼짐 — Chrome·Safari·모바일 기준.
+- AC-105 (맨 위로, 11/22 UX 실조작 막힘 해소): Given 공고 상세(카드로 약 1화면 길어져 4~5화면) When 한 화면 넘게 내려간 뒤 위로 스크롤하면 Then 오른쪽 아래 `aria-label="맨 위로"` 버튼(48px, 하단 CTA 바 있으면 그 위)이 나타나고 누르면 맨 위로 간다. 처음엔 `hidden`, 인라인 스크립트 1개(판정·계산 없음, AC-64 예외 범위).
 **비목표**: 앱 번들·결제·가격 숫자 · 공고별 맞춤 카드(앱 유료) · 새 nginx location · 추적 스크립트 · 「수상 보장」류 약속.
 **변경 이력**: v1.11 2026-11-22 §29 추가.
