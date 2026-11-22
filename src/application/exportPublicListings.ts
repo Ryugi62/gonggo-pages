@@ -5,6 +5,7 @@ import type { PublicListing, SourceRow } from '../domain/listing.ts';
 import { findForbidden, findInternalJudgement, isClean } from '../domain/privacy.ts';
 import { makeSlug } from '../domain/slug.ts';
 import { readClauses } from '../domain/clause.ts';
+import { scrubTitle } from '../domain/titleScrub.ts';
 
 export const PUBLIC_KEYS = [
   'slug', 'name', 'category', 'kind', 'deadline', 'deadlineTime', 'rolling', 'url',
@@ -16,7 +17,7 @@ const PUBLIC_STATES = new Set(['후보', '신청예정', '조건불가', '제출
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const ROLLING_RE = /상시|소진|수시/;
 
-export type DropReason = 'state' | 'kind' | 'expired' | 'nodate' | 'url' | 'name' | 'duplicate';
+export type DropReason = 'state' | 'kind' | 'expired' | 'nodate' | 'url' | 'name' | 'duplicate' | 'memo';
 
 export interface ExportResult {
   listings: PublicListing[];
@@ -26,7 +27,7 @@ export interface ExportResult {
 /** UC-1: 원천 행 → 공개 공고. today = YYYY-MM-DD(KST) */
 /** fill = 원문 받기로 모은 보강 인용(url → 인용, SPEC §27). note에서 자격 인용을 못 뽑은 행에만 쓴다. */
 export function exportPublicListings(rows: SourceRow[], today: string, fill: ReadonlyMap<string, string> = new Map()): ExportResult {
-  const dropped: Record<DropReason, number> = { state: 0, kind: 0, expired: 0, nodate: 0, url: 0, name: 0, duplicate: 0 };
+  const dropped: Record<DropReason, number> = { state: 0, kind: 0, expired: 0, nodate: 0, url: 0, name: 0, duplicate: 0, memo: 0 };
   const out: PublicListing[] = [];
   const seenUrl = new Set<string>();
   const seenSlug = new Set<string>();
@@ -47,7 +48,9 @@ export function exportPublicListings(rows: SourceRow[], today: string, fill: Rea
 
     const url = (r.url ?? '').trim();
     if (!/^https?:\/\/\S+$/.test(url) || !isClean(url)) { dropped.url++; continue; }
-    const name = cleanName(r.name ?? '');
+    const st = scrubTitle(cleanName(r.name ?? ''));
+    if (st.drop) { dropped.memo++; continue; }
+    const name = st.name;
     if (name.length < 2 || !isClean(name)) { dropped.name++; continue; }
     const urlKey = url.replace(/#.*$/, '').replace(/\/$/, '');
     if (seenUrl.has(urlKey)) { dropped.duplicate++; continue; }

@@ -5,6 +5,7 @@ import { reconcileDeadlineTime } from '../domain/freshness.ts';
 import { scrubQuote } from '../domain/quoteScrub.ts';
 import { findInternalJudgement } from '../domain/privacy.ts';
 import { parseConstraints, tagsFor } from '../domain/eligibility.ts';
+import { scrubTitle } from '../domain/titleScrub.ts';
 import { assertPublicSafe } from './exportPublicListings.ts';
 
 const urlKey = (u: string) => u.replace(/#.*$/, '').replace(/\/$/, '');
@@ -35,7 +36,9 @@ export function mergeListings(prev: PublicListing[], fresh: PublicListing[]): Pu
   for (const f of fresh) if (!used.has(f.slug)) out.push(f);
   const seen = new Set<string>();
   const uniq = out.filter((l) => (seen.has(l.slug) ? false : (seen.add(l.slug), true)));
-  const merged = uniq.map(scrubListing).map(reconcileDeadlineTime).sort(order);
+  const titled = uniq.flatMap((l) => { const t = scrubTitle(l.name); // 옛 목록: 중복 표시 공고는 URL·앱 번들 slug 보존(9617fee)을 위해 메모만 걷고 남긴다. 요청에 의한 비공개만 뺀다.
+    return t.reason === 'hidden' ? [] : [t.name === l.name ? l : { ...l, name: t.name }]; });
+  const merged = titled.map(scrubListing).map(reconcileDeadlineTime).sort(order);
   assertPublicSafe(merged);
   return merged;
 }

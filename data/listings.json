@@ -2656,6 +2656,32 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "harmony-11-2-75292234",
+   "name": "[이번기수 마지막기회/Harmony반]💚 성남아트센터에서 합창단과 함께 공연할 오케스트라 단원 모집 💚 (~11/2)",
+   "category": "대외활동",
+   "kind": "기타",
+   "deadline": "2026-11-03",
+   "deadlineTime": "00:00",
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112396",
+   "organizer": "사단법인 문화예술봉사단메리",
+   "prize": null,
+   "eligibilityQuote": "- 지원자격: 악기 경험 3개월 이상 누구나(성별/나이 무관) 인스타그램 @weare_merry 프로필링크 또는 https://www.wearemerry.org/recruit-merryorchestracheongchoon-12 에서 확인 📍활동안내",
+   "tags": [
+    "누구나"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": true
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "3-11-3-d266d58a",
    "name": "[인사이드아웃] 마케팅 전략 디자인 인턴형 프로그램 3기 모집 (~11/3)",
    "category": "대외활동",
@@ -3636,32 +3662,6 @@
    "eligibilityQuote": "고등학생, 동 연령대 청소년, 대학생, 대학원생, 일반인",
    "tags": [
     "대학생",
-    "누구나"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": true
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "harmony-11-2-75292234",
-   "name": "지혜 // [이번기수 마지막기회/Harmony반]💚 성남아트센터에서 합창단과 함께 공연할 오케스트라 단원 모집 💚 (~11/2)",
-   "category": "대외활동",
-   "kind": "기타",
-   "deadline": "2026-11-03",
-   "deadlineTime": "00:00",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112396",
-   "organizer": "사단법인 문화예술봉사단메리",
-   "prize": null,
-   "eligibilityQuote": "- 지원자격: 악기 경험 3개월 이상 누구나(성별/나이 무관) 인스타그램 @weare_merry 프로필링크 또는 https://www.wearemerry.org/recruit-merryorchestracheongchoon-12 에서 확인 📍활동안내",
-   "tags": [
     "누구나"
    ],
    "constraints": {
@@ -4744,6 +4744,39 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "2026-ai-x-2-50c20a34",
+   "name": "2026 서울시립대학교 AI+X 실전 문제해결 프로젝트 2기",
+   "category": "대외활동",
+   "kind": "기타",
+   "deadline": "2026-11-04",
+   "deadlineTime": "23:30",
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112397",
+   "organizer": "서울시립대학교 캠퍼스타운사업단",
+   "prize": null,
+   "eligibilityQuote": "■ 사업목적 창업 아이디어는 있지만 개발이 막막했던 청년이 AI 코딩 도구(바이브코딩)를 활용해 창업 아이템을 실제 웹서비스로 직접 구현해 보는 실전형 해커톤입니다. 코딩 경험이 없어도 온라인 사전교육과 강의 자료를 통해 처음부터 함께 만들어 갑니다. ■ 신청대상 ○ 대학생 및 청년 30명 ※ 오프라인 해커톤 2일 모두 참석 가능한 분 ■ 신청기간 ○ ~",
+   "tags": [
+    "대학생",
+    "청년"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": true,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "■ 사업목적 창업 아이디어는 있지만 개발이 막막했던 청년이 AI 코딩 도구(바이브코딩)를 활용해 창업 아이템을 실제 웹서비스로 직접 구현해 보는 실전형 해커톤입니다. 코딩 경험이 없어도 온라인 사전교육과 강의 자료를 통해 처음부터 함께 만들어 갑니다. ■ 신청대상 ○ 대학생 및 청년 30명 ※ 오프라인 해커톤 2일 모두 참석 가능한 분 ■ 신청기간 ○ ~…",
+     "source": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112397"
+    }
+   ],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2026-40f3cfb1",
    "name": "2026 서울시여성가족재단 다목적라운지 전시 작품 공모",
    "category": "공모전",
@@ -5418,39 +5451,6 @@
      "kind": "ELIGIBILITY",
      "quote": "참가 자격 - 1981년 이전 출생자",
      "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112372"
-    }
-   ],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "2026-ai-x-2-50c20a34",
-   "name": "지혜 //2026 서울시립대학교 AI+X 실전 문제해결 프로젝트 2기",
-   "category": "대외활동",
-   "kind": "기타",
-   "deadline": "2026-11-04",
-   "deadlineTime": "23:30",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112397",
-   "organizer": "서울시립대학교 캠퍼스타운사업단",
-   "prize": null,
-   "eligibilityQuote": "■ 사업목적 창업 아이디어는 있지만 개발이 막막했던 청년이 AI 코딩 도구(바이브코딩)를 활용해 창업 아이템을 실제 웹서비스로 직접 구현해 보는 실전형 해커톤입니다. 코딩 경험이 없어도 온라인 사전교육과 강의 자료를 통해 처음부터 함께 만들어 갑니다. ■ 신청대상 ○ 대학생 및 청년 30명 ※ 오프라인 해커톤 2일 모두 참석 가능한 분 ■ 신청기간 ○ ~",
-   "tags": [
-    "대학생",
-    "청년"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": true,
-    "region": null,
-    "business": null,
-    "open": false
-   },
-   "clauses": [
-    {
-     "kind": "ELIGIBILITY",
-     "quote": "■ 사업목적 창업 아이디어는 있지만 개발이 막막했던 청년이 AI 코딩 도구(바이브코딩)를 활용해 창업 아이템을 실제 웹서비스로 직접 구현해 보는 실전형 해커톤입니다. 코딩 경험이 없어도 온라인 사전교육과 강의 자료를 통해 처음부터 함께 만들어 갑니다. ■ 신청대상 ○ 대학생 및 청년 30명 ※ 오프라인 해커톤 2일 모두 참석 가능한 분 ■ 신청기간 ○ ~…",
-     "source": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112397"
     }
    ],
    "aiUse": "UNSTATED"
@@ -6713,32 +6713,6 @@
    "aiUse": "UNSTATED"
   },
   {
-   "slug": "ocean-tech-korea-2026-2026-cc98973a",
-   "name": "게시판 이동 안내 전화 완료 //Ocean Tech Korea 2026 | 오션테크코리아 2026",
-   "category": "대외활동",
-   "kind": "기타",
-   "deadline": "2026-11-05",
-   "deadlineTime": null,
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=111724",
-   "organizer": "해양수산부, 해양수산과학기술진흥원",
-   "prize": null,
-   "eligibilityQuote": "제한 없음",
-   "tags": [
-    "누구나"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": true
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
    "slug": "m-063383d6",
    "name": "광안리 M 드론라이트쇼 너의 꿈을 그려봐 그림 공모전",
    "category": "공모전",
@@ -7232,6 +7206,32 @@
      "source": "https://www.campuspick.com/activity/view?id=36628"
     }
    ],
+   "aiUse": "UNSTATED"
+  },
+  {
+   "slug": "ocean-tech-korea-2026-2026-cc98973a",
+   "name": "Ocean Tech Korea 2026 | 오션테크코리아 2026",
+   "category": "대외활동",
+   "kind": "기타",
+   "deadline": "2026-11-05",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=111724",
+   "organizer": "해양수산부, 해양수산과학기술진흥원",
+   "prize": null,
+   "eligibilityQuote": "제한 없음",
+   "tags": [
+    "누구나"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": true
+   },
+   "clauses": [],
    "aiUse": "UNSTATED"
   },
   {
@@ -9010,6 +9010,32 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "2026-self-2026-0d1d7e02",
+   "name": "2026 사회적기업 국제포럼(SELF 2026)",
+   "category": "대외활동",
+   "kind": "기타",
+   "deadline": "2026-11-06",
+   "deadlineTime": "00:00",
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112121",
+   "organizer": "고용노동부",
+   "prize": null,
+   "eligibilityQuote": "제한 없음",
+   "tags": [
+    "누구나"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": true
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2026-b2g-bacf43e0",
    "name": "2026 서울 기후테크 글로벌 B2G 매칭데이 행사 참여기업 모집",
    "category": "지원사업",
@@ -10064,32 +10090,6 @@
     "region": null,
     "business": null,
     "open": false
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "2026-self-2026-0d1d7e02",
-   "name": "게시판 이동 안내 전화 완료 //2026 사회적기업 국제포럼(SELF 2026)",
-   "category": "대외활동",
-   "kind": "기타",
-   "deadline": "2026-11-06",
-   "deadlineTime": "00:00",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112121",
-   "organizer": "고용노동부",
-   "prize": null,
-   "eligibilityQuote": "제한 없음",
-   "tags": [
-    "누구나"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": true
    },
    "clauses": [],
    "aiUse": "UNSTATED"
@@ -17522,6 +17522,32 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "2026-up-class-93866c97",
+   "name": "2026 업비트 디지털 자산 특강 'UP Class'",
+   "category": "대외활동",
+   "kind": "기타",
+   "deadline": "2026-11-10",
+   "deadlineTime": "00:00",
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112209",
+   "organizer": "두나무",
+   "prize": null,
+   "eligibilityQuote": "제한 없음",
+   "tags": [
+    "누구나"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": true
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2026-8c1573c9",
    "name": "2026 재난 안전 논문 공모전",
    "category": "공모전",
@@ -17912,32 +17938,6 @@
      "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=111804"
     }
    ],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "2026-up-class-93866c97",
-   "name": "게시판 이동 안내 전화 완료 //2026 업비트 디지털 자산 특강 'UP Class'",
-   "category": "대외활동",
-   "kind": "기타",
-   "deadline": "2026-11-10",
-   "deadlineTime": "00:00",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112209",
-   "organizer": "두나무",
-   "prize": null,
-   "eligibilityQuote": "제한 없음",
-   "tags": [
-    "누구나"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": true
-   },
-   "clauses": [],
    "aiUse": "UNSTATED"
   },
   {
@@ -19189,6 +19189,38 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "2026-e-room-7da75753",
+   "name": "2026 의왕시 청년 e-Room 창업 아이디어 공모전 참가자 모집",
+   "category": "지원사업",
+   "kind": "지원사업",
+   "deadline": "2026-11-11",
+   "deadlineTime": "00:00",
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112330",
+   "organizer": "(주)이노어스",
+   "prize": null,
+   "eligibilityQuote": "◦ 참가대상 - 대한민국 19~39세 청년 - 개인 또는 팀 지원 가능",
+   "tags": [
+    "청년"
+   ],
+   "constraints": {
+    "minAge": 19,
+    "maxAge": 39,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [
+    {
+     "kind": "TEAM",
+     "quote": "- 개인 또는 팀 지원 가능 ◦ 공모주제",
+     "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112330"
+    }
+   ],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2026-e-room-590ca66f",
    "name": "2026 의왕시 청년e-Room 창업아이디어 공모전",
    "category": "공모전",
@@ -19839,38 +19871,6 @@
     "open": false
    },
    "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "2026-e-room-7da75753",
-   "name": "중복 //2026 의왕시 청년 e-Room 창업 아이디어 공모전 참가자 모집",
-   "category": "지원사업",
-   "kind": "지원사업",
-   "deadline": "2026-11-11",
-   "deadlineTime": "00:00",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112330",
-   "organizer": "(주)이노어스",
-   "prize": null,
-   "eligibilityQuote": "◦ 참가대상 - 대한민국 19~39세 청년 - 개인 또는 팀 지원 가능",
-   "tags": [
-    "청년"
-   ],
-   "constraints": {
-    "minAge": 19,
-    "maxAge": 39,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": false
-   },
-   "clauses": [
-    {
-     "kind": "TEAM",
-     "quote": "- 개인 또는 팀 지원 가능 ◦ 공모주제",
-     "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112330"
-    }
-   ],
    "aiUse": "UNSTATED"
   },
   {
@@ -22418,6 +22418,32 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "2026-f807f3ac",
+   "name": "2026 문화체육관광 디지털혁신 포럼",
+   "category": "대외활동",
+   "kind": "기타",
+   "deadline": "2026-11-13",
+   "deadlineTime": "23:30",
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112037",
+   "organizer": "문화체육관광부",
+   "prize": null,
+   "eligibilityQuote": "제한 없음",
+   "tags": [
+    "누구나"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": true
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2026-dd54f87b",
    "name": "2026 미디어를 활용한 사회참여형 학생 대상 영상공모전",
    "category": "공모전",
@@ -23155,32 +23181,6 @@
      "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=111778"
     }
    ],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "2026-f807f3ac",
-   "name": "게시판 이동 안내 연락 완료//2026 문화체육관광 디지털혁신 포럼",
-   "category": "대외활동",
-   "kind": "기타",
-   "deadline": "2026-11-13",
-   "deadlineTime": "23:30",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112037",
-   "organizer": "문화체육관광부",
-   "prize": null,
-   "eligibilityQuote": "제한 없음",
-   "tags": [
-    "누구나"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": true
-   },
-   "clauses": [],
    "aiUse": "UNSTATED"
   },
   {
@@ -31191,6 +31191,38 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "2026-ai-370109a5",
+   "name": "2026 사회보장 데이터를 활용한 AI 혁신 아이디어 경진대회",
+   "category": "공모전",
+   "kind": "대회",
+   "deadline": "2026-11-20",
+   "deadlineTime": "00:00",
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112315",
+   "organizer": "대구가톨릭대학교, 한국사회보장정보원",
+   "prize": null,
+   "eligibilityQuote": "■ 참가 대상 전 국민 누구나 개인 또는 팀으로 참여 가능 - 팀 구성 인원 제한 없음",
+   "tags": [
+    "누구나"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": true
+   },
+   "clauses": [
+    {
+     "kind": "TEAM",
+     "quote": "전 국민 누구나 개인 또는 팀으로 참여 가능 - 팀 구성 인원 제한 없음",
+     "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112315"
+    }
+   ],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2026-4b1e0754",
    "name": "2026 성남 헤리티지 런",
    "category": "공모전",
@@ -31929,6 +31961,38 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "ai-d5841c45",
+   "name": "용산국제업무지구 AI 스마트도시 아이디어 공모",
+   "category": "공모전",
+   "kind": "공모",
+   "deadline": "2026-11-20",
+   "deadlineTime": "17:00",
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112058",
+   "organizer": "서울특별시 용산입체도시담당관",
+   "prize": null,
+   "eligibilityQuote": "● 참가 자격 - 「서울특별시 청년 기본 조례",
+   "tags": [
+    "청년"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [
+    {
+     "kind": "TEAM",
+     "quote": "- 개인 또는 팀 단위 응모가 가능하며, 팀 응모 시 최대 5인까지 가능함 ● 공모 주제",
+     "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112058"
+    }
+   ],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "4-r-d-a707e5f1",
    "name": "제 4회 산업기술 R&D 어린이 그림 그리기 공모전",
    "category": "공모전",
@@ -32063,70 +32127,6 @@
      "kind": "TEAM",
      "quote": "● 참가 대상 : 제주 거주 만 19세 미만 청소년(접수 마감일 기준), 개인 또는 팀 ● 공모 형식 : 2분 내외 자유 형식 영상, 개인·팀당 1편",
      "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112283"
-    }
-   ],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "2026-ai-370109a5",
-   "name": "중복 //2026 사회보장 데이터를 활용한 AI 혁신 아이디어 경진대회",
-   "category": "공모전",
-   "kind": "대회",
-   "deadline": "2026-11-20",
-   "deadlineTime": "00:00",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112315",
-   "organizer": "대구가톨릭대학교, 한국사회보장정보원",
-   "prize": null,
-   "eligibilityQuote": "■ 참가 대상 전 국민 누구나 개인 또는 팀으로 참여 가능 - 팀 구성 인원 제한 없음",
-   "tags": [
-    "누구나"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": true
-   },
-   "clauses": [
-    {
-     "kind": "TEAM",
-     "quote": "전 국민 누구나 개인 또는 팀으로 참여 가능 - 팀 구성 인원 제한 없음",
-     "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112315"
-    }
-   ],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "ai-d5841c45",
-   "name": "중복 //용산국제업무지구 AI 스마트도시 아이디어 공모",
-   "category": "공모전",
-   "kind": "공모",
-   "deadline": "2026-11-20",
-   "deadlineTime": "17:00",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112058",
-   "organizer": "서울특별시 용산입체도시담당관",
-   "prize": null,
-   "eligibilityQuote": "● 참가 자격 - 「서울특별시 청년 기본 조례",
-   "tags": [
-    "청년"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": false
-   },
-   "clauses": [
-    {
-     "kind": "TEAM",
-     "quote": "- 개인 또는 팀 단위 응모가 가능하며, 팀 응모 시 최대 5인까지 가능함 ● 공모 주제",
-     "source": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112058"
     }
    ],
    "aiUse": "UNSTATED"
@@ -33154,6 +33154,32 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "rx-1440c1a0",
+   "name": "[한국야쿠르트] 펫쿠르트 왈Rx 환승사료 숏폼 공모전",
+   "category": "대외활동",
+   "kind": "기타",
+   "deadline": "2026-11-22",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=111842",
+   "organizer": "hy (에치와이)",
+   "prize": "총상금 750만원",
+   "eligibilityQuote": "응모자격 만 19 세 이상 , 반려견을 양육 중인 누구나 접수기간",
+   "tags": [
+    "누구나"
+   ],
+   "constraints": {
+    "minAge": 19,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": true
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "11-kiada2026-b1aedde2",
    "name": "[행사운영지원] 제11회 대한민국장애인국제무용제 KIADA2026 사진전 자원봉사자 모집",
    "category": "공모전",
@@ -33903,32 +33929,6 @@
     "region": null,
     "business": null,
     "open": false
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "rx-1440c1a0",
-   "name": "게시판 이동 안내 전화 완료 //[한국야쿠르트] 펫쿠르트 왈Rx 환승사료 숏폼 공모전",
-   "category": "대외활동",
-   "kind": "기타",
-   "deadline": "2026-11-22",
-   "deadlineTime": null,
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=111842",
-   "organizer": "hy (에치와이)",
-   "prize": "총상금 750만원",
-   "eligibilityQuote": "응모자격 만 19 세 이상 , 반려견을 양육 중인 누구나 접수기간",
-   "tags": [
-    "누구나"
-   ],
-   "constraints": {
-    "minAge": 19,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": true
    },
    "clauses": [],
    "aiUse": "UNSTATED"
@@ -35926,6 +35926,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "2026-10-84fea7d6",
+   "name": "2026 제10회 서민금융포럼 서포터즈 모집",
+   "category": "공모전",
+   "kind": "공모",
+   "deadline": "2026-11-23",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=113058",
+   "organizer": "아주경제, 서민금융진흥원",
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2026-30dcffee",
    "name": "2026 제주 국가유산 탐험 후기 공모전",
    "category": "공모전",
@@ -36764,30 +36788,6 @@
     "region": null,
     "business": null,
     "open": true
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "2026-10-84fea7d6",
-   "name": "지혜 // 2026 제10회 서민금융포럼 서포터즈 모집",
-   "category": "공모전",
-   "kind": "공모",
-   "deadline": "2026-11-23",
-   "deadlineTime": null,
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=113058",
-   "organizer": "아주경제, 서민금융진흥원",
-   "prize": null,
-   "eligibilityQuote": null,
-   "tags": [],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": false
    },
    "clauses": [],
    "aiUse": "UNSTATED"
@@ -39068,7 +39068,7 @@
   },
   {
    "slug": "g-88a616f7",
-   "name": "고재원 준비중 // 국회 미래세대 미래의제 공모전",
+   "name": "국회 미래세대 미래의제 공모전",
    "category": "공모전",
    "kind": "공모",
    "deadline": "2026-11-25",
@@ -42962,7 +42962,7 @@
   },
   {
    "slug": "g-3643a373",
-   "name": "주최사에 전화 후 게시판 이동 안내 요청 완료 //태화강 어린연어 키우기",
+   "name": "태화강 어린연어 키우기",
    "category": "공모전",
    "kind": "공모",
    "deadline": "2026-11-27",
@@ -43939,6 +43939,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "32-11-29-61ea41c8",
+   "name": "나를 브랜딩 하라! 팀 화이트 32기 모집 (~11/29)",
+   "category": "공모전",
+   "kind": "공모",
+   "deadline": "2026-11-29",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=113043",
+   "organizer": "한국소비자포럼",
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "6-6b7f621d",
    "name": "내가 만드는 한국여행 제6회 인천공항 여행 공모전",
    "category": "공모전",
@@ -44344,57 +44368,6 @@
    "aiUse": "UNSTATED"
   },
   {
-   "slug": "the-6th-incheon-airport-travel-contest-korea-mad-dec7fbfc",
-   "name": "중복 //The 6th Incheon Airport Travel Contest 'Korea, Made by You'",
-   "category": "공모전",
-   "kind": "공모",
-   "deadline": "2026-11-29",
-   "deadlineTime": "00:00",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112319",
-   "organizer": "Incheon Airport",
-   "prize": null,
-   "eligibilityQuote": "어린이, 초등학생, 중학생, 고등학생, 동 연령대 청소년, 대학생, 대학원생, 일반인, 제한 없음",
-   "tags": [
-    "대학생",
-    "누구나"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": true
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "32-11-29-61ea41c8",
-   "name": "지혜 // 나를 브랜딩 하라! 팀 화이트 32기 모집 (~11/29)",
-   "category": "공모전",
-   "kind": "공모",
-   "deadline": "2026-11-29",
-   "deadlineTime": null,
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=113043",
-   "organizer": "한국소비자포럼",
-   "prize": null,
-   "eligibilityQuote": null,
-   "tags": [],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": false
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
    "slug": "11-ef566d94",
    "name": "취약분야 상시 컨설팅 11월 참가자 모집 공고",
    "category": "지원사업",
@@ -44685,6 +44658,33 @@
     "region": null,
     "business": null,
     "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
+   "slug": "the-6th-incheon-airport-travel-contest-korea-mad-dec7fbfc",
+   "name": "The 6th Incheon Airport Travel Contest 'Korea, Made by You'",
+   "category": "공모전",
+   "kind": "공모",
+   "deadline": "2026-11-29",
+   "deadlineTime": "00:00",
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112319",
+   "organizer": "Incheon Airport",
+   "prize": null,
+   "eligibilityQuote": "어린이, 초등학생, 중학생, 고등학생, 동 연령대 청소년, 대학생, 대학원생, 일반인, 제한 없음",
+   "tags": [
+    "대학생",
+    "누구나"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": true
    },
    "clauses": [],
    "aiUse": "UNSTATED"
@@ -48127,6 +48127,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "3-15-66-18-3-15-ucc-2ec00000",
+   "name": "3·15의거 제66주년 기념 '제18회 3·15 청소년 영상제 UCC공모전'",
+   "category": "공모전",
+   "kind": "공모",
+   "deadline": "2026-11-30",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112491",
+   "organizer": "(사)3",
+   "prize": null,
+   "eligibilityQuote": "● 응모 자격 - 3·15 의거에 관심 있는 대한민국 초 · 중 · 고 학생 및 청소년 ● 응모 주제 : 대한민국 첫 민주화 운동 3·15 의거 !",
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "g-77396c1e",
    "name": "고령군 소식지 네이밍 공모",
    "category": "공모전",
@@ -48905,6 +48929,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "1-w-23114b30",
+   "name": "이공계 여학생 커리어 플렛폼 W브릿지 신규 회원 이벤트",
+   "category": "공모전",
+   "kind": "공모",
+   "deadline": "2026-11-30",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112956",
+   "organizer": "한국여성과학기술인육성재단",
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "11-f4aa3fce",
    "name": "이번 11월, 부여 어때? 숏폼 공모전",
    "category": "공모전",
@@ -48952,30 +49000,6 @@
     "region": null,
     "business": null,
     "open": true
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "1-w-23114b30",
-   "name": "재등록 요청 전화 1차 진행 // 이공계 여학생 커리어 플렛폼 W브릿지 신규 회원 이벤트",
-   "category": "공모전",
-   "kind": "공모",
-   "deadline": "2026-11-30",
-   "deadlineTime": null,
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112956",
-   "organizer": "한국여성과학기술인육성재단",
-   "prize": null,
-   "eligibilityQuote": null,
-   "tags": [],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": false
    },
    "clauses": [],
    "aiUse": "UNSTATED"
@@ -49366,30 +49390,6 @@
     "region": null,
     "business": null,
     "open": true
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "3-15-66-18-3-15-ucc-2ec00000",
-   "name": "지혜 // 3·15의거 제66주년 기념 '제18회 3·15 청소년 영상제 UCC공모전'",
-   "category": "공모전",
-   "kind": "공모",
-   "deadline": "2026-11-30",
-   "deadlineTime": null,
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112491",
-   "organizer": "(사)3",
-   "prize": null,
-   "eligibilityQuote": "● 응모 자격 - 3·15 의거에 관심 있는 대한민국 초 · 중 · 고 학생 및 청소년 ● 응모 주제 : 대한민국 첫 민주화 운동 3·15 의거 !",
-   "tags": [],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": false
    },
    "clauses": [],
    "aiUse": "UNSTATED"
@@ -54546,33 +54546,6 @@
     "region": null,
     "business": null,
     "open": false
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "g-7857fd5e",
-   "name": "요청에의한 비공개 / 건전한 사이버 세상 만들기 ‘디지털 공감’ 숏폼 공모전",
-   "category": "공모전",
-   "kind": "공모",
-   "deadline": "2026-12-05",
-   "deadlineTime": "00:00",
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/contest/view.do?contest_pk=112152",
-   "organizer": "(사)한국인터넷기업협회",
-   "prize": null,
-   "eligibilityQuote": "● 참가 대상 - 공모전에 관심 있는 누구나 - 초등부·중등부: 서울 소재 학교 재학생",
-   "tags": [
-    "대학생",
-    "누구나"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": "서울",
-    "business": null,
-    "open": true
    },
    "clauses": [],
    "aiUse": "UNSTATED"
@@ -60475,6 +60448,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "1365-e73e8ddb",
+   "name": "1365 파주 운정역 유기견 보호소 봉사자 모집",
+   "category": "공모전",
+   "kind": "공모",
+   "deadline": "2026-12-15",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112932",
+   "organizer": "국제청년센터",
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2026-052aed76",
    "name": "2026년 벤처나라 벤처창업기업제품 등록 지원제도 기관 추천 희망 기업 모집",
    "category": "지원사업",
@@ -60513,30 +60510,6 @@
    "url": "https://www.contestkorea.com/sub/view.php?int_gbn=1&str_no=202610280037",
    "organizer": null,
    "prize": "총상금 300만원",
-   "eligibilityQuote": null,
-   "tags": [],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": false
-   },
-   "clauses": [],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "1365-e73e8ddb",
-   "name": "기존 게시판에 업데이트 완료 // 1365 파주 운정역 유기견 보호소 봉사자 모집",
-   "category": "공모전",
-   "kind": "공모",
-   "deadline": "2026-12-15",
-   "deadlineTime": null,
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=112932",
-   "organizer": "국제청년센터",
-   "prize": null,
    "eligibilityQuote": null,
    "tags": [],
    "constraints": {
@@ -68764,6 +68737,32 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "2026-3-b3d4178d",
+   "name": "[아이쿠스] 2026 겨울 이집트 드리머즈 3기 모집✈️｜이집트여행·문화교류·해외봉사",
+   "category": "대외활동",
+   "kind": "기타",
+   "deadline": "2027-01-07",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=111813",
+   "organizer": "아이쿠스",
+   "prize": null,
+   "eligibilityQuote": "○ 모집 대상: 전국 20대 (대학생, 휴학생, 취준생 등) ○ 모집 기간: 선착순 마감(기수별 모집 완료 시 조기 마감될 수 있습니다) ○ 모집 인원: 46명",
+   "tags": [
+    "대학생"
+   ],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": true,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2027-1-1-9ab1cd72",
    "name": "2027년 1학기 국가장학금 1차 신청",
    "category": "장학",
@@ -68791,32 +68790,6 @@
      "source": "https://www.kosaf.go.kr/ko/notice.do?ctgrId1=0000000002&ctgrId2=0000000012"
     }
    ],
-   "aiUse": "UNSTATED"
-  },
-  {
-   "slug": "2026-3-b3d4178d",
-   "name": "중복 //[아이쿠스] 2026 겨울 이집트 드리머즈 3기 모집✈️｜이집트여행·문화교류·해외봉사",
-   "category": "대외활동",
-   "kind": "기타",
-   "deadline": "2027-01-07",
-   "deadlineTime": null,
-   "rolling": false,
-   "url": "https://www.thinkcontest.com/thinkgood/user/outside/view.do?contest_pk=111813",
-   "organizer": "아이쿠스",
-   "prize": null,
-   "eligibilityQuote": "○ 모집 대상: 전국 20대 (대학생, 휴학생, 취준생 등) ○ 모집 기간: 선착순 마감(기수별 모집 완료 시 조기 마감될 수 있습니다) ○ 모집 인원: 46명",
-   "tags": [
-    "대학생"
-   ],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": true,
-    "region": null,
-    "business": null,
-    "open": false
-   },
-   "clauses": [],
    "aiUse": "UNSTATED"
   },
   {
@@ -75735,7 +75708,7 @@
   },
   {
    "slug": "1-b0768d84",
-   "name": "중복 // 문익환 목사 창작희곡 공모, 총 상금 1억원",
+   "name": "문익환 목사 창작희곡 공모, 총 상금 1억원",
    "category": "공모전",
    "kind": "공모",
    "deadline": "2027-12-31",

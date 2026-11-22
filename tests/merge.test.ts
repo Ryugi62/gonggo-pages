@@ -89,7 +89,9 @@ describe('실데이터 — 라이브 스냅숏(9617fee) ⊆ 현재 data/listings
   const cur = JSON.parse(readFileSync('data/listings.json', 'utf8')) as { generatedAt: string; listings: any[] };
   it('소멸 0', () => {
     const s = new Set(cur.listings.map((l) => l.slug));
-    expect(live.filter((l) => !s.has(l.slug)).map((l) => l.slug)).toEqual([]);
+    // 예외: 「요청에의한 비공개」 앞머리 공고는 원 사이트 요청으로 공개에서 뺐다(titleScrub, 11/22 핫픽스)
+    const PRIVACY_REMOVED = ['g-7857fd5e'];
+    expect(live.filter((l) => !s.has(l.slug) && !PRIVACY_REMOVED.includes(l.slug)).map((l) => l.slug)).toEqual([]);
   });
   it('정리 기준일이 11/02가 아니고 열린 공고가 1,500건 이상', () => {
     expect(cur.generatedAt > '2026-11-19').toBe(true);
