@@ -137,3 +137,23 @@ export function countSubSteps(text: string, o: CountOptions): SubVisits {
   }
   return { click: seen.click.size, request: seen.request.size };
 }
+
+// SPEC §29 AC-104 — 상세 「앱에서 전체 카드」 클릭. <a ping>이 보내는 POST(브라우저에 따라 GET)를 센다. 같은 (IP, UA, KST 날짜)는 1명.
+// Firefox는 ping 기본 꺼짐 — 계측은 Chrome·Safari·모바일 기준.
+const APP_CARD = /^(\S+) (.+?) "(?:POST|GET) \/intent\/app-card HTTP\/[\d.]+" (\d{3}) "([^"]*)" "([^"]*)"$/;
+export function countAppCardClicks(text: string, o: CountOptions): number {
+  const self = new Set(o.selfIps);
+  const seen = new Set<string>();
+  for (const line of text.split('\n')) {
+    const m = APP_CARD.exec(line.trim());
+    if (!m) continue;
+    const [, t, xff, status, , ua] = m;
+    const at = new Date(t);
+    if (Number.isNaN(at.getTime())) continue;
+    const day = kstDay(at);
+    const ip = firstIp(xff);
+    if (status !== '204' || day < o.since || self.has(ip) || !isHumanUserAgent(ua)) continue;
+    seen.add(`${ip}|${ua}|${day}`);
+  }
+  return seen.size;
+}

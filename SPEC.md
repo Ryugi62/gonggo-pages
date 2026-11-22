@@ -383,3 +383,16 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - 유지: 상세 HTML ≤ 40KB(S4), 페이지 요청 수 ≤ 3.
 **비목표**: 추적 스크립트 추가 0 · 딥링크(`servicetoss://`) 직접 생성 0 · 새 요청·이미지·외부 스크립트 0 · 배너·그림자·음수 여백.
 **변경 이력**: v1.10 2026-11-19 §28 추가.
+
+## 29. 공고 상세 「공모 읽는 법」 맛보기 카드 (v1.11, 2026-11-22 — 볼트 `projects/공고콕-앱인토스-2026/유입실험-2026-11-22/SPEC` 실험 E1)
+**목적**: 공고 정보는 경쟁자도 무료라 검색 착지가 머물 이유가 없다. 「이 공고는 이렇게 읽어요」 4칸(니즈·평가 전략·맞춤 아이디어·완성도)을 상세에 싣고, 전체 카드는 토스 앱 미니앱으로 잇는다.
+**용어**: 읽는 법 카드 `ReadCard` · 축 `Axis` · 유형 `ReadKind`(해커톤·공모전·지원사업·대외활동, 장학 제외) · 맛보기. 데이터 `data/readcards.json`(유형 4 × 축 4, 줄 1문장 ≤60자 + 체크 3개 ≤30자) · 도메인 `src/domain/readCard.ts` · 컴포넌트 `ReadCard.astro`.
+**성공 조건(배포일 D, 측정 = `npm run visits`)**: D+14 웹 무료 착지 ≥ 40/주(기준 약 21) · 카드 앱 열기 클릭 ≥ 착지의 5% · D+21 착지 < 25/주 이고 클릭 < 2%이면 문구 1회 재작성, 같으면 kill.
+- AC-99: Given 기본·AWS 빌드 When 4유형 상세 Then `#read-card` 1개 · 소제목 4 · 줄 4 · 체크 12. 장학엔 0개.
+- AC-100: Given 카드 When 링크 Then `href`=`TOSS_MINIAPP_URL`·`target="_blank"`·`rel="noopener"`·`ping="/intent/app-card"`, 문구 해요체 ≤40자. 페이지당 minion 링크는 정확히 1개 — 카드 상세에선 카드 링크가 기존 타일을 대체한다(AC-97 유지).
+- AC-101: Given `readcards.json` Then 「우승·1위·합격 보장·확실·무조건」·점수/% 단정 0, 카드 아래 고정 문장 「원문 공고가 기준이에요」.
+- AC-102: Given 데이터·산출물 Then `privacy.ts` 금지 토큰·장부 id(`L0xxx`)·「모의」「블라인드」「우승게이트」 0. 카드 문장은 교훈 장부를 일반화해 새로 쓴 지원자 문장(원문 복사 0).
+- AC-103: Given `domain/readCard.ts` Then fs·astro·adapters import 0. 카드 섹션 ≤ 3KB, 상세 ≤ 40KB.
+- AC-104: Given 배포 When `npm run visits` Then 「앱 카드 클릭」 줄(`/intent/app-card` POST·GET, 같은 IP·UA·날 1명, 운영자·봇 제외). Firefox는 ping 기본 꺼짐 — Chrome·Safari·모바일 기준.
+**비목표**: 앱 번들·결제·가격 숫자 · 공고별 맞춤 카드(앱 유료) · 새 nginx location · 추적 스크립트 · 「수상 보장」류 약속.
+**변경 이력**: v1.11 2026-11-22 §29 추가.

@@ -7,6 +7,8 @@ import { dDayLabel, formatDate } from '../../domain/format.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import ReadRequestEntry from '../../components/ReadRequestEntry.astro';
 import TossMiniappLink from '../../components/TossMiniappLink.astro';
+import ReadCard from '../../components/ReadCard.astro';
+import { readCardOf } from '../../adapters/site/readCards.ts';
 import SubscribeEntry from '../../components/SubscribeEntry.astro';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
 import { CLAUSE_LABEL } from '../../domain/clause.ts';
@@ -21,6 +23,7 @@ export function getStaticPaths() {
 interface Props { l: PublicListing }
 const { l } = Astro.props;
 const related = index.related(l);
+const readCard = readCardOf(l.category); // SPEC §29 — 카드가 있는 유형은 카드 링크가 기존 타일을 대신한다(AC-100)
 const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
 // SPEC §15 — 고객이 검색하는 말(「받을 수 있나요?」「중복 수혜」)로 제목·설명, 화면 질문 = FAQ 구조화 데이터
 const title = searchTitle(l);
@@ -132,7 +135,7 @@ const jsonLd = [
     <a class="tile" href="/check/"><b>내 조건으로 낼 수 있는 공고 찾기 →</b><span>나이·학생·지역·사업자 여부만 고르면 돼요. 입력값은 브라우저 밖으로 나가지 않아요.</span></a>
   </section>
 
-  <TossMiniappLink />
+  {readCard ? <ReadCard card={readCard} /> : <TossMiniappLink />}
 
   {related.length > 0 && (
     <section>

@@ -1,0 +1,28 @@
+---
+// SPEC §29 — 공고 상세 「공모 읽는 법」 맛보기 4칸 + 토스 앱 열기 링크(ping으로 클릭 계측, 스크립트 0).
+import type { ReadCard } from '../domain/readCard.ts';
+import { AXES, READ_CARD_COPY, APP_CARD_PING } from '../domain/readCard.ts';
+import { TOSS_MINIAPP_URL } from '../domain/tossLink.ts';
+interface Props { card: ReadCard }
+const { card } = Astro.props;
+---
+<section id="read-card" aria-labelledby="rc-h">
+  <h2 id="rc-h">{READ_CARD_COPY.title}</h2>
+  <p class="sub">{card.kind} 공고를 처음 내는 분을 위한 4칸 맛보기예요.</p>
+  {AXES.map((a) => (
+    <div class="rc-axis">
+      <h3>{a.label}</h3>
+      <p class="rc-line">{card.axes[a.key].line}</p>
+      <ul>{card.axes[a.key].check.map((t) => <li class="rc-check">{t}</li>)}</ul>
+    </div>
+  ))}
+  <a class="tile" href={TOSS_MINIAPP_URL} target="_blank" rel="noopener" ping={APP_CARD_PING}><b>{READ_CARD_COPY.link} →</b></a>
+  <p class="small">{READ_CARD_COPY.note}</p>
+</section>
+<style>
+  .rc-axis { margin: 14px 0 0; }
+  .rc-axis h3 { margin: 0 0 4px; font-size: 15px; }
+  .rc-line { margin: 0 0 4px; }
+  .rc-axis ul { margin: 0 0 0 18px; padding: 0; color: var(--muted); font-size: 13px; }
+  #read-card .tile { margin-top: 16px; }
+</style>
