@@ -4,7 +4,7 @@ import { assertReadFactsClean } from '../src/domain/readFacts.ts';
 
 const mk = (extra: Record<string, unknown> = {}) => ({ slug: 'a', name: 'A 공모전', category: '공모전', kind: '대회', deadline: '2026-12-01', deadlineTime: '18:00', rolling: false, url: 'https://x.test/a', organizer: '창원시', prize: '상금 300만원', eligibilityQuote: null, tags: ['대학생'], constraints: {}, clauses: [], aiUse: 'UNSTATED', ...extra }) as any;
 
-describe('AC-109 읽는 법 4칸에 공고별 한 줄', () => {
+describe('AC-114 읽는 법 4칸에 공고별 한 줄', () => {
   it('공개 필드(주최·상금·대상·마감)에서 4칸 모두 한 줄 이상', () => {
     const f = axisFacts(mk(), '2026-11-22');
     expect(f.needs).toContain('창원시');

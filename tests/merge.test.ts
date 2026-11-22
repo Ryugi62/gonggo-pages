@@ -13,7 +13,7 @@ const mk = (slug: string, deadline: string | null, extra: Record<string, unknown
   constraints: { minAge: null, maxAge: null, studentOnly: false, region: null, business: null, open: true }, clauses: [], aiUse: 'UNSTATED', ...extra,
 }) as any;
 
-describe('AC-106 병합 — 소멸 0·새 공고 추가·갱신 덮어쓰기', () => {
+describe('AC-111 병합 — 소멸 0·새 공고 추가·갱신 덮어쓰기', () => {
   const prev = [mk('old-closed', '2026-11-02'), mk('both', '2026-12-01', { prize: '옛 상금' }), mk('moved-old', '2026-12-05', { url: 'https://x.test/same' })];
   const fresh = [mk('both', '2026-12-01', { prize: '새 상금' }), mk('new-open', '2026-12-20'), mk('moved-new', '2026-12-05', { url: 'https://x.test/same#top', prize: '갱신' })];
   const out = mergeListings(prev, fresh);
@@ -48,7 +48,7 @@ describe('isOpen — 열림 = 상시 또는 마감일 ≥ 오늘', () => {
   });
 });
 
-describe('AC-107 마감 시각은 원문 인용과 어긋나지 않는다', () => {
+describe('AC-112 마감 시각은 원문 인용과 어긋나지 않는다', () => {
   it('날짜 뒤 「18시까지」를 읽는다', () => {
     expect(quoteDeadlineTime('모집기간 : 2026.10.19.(월)~2026.11.2.(월) 18시까지', '2026-11-02')).toBe('18:00');
     expect(quoteDeadlineTime('접수 11월 2일 오후 6시까지', '2026-11-02')).toBe('18:00');
@@ -65,7 +65,7 @@ describe('AC-107 마감 시각은 원문 인용과 어긋나지 않는다', () =
   });
 });
 
-describe('AC-108 비슷한 공고는 열린 색인에서 n개', () => {
+describe('AC-113 비슷한 공고는 열린 색인에서 n개', () => {
   const open = [mk('o1', '2026-12-01'), mk('o2', '2026-12-02'), mk('o3', '2026-12-03'), mk('o4', '2026-12-04')];
   const idx = buildSiteIndex(open);
   it('마감된 공고에도 열린 것만 n개', () => {
