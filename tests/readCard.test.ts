@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { READ_KINDS, AXES, readCardFor, assertReadCardClean, READ_CARD_COPY, APP_CARD_PING, type ReadCardData } from '../src/domain/readCard.ts';
+import { READ_KINDS, AXES, readCardFor, assertReadCardClean, readCardTitle, APP_CARD_PING, type ReadCardData } from '../src/domain/readCard.ts';
 import { findForbidden } from '../src/domain/privacy.ts';
 import { countAppCardClicks } from '../src/application/visitCount.ts';
 import { TOSS_MINIAPP_URL } from '../src/domain/tossLink.ts';
@@ -28,21 +28,24 @@ describe('AC-99 카드 데이터 모양', () => {
   });
 });
 
-describe('AC-100 앱 연결 문구', () => {
-  it('해요체 ≤ 40자, ping 경로는 /intent/app-card', () => {
-    expect(READ_CARD_COPY.link.length).toBeLessThanOrEqual(40);
-    expect(READ_CARD_COPY.link).toMatch(/요$/);
+describe('AC-100 읽는 법 제목·앱 연결', () => {
+  it('제목은 유형 이름으로 솔직하게(「이 공고는」 아님), 해요체, ping 경로는 /intent/app-card', () => {
+    expect(readCardTitle('공모전')).toBe('공모전 공고는 이렇게 읽어요');
+    for (const k of READ_KINDS) { expect(readCardTitle(k)).toMatch(/요$/); expect(readCardTitle(k)).not.toContain('이 공고는'); }
     expect(APP_CARD_PING).toBe('/intent/app-card');
     expect(TOSS_MINIAPP_URL).toBe('https://minion.toss.im/L5iKJAEk');
   });
 });
 
 describe('AC-101 과장·금지 낱말 0', () => {
-  it('우승·1위·합격 보장·확실·무조건·점수 단정 없음', () => {
+  it('우승·1위·합격 보장·확실·무조건·점수 단정 없음, 마감 전날 같은 시점 단정 없음', () => {
     expect(raw).not.toMatch(/우승|1위|합격\s*보장|확실|무조건|보장|반드시 (붙|합격|수상)/);
     expect(raw).not.toMatch(/\d+\s*점|\d+\s*%/);
     expect(raw).not.toMatch(/대신(해|합)|원문을 대체/);
-    expect(READ_CARD_COPY.note).toBe('원문 공고가 기준이에요');
+    expect(raw).not.toMatch(/마감 전날/); // 마감된 공고에도 틀리지 않게(11/22 r2)
+  });
+  it('체크 문구는 명사형·「~기」·「~는지」가 섞이지 않고 한 꼴로 끝난다', () => {
+    for (const k of READ_KINDS) for (const a of AXES) for (const t of data[k][a.key].check) expect(t, `${k}/${a.key}`).toMatch(/기$/);
   });
 });
 

@@ -1,12 +1,15 @@
 ---
 // SPEC §21 — 무료 공고 판독 요청 입구(AWS 빌드에서만 호출). 폼 3칸: 공고 링크 · 이메일 · 개인정보 동의.
 // 저장은 기존 POST /api/pro-request(kind:"read"), 계측은 /intent/read/{click,request}.
+import Chevron from './Chevron.astro';
 ---
-<section class="read-entry card" data-read-entry aria-labelledby="read-h">
-  <h2 id="read-h">다른 공고도 원문 조항을 읽어 드려요</h2>
-  <p class="sub">무료예요. 공고 링크와 이메일을 남기면 24시간 안에 AI 사용·중복 수상·자격 조항을 원문 문장 그대로 정리해 메일 1통으로 답해요. 가격이나 광고 안내는 넣지 않아요.</p>
-  <button class="btn secondary block" id="read-open" type="button" aria-expanded="false" aria-controls="read-form">공고 읽어 달라고 요청하기</button>
+<section class="read-entry row-entry" data-read-entry aria-labelledby="read-h">
+  <button class="row" id="read-open" type="button" aria-expanded="false" aria-controls="read-form">
+    <span class="rt"><b id="read-h">다른 공고도 원문 조항을 읽어 드려요</b><span>무료예요. 24시간 안에 조항 정리를 메일 1통으로 보내요.</span></span>
+    <Chevron />
+  </button>
   <form id="read-form" hidden novalidate onsubmit="return false">
+    <p class="small">공고 링크와 이메일을 남기면 AI 사용·중복 수상·자격 조항을 원문 문장 그대로 정리해 답해요. 가격이나 광고 안내는 넣지 않아요.</p>
     <label class="rf"><span>공고 링크</span>
       <input id="read-link" type="url" inputmode="url" autocomplete="off" maxlength="400" placeholder="예: https://…" />
     </label>
@@ -20,15 +23,14 @@
   <p id="read-done" hidden role="status"><strong>접수됐어요.</strong> 24시간 안에 적어 주신 메일로 공고 원문 조항을 정리해 답할게요.</p>
 </section>
 <style>
-  .read-entry h2 { font-size: 18px; margin-bottom: 8px; }
   .read-entry [hidden] { display: none !important; }
-  .read-entry .block { margin-top: 12px; width: 100%; min-height: 48px; }
-  #read-form { margin-top: 8px; }
-  .rf { display: block; margin-top: 14px; }
-  .rf > span { display: block; font-weight: 600; font-size: 14px; color: var(--sub); margin-bottom: 6px; }
-  .rf input { width: 100%; height: 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 16px; padding: 0 14px; font-family: inherit; }
-  .rc { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; font-size: 14px; cursor: pointer; }
-  .rc input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--btn); }
+  .read-entry .btn.block { margin-top: 16px; }
+  #read-form { margin: 0 0 16px; }
+  .rf { display: block; margin-top: 16px; }
+  .rf > span { display: block; font-weight: 600; font-size: 14px; color: var(--sub); margin-bottom: 8px; }
+  .rf input { width: 100%; height: 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 16px; padding: 0 16px; font-family: inherit; }
+  .rc { display: flex; gap: 8px; align-items: flex-start; margin-top: 16px; font-size: 14px; cursor: pointer; }
+  .rc input { width: 22px; height: 22px; margin: 4px 0 0; flex: none; accent-color: var(--btn); }
   .warn { color: var(--no); }
   .nw { white-space: nowrap; }
 </style>

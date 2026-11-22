@@ -22,7 +22,7 @@ const jsonLd = [
   <h1>{heading}</h1>
   <p class="lead">{lead}</p>
   <p class="small" style="margin:8px 0 0">{generatedAt} 판독 · 지금 열려 있는 공고 {total}건 · 공고 원문 문장을 그대로 옮겼어요. 원문과 다르면 원문이 맞아요.</p>
-  {IS_AWS && <ReadRequestEntry />}
+  {IS_AWS && <div class="rows"><ReadRequestEntry /></div>}
   {groups.map((g) => (
     <section aria-label={g.title}>
       <h2>{g.title} ({g.items.length}건)</h2>

@@ -31,6 +31,6 @@ const jsonLd = [{ '@context': 'https://schema.org', '@type': 'ItemList', numberO
     ))}
   </ol>
   <p class="sub">공고 목록은 매주 새로 만들어요. 전체 목록은 <a href="/week/">이번 주 마감 공고</a>에서 볼 수 있어요.</p>
-  {IS_AWS && <SubscribeEntry />}
+  {IS_AWS && <div class="rows"><SubscribeEntry /></div>}
   {IS_AWS && <section><a class="tile" href={pro.href}><b>{pro.title}</b><span>{pro.sub}</span></a></section>}
 </Layout>

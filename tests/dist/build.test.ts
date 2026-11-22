@@ -29,10 +29,11 @@ describe('AC-10 상세 페이지', () => {
     expect(page).toContain('property="og:title"');
     expect(page).toContain('"@type":"BreadcrumbList"');
   });
-  it('원문 링크·면책·알림 의향 버튼(준비 중 표기)', () => {
+  it('원문 링크·면책, 죽은 버튼(마감 알림 준비 중)은 없다(11/22 검수)', () => {
     expect(page).toContain(`href="${l.url.replace(/&/g, '&amp;')}"`);
     expect(page).toContain('공고를 주최하거나 접수하지 않아요');
-    expect(page).toContain('마감 알림 받기 (준비 중)');
+    expect(page).not.toContain('마감 알림 받기');
+    expect(page).not.toContain('준비 중');
   });
   it('모든 상세 페이지 ≤ 40KB, lang=ko, viewport', () => {
     for (const f of detail) {
@@ -80,14 +81,6 @@ describe('AC-12 검색 등록 소유확인', () => {
     expect(readFileSync('dist/naver834f78053dd5db36c61e81760ecaf7ce.html', 'utf8')).toContain('naver-site-verification: naver834f78053dd5db36c61e81760ecaf7ce.html');
     expect(readFileSync('dist/naver228ead5495fbad5fe49c95cc18e5bc7c.html', 'utf8')).toContain('naver-site-verification: naver228ead5495fbad5fe49c95cc18e5bc7c.html');
     expect(readFileSync('dist/index.html', 'utf8')).toContain('<meta name="naver-site-verification" content="b075ec90d3f456a4ecbac88671fff441169d5b8b"');
-  });
-});
-
-describe('AC-13 알림 의향 계측', () => {
-  it('알림 버튼을 켤 때 /intent/alert/<slug> 가상 페이지뷰를 보낸다', () => {
-    const l = data.listings[0];
-    const page = readFileSync(`dist/g/${l.slug}/index.html`, 'utf8');
-    expect(page).toContain("window.va('pageview',{route:'/intent/alert',path:'/intent/alert/'+s})");
   });
 });
 

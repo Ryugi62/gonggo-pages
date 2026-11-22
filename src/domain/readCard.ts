@@ -16,11 +16,8 @@ export const AXES: { key: Axis; label: string }[] = [
   { key: 'polish', label: '완성도' },
 ];
 
-export const READ_CARD_COPY = {
-  title: '이 공고는 이렇게 읽어요',
-  link: '이 공고에 맞춘 전체 카드는 토스 앱에서 봐요',
-  note: '원문 공고가 기준이에요',
-} as const;
+/** 4칸은 유형(공모전·해커톤…) 공통 문장이라 제목도 유형 이름으로 솔직하게 쓴다(11/22 검수: 「이 공고는」 약속 불이행) */
+export const readCardTitle = (kind: ReadKind): string => `${kind} 공고는 이렇게 읽어요`;
 
 /** 앱 열기 클릭 계측 경로 — 기존 nginx `/intent/` location이 204로 받는다(새 location 0). */
 export const APP_CARD_PING = '/intent/app-card';

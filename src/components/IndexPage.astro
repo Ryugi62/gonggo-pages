@@ -24,7 +24,7 @@ const jsonLd = [
   <p class="sub">{lead}</p>
   <section class="card" style="margin-top:20px">
     <div class="big">{items.length}건</div>
-    <p style="margin:6px 0 0" class="sub">마감이 가까운 순서예요.</p>
+    <p style="margin:8px 0 0" class="sub">마감이 가까운 순서예요.</p>
   </section>
   {IS_AWS && pro && <section><a class="tile" href={pro.href}><b>{pro.title}</b><span>{pro.sub}</span></a></section>}
   {feed && hasFeed(feed) && <CalendarSubscribe feed={feed} />}

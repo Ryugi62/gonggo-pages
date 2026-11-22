@@ -1,7 +1,20 @@
 ---
-// SPEC §28 — 토스 미니앱 열기 링크 줄(타일 1개). 새 요청·스크립트·이미지 0.
-import { TOSS_MINIAPP_URL, TOSS_MINIAPP_COPY } from '../domain/tossLink.ts';
+// SPEC §28·§30 — 토스 미니앱 열기 링크. 홈 = 타일 1개(기본), 상세 = 하단 묶음의 ListRow(slug가 있으면 앱에 같은 공고가 있을 때 딥링크).
+import { TOSS_MINIAPP_URL, TOSS_MINIAPP_COPY, TOSS_APP_COPY } from '../domain/tossLink.ts';
+import { APP_CARD_PING } from '../domain/readCard.ts';
+import { appLinkOf } from '../adapters/site/appSlugs.ts';
+import Chevron from './Chevron.astro';
+interface Props { slug?: string }
+const { slug } = Astro.props;
+const deep = slug ? appLinkOf(slug) : null;
 ---
-<section>
-  <a class="tile" href={TOSS_MINIAPP_URL} target="_blank" rel="noopener"><b>{TOSS_MINIAPP_COPY.title}</b><span>{TOSS_MINIAPP_COPY.sub}</span></a>
-</section>
+{slug ? (
+  <a class="row" href={TOSS_MINIAPP_URL} target="_blank" rel="noopener" ping={APP_CARD_PING} data-intoss={deep ?? undefined}>
+    <span class="rt"><b>{deep ? TOSS_APP_COPY.specific : TOSS_APP_COPY.generic}</b><span>{deep ? TOSS_APP_COPY.specificSub : TOSS_APP_COPY.genericSub}</span></span>
+    <Chevron />
+  </a>
+) : (
+  <section>
+    <a class="tile" href={TOSS_MINIAPP_URL} target="_blank" rel="noopener"><b>{TOSS_MINIAPP_COPY.title}</b><span>{TOSS_MINIAPP_COPY.sub}</span></a>
+  </section>
+)}

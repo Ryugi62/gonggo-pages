@@ -2,11 +2,13 @@
 // SPEC §25 — 마감 임박 메일 구독 입구(AWS 빌드에서만 호출). 폼 3칸: 이메일 · 관심 분야 1개 · 개인정보 동의.
 // 저장은 기존 POST /api/pro-request(kind:"sub"), 계측은 /intent/sub/{click,request}.
 import { SUB_TOPICS, SUB_TOPIC_LABEL } from '../domain/subscribe.ts';
+import Chevron from './Chevron.astro';
 ---
-<section class="sub-entry card" data-sub-entry aria-labelledby="sub-h">
-  <h2 id="sub-h">마감 임박 공고, 주 1회 메일로 받기</h2>
-  <p class="sub">무료예요. 이메일과 관심 분야를 남기면 7일 안에 마감하는 공고를 골라 주 1회 메일로 보내요. 가격이나 광고 안내는 넣지 않아요.</p>
-  <button class="btn secondary block" id="sub-open" type="button" aria-expanded="false" aria-controls="sub-form">메일로 받아보기</button>
+<section class="sub-entry row-entry" data-sub-entry aria-labelledby="sub-h">
+  <button class="row" id="sub-open" type="button" aria-expanded="false" aria-controls="sub-form">
+    <span class="rt"><b id="sub-h">마감 임박 공고, 주 1회 메일로 받기</b><span>무료예요. 7일 안에 마감하는 공고를 골라 보내요.</span></span>
+    <Chevron />
+  </button>
   <form id="sub-form" hidden novalidate onsubmit="return false">
     <label class="rf"><span>받을 이메일</span>
       <input id="sub-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="예: me@example.com" />
@@ -23,15 +25,14 @@ import { SUB_TOPICS, SUB_TOPIC_LABEL } from '../domain/subscribe.ts';
   <p id="sub-done" hidden role="status"><strong>구독 신청이 접수됐어요.</strong> 7일 안에 마감하는 공고를 골라 첫 메일을 보낼게요. 끊고 싶으면 그 메일에 「수신 거부」라고 답장해 주세요.</p>
 </section>
 <style>
-  .sub-entry h2 { font-size: 18px; margin-bottom: 8px; }
   .sub-entry [hidden] { display: none !important; }
-  .sub-entry .block { margin-top: 12px; width: 100%; min-height: 48px; }
-  #sub-form { margin-top: 8px; }
-  .sub-entry .rf { display: block; margin-top: 14px; }
-  .sub-entry .rf > span { display: block; font-weight: 600; font-size: 14px; color: var(--sub); margin-bottom: 6px; }
-  .sub-entry .rf input, .sub-entry .rf select { width: 100%; height: 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 16px; padding: 0 14px; font-family: inherit; }
-  .sub-entry .rc { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; font-size: 14px; cursor: pointer; }
-  .sub-entry .rc input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--btn); }
+  .sub-entry .btn.block { margin-top: 16px; }
+  #sub-form { margin: 0 0 16px; }
+  .sub-entry .rf { display: block; margin-top: 16px; }
+  .sub-entry .rf > span { display: block; font-weight: 600; font-size: 14px; color: var(--sub); margin-bottom: 8px; }
+  .sub-entry .rf input, .sub-entry .rf select { width: 100%; height: 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 16px; padding: 0 16px; font-family: inherit; }
+  .sub-entry .rc { display: flex; gap: 8px; align-items: flex-start; margin-top: 16px; font-size: 14px; cursor: pointer; }
+  .sub-entry .rc input { width: 22px; height: 22px; margin: 4px 0 0; flex: none; accent-color: var(--btn); }
   .sub-entry .warn { color: var(--no); }
   .sub-entry .nw { white-space: nowrap; }
 </style>
