@@ -30,6 +30,7 @@ const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SI
   <section aria-labelledby="soon-h" style="margin-top:16px">
     <h2 id="soon-h">마감 임박</h2>
     <ListingList items={soon} group="soon" cap={10} />
+    <div class="rows"><a class="row" href={weeks.includes(thisWeek) ? `/w/${thisWeek}/` : '/week/'}><span class="rt"><b>마감 임박 전체 보기</b><span>이번 주 마감하는 공고를 마감순으로 봐요</span></span><Chevron /></a></div>
   </section>
 
   <section class="rows door" aria-label="토스 앱"><TossMiniappLink /></section>
@@ -55,11 +56,17 @@ const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SI
 
   <section>
     <h2>마감 주별로 보기</h2>
-    <ul class="chips">{weeks.slice(0, 4).map((w) => <li><a class={`chip${w === thisWeek ? '' : ' gray'}`} href={`/w/${w}/`}>{w === thisWeek ? '이번 주' : weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
+    <ul class="chips">{weeks.slice(0, 4).map((w) => <li><a class={`chip${w === thisWeek ? '' : ' gray'}`} href={`/w/${w}/`}>{w === thisWeek ? '이번 주' : `${w.slice(0, 4)}년 ${weekLabel(w)}`} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
     {weeks.length > 4 && (
       <details class="fold" style="margin-top:8px">
         <summary>주별 더 보기<Chevron /></summary>
-        <ul class="chips" style="margin-top:8px">{weeks.slice(4).map((w) => <li><a class="chip gray" href={`/w/${w}/`}>{weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
+        <ul class="chips" style="margin-top:8px">{weeks.slice(4, 8).map((w) => <li><a class="chip gray" href={`/w/${w}/`}>{w.slice(0, 4)}년 {weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
+        {weeks.length > 8 && (
+          <details class="fold" style="margin-top:8px">
+            <summary>그 뒤 주 더 보기<Chevron /></summary>
+            <ul class="chips" style="margin-top:8px">{weeks.slice(8).map((w) => <li><a class="chip gray" href={`/w/${w}/`}>{w.slice(0, 4)}년 {weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
+          </details>
+        )}
       </details>
     )}
   </section>

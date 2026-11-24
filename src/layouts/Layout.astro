@@ -48,7 +48,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
     : <script is:inline>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>}
   {analytics && !IS_AWS && <script is:inline defer src="/_vercel/insights/script.js"></script>}
 </head>
-<body class={bottomCta ? 'has-cta' : ''}>
+<body class={`${bottomCta ? 'has-cta' : ''}${bottomCta?.note ? ' has-note' : ''}`.trim()}>
   <header class="top">
     <div class="wrap top-in">
       <a class="brand" href="/" aria-label={`${SITE_NAME} 홈`}><span class="dot" aria-hidden="true"></span>{SITE_NAME}</a>
@@ -67,7 +67,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
     </div>
   </footer>
   {bottomCta && (
-    <div class="cta-bar">
+    <div class={`cta-bar${bottomCta.note ? ' has-note' : ''}`}>
       {bottomCta.note && <p class="pc-note small">{bottomCta.note}</p>}
       <a class="cta" href={bottomCta.href} {...(bottomCta.external ? { target: '_blank', rel: 'noopener' } : {})} {...(bottomCta.attrs ?? {})}>{bottomCta.label}</a>
     </div>
@@ -199,6 +199,12 @@ const ogImage = new URL('/og.png', Astro.site).href;
   .row .go { transition: transform .15s ease; }
   /* §35 AC-141 — 「맨 위로」는 글 위에 떠 있을 뿐 행 폭을 바꾸지 않는다(폭이 바뀌면 716줄이 다시 줄바꿈돼 위로 올릴 때 목록이 튀었다) */
   li[data-off] { display: none; }
+  li[data-top] .row { border-top: 0; } /* 걸러서 첫 보이는 행 위의 선 제거(§36 AC-153) */
+  h2 + .rows, h2 + ul.rows { margin-top: 0; } /* 제목 → 행 간격 통일 */
+  .ql { display: block; }
+  body.has-note { padding-bottom: 132px; }
+  .cta-bar.has-note { background: var(--bg); } /* 안내 글이 푸터와 겹치지 않게 불투명(§36 AC-152) */
+  body.form-open .cta-bar { display: none; } /* 폼이 열려 있는 동안 채운 파란 버튼은 폼 것 하나(§36 AC-155) */
   .chip.on { background: var(--btn); color: #fff; }
   /* SPEC §33 AC-127 — PC 폭에서만 보이는 안내(PC는 앱을 열 수 없다) */
   .pc-note { display: none; }

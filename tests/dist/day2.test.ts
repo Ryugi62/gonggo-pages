@@ -98,7 +98,7 @@ describe('AC-134 상세 순서·AC-137 read 접힘·AC-135 중복', () => {
   });
   it('/pro: 하단 CTA가 문, PC 안내는 CTA 바로 위, 그래픽 없음', () => {
     const h = read('dist/pro/index.html');
-    expect(h).toMatch(/<div class="cta-bar">\s*<p class="pc-note small">[^<]+<\/p>\s*<a class="cta"/);
+    expect(h).toMatch(/<div class="cta-bar[^"]*">\s*<p class="pc-note small">[^<]+<\/p>\s*<a class="cta"/);
     expect(h).not.toContain('static.toss.im');
   });
   it('목록(분류) 칩 ≤5 · 건수 data-count', () => {

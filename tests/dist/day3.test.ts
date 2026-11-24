@@ -26,7 +26,7 @@ describe('AC-142·143 마감 시각·원문 길', () => {
     expect(z).toBeTruthy();
     const h = read(`dist/g/${z.slug}/index.html`);
     const heroRaw = h.match(/<section class="hero-d"[\s\S]*?<\/section>/)![0];
-    expect(heroRaw).toContain('data-deadline-time="00:00"');
+    expect(heroRaw).not.toContain('data-deadline-time'); // §36 AC-150: 00:00은 시각 없음 — 속성도 없다
     const hero = heroRaw.replace(/<[^>]+>/g, ' ');
     expect(hero).not.toContain('00:00');
     expect(hero).toContain('마감 시각은 원문에서 확인');

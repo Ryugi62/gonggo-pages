@@ -4,8 +4,8 @@ import RelatedRows from '../../components/RelatedRows.astro';
 import { index, allListings as listings, generatedAt, today, nowHM } from '../../adapters/site/data.ts';
 import { categorySlug, tagSlug } from '../../domain/category.ts';
 import { dDay, dDayLabel, formatDate } from '../../domain/format.ts';
-import { isOpen, deadlineDisplay } from '../../domain/freshness.ts';
-import { cleanDisplay, tidyQuote } from '../../domain/displayText.ts';
+import { isOpen, deadlineDisplay, deadlineTimeOf } from '../../domain/freshness.ts';
+import { cleanDisplay, tidyQuote, quoteLines, eligibilityText } from '../../domain/displayText.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import Chevron from '../../components/Chevron.astro';
 import TossMiniappLink from '../../components/TossMiniappLink.astro';
@@ -26,6 +26,7 @@ const related = index.related(l, closed ? 3 : 5, closed ? anchor : undefined); /
 const readCard = isAudition(l) ? null : readCardOf(l.category); // 오디션·캐스팅류는 읽는 법 행 없음(SPEC §32) // SPEC §30 — 4칸은 /g/<slug>/read/ 별도 화면, 상세엔 한 줄 진입(장학은 4칸 데이터가 없어 진입 행 없음)
 const dispTime = deadlineDisplay(l); // 00:00은 싣지 않는다(SPEC §35 AC-142)
 const deadlineText = l.deadline ? `${formatDate(l.deadline)}${dispTime.time ? ` ${dispTime.time}` : ''}` : '상시 모집';
+const elig = eligibilityText(l); // 인용이 없으면 찾은 ELIGIBILITY 조항 문장(SPEC §36 AC-151)
 const hasClauseInfo = clausesFound(l); // 못 찾은 조항 줄은 숨긴다(SPEC §35 AC-145)
 // SPEC §15 — 고객이 검색하는 말(「받을 수 있나요?」「중복 수혜」)로 제목·설명, 화면 질문 = FAQ 구조화 데이터
 const title = searchTitle(l);
@@ -34,7 +35,7 @@ const faq = listingFaq(l).filter((f) => clausesFound(l) || f.q !== CLAUSE_QUESTI
 const dd = l.deadline ? dDay(l.deadline, today) : null;
 const heroTone = dd === null ? '' : closed ? 'closed' : dd <= 3 ? 'soon' : '';
 // 자격 인용과 같은 문장(말줄임만 다른 경우 포함)은 조항 판독에서 한 번 더 싣지 않는다
-const clauses = dedupeClauses(l.clauses, l.eligibilityQuote);
+const clauses = dedupeClauses(l.clauses, elig);
 const heroMeta = [l.organizer, l.prize].filter(Boolean).join(' · ');
 const catSlug = categorySlug(l.category);
 const openCat = index.byCategory.get(l.category)?.length ? `/c/${catSlug}/` : '/';
@@ -63,7 +64,7 @@ const jsonLd = [
 
   <section class="hero-d" aria-label="마감">
     {l.deadline
-      ? <span class={`bd lg ${heroTone}`} data-deadline={l.deadline} data-deadline-time={l.deadlineTime ?? undefined}>{closed ? '마감됐어요' : dDayLabel(l.deadline, today)}</span>
+      ? <span class={`bd lg ${heroTone}`} data-deadline={l.deadline} data-deadline-time={deadlineTimeOf(l.deadlineTime) ?? undefined}>{closed ? '마감됐어요' : dDayLabel(l.deadline, today)}</span>
       : <span class="bd lg">상시</span>}
     <p class="hd-t"><b>{deadlineText}{closed || !l.deadline ? '' : ' 마감'}</b>{dispTime.note && <span class="small">{dispTime.note}</span>}{heroMeta && <span>{heroMeta}</span>}</p>
   </section>
@@ -82,13 +83,13 @@ const jsonLd = [
     {l.tags.length > 0 && (
       <ul class="chips">{l.tags.map((t) => <li><a class="chip" href={`/t/${tagSlug(t)}/`}>{t}</a></li>)}</ul>
     )}
-    {l.eligibilityQuote ? (
+    {elig ? (
       <>
-        <blockquote id="elig-q" class="clamp">{tidyQuote(l.eligibilityQuote)}</blockquote>
+        <blockquote id="elig-q" class="clamp">{quoteLines(tidyQuote(elig)).map((ln) => <span class="ql">{ln}</span>)}</blockquote>
         <button type="button" class="more-q" id="q-more" hidden>더 보기</button>
       </>
     ) : (
-      <p class="sub" style="margin-top:12px">이 공고는 자격 문장을 따로 정리하지 못했어요. 원문 공고에서 확인해 주세요.</p>
+      <p class="sub" style="margin-top:12px">원문에서 자격을 확인해 주세요</p>
     )}
   </section>
 

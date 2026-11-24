@@ -24,8 +24,8 @@ export function visibleRows(g: Groups, view: MatchVerdict, today: string): Check
 
 export function checkerCounts(g: Groups) {
   return {
-    ok: `${g['맞음'].length}개`,
-    rest: `확인이 필요한 공고 ${g['확인 필요'].length}개 · 조건이 안 맞는 공고 ${g['안 맞음'].length}개는 숨겼어요`,
+    ok: `${g['맞음'].length}건`,
+    rest: `확인이 필요한 공고 ${g['확인 필요'].length}건 · 조건이 안 맞는 공고 ${g['안 맞음'].length}건은 숨겼어요`,
     tabOk: `맞음 ${g['맞음'].length}`,
     tabUnknown: `확인 필요 ${g['확인 필요'].length}`,
   };

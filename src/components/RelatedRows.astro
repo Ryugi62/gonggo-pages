@@ -1,7 +1,7 @@
 ---
 // SPEC §31·§34 — 비슷한 공고·목록 행: 구분선 행(TDS ListRow) + D-day 배지. 행마다 마감일을 달아 날이 지나면 화면에서 걷는다(DAY_SCRIPT).
 import type { PublicListing } from '../domain/listing.ts';
-import { badgeState } from '../domain/freshness.ts';
+import { badgeState, deadlineTimeOf } from '../domain/freshness.ts';
 import { cleanDisplay } from '../domain/displayText.ts';
 import { formatDate } from '../domain/format.ts';
 import { today, nowHM } from '../adapters/site/data.ts';
@@ -13,9 +13,9 @@ const meta = (l: PublicListing) => [l.category, l.deadline ? `${formatDate(l.dea
   {items.map((l) => {
     const b = l.deadline ? badgeState(l.deadline, today, false, l.deadlineTime, nowHM) : null;
     return (
-    <li data-row-deadline={l.deadline ?? '9999-12-31'} data-group={group} data-cap={cap ? String(cap) : undefined} data-row-time={l.deadlineTime ?? undefined} data-tags={l.tags.join(',')}>
+    <li data-row-deadline={l.deadline ?? '9999-12-31'} data-group={group} data-cap={cap ? String(cap) : undefined} data-row-time={deadlineTimeOf(l.deadlineTime) ?? undefined} data-tags={l.tags.join(',')}>
       <a class="row" href={`/g/${l.slug}/`}>
-        {b ? <span class={`bd ${b.closed ? 'closed' : b.soon ? 'soon' : ''}`} data-deadline={l.deadline} data-deadline-time={l.deadlineTime ?? undefined}>{b.label}</span> : <span class="bd">상시</span>}
+        {b ? <span class={`bd ${b.closed ? 'closed' : b.soon ? 'soon' : ''}`} data-deadline={l.deadline} data-deadline-time={deadlineTimeOf(l.deadlineTime) ?? undefined}>{b.label}</span> : <span class="bd">상시</span>}
         <span class="rt"><b>{cleanDisplay(l.name)}</b><span>{meta(l)}</span></span>
       </a>
     </li>

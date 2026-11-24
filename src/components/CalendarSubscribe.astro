@@ -1,6 +1,7 @@
 ---
 import { feedUrl } from '../adapters/site/data.ts';
 import { googleSubscribeUrl, webcalUrl } from '../domain/ics.ts';
+import Chevron from './Chevron.astro';
 interface Props { feed: string }
 const { feed } = Astro.props;
 const url = feedUrl(feed);
@@ -13,7 +14,7 @@ const url = feedUrl(feed);
     <a class="btn secondary block" href={webcalUrl(url)} data-intent={`/intent/cal/sub/${feed}`}>애플·아웃룩</a>
   </div>
   <p class="small" id={`cal-sub-note-${feed}`} role="status" aria-live="polite" style="margin:8px 0 0"></p>
-  <p class="small" style="margin:8px 0 0;word-break:break-all">구독 주소(동아리·단톡방에 그대로 공유해도 돼요): {url}</p>
+  <details class="fold" style="margin-top:8px"><summary>구독 주소 직접 복사<Chevron /></summary><p class="small" style="margin:8px 0 0;word-break:break-all">구독 주소(동아리·단톡방에 그대로 공유해도 돼요): {url}</p></details>
 </section>
 <script is:inline>
   // 애플·아웃룩(webcal:)은 PC 브라우저에선 눌러도 화면이 안 바뀐다 — 눌렀다는 것과 안 열릴 때 할 일을 바로 알려 준다(11/22 walk)

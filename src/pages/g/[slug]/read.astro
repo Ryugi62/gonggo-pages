@@ -44,17 +44,18 @@ const cta = closed
 ---
 <Layout title={`${title} — ${l.name}`} description={`${l.name}를 읽을 때 볼 4칸 — 니즈·평가 전략·맞춤 아이디어·완성도.`} path={`/g/${l.slug}/read/`} noindex bottomCta={cta}>
   <nav class="crumb back" aria-label="위치"><a href={`/g/${l.slug}/`} data-back>공고 상세로 돌아가기</a></nav>
-  {closed && (
-    <section class="rd-closed" aria-labelledby="rd-cl-h">
-      <span class="bd lg closed">마감됐어요</span>
-      <h2 id="rd-cl-h">지금 낼 수 있는 비슷한 공고</h2>
-      {related.length > 0 ? <RelatedRows items={related} group="rel" /> : <p class="sub">지금 접수 중인 비슷한 공고가 없어요.</p>}
-    </section>
-  )}
+  {closed && <span class="bd lg closed" style="margin-top:8px">마감됐어요</span>}
   <h1>{title}</h1>
   <p class="sub rd-sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{cleanDisplay(l.name)}</a> · {deadlineText}{closed || !l.deadline ? '' : ' 마감'}{l.prize ? ` · ${l.prize}` : ''}</p>
 
   <ReadCard card={card} facts={facts} />
+
+  {closed && (
+    <section class="rd-closed" style="margin-top:32px" aria-labelledby="rd-cl-h">
+      <h2 id="rd-cl-h">지금 낼 수 있는 비슷한 공고</h2>
+      {related.length > 0 ? <RelatedRows items={related} group="rel" /> : <p class="sub">지금 접수 중인 비슷한 공고가 없어요.</p>}
+    </section>
+  )}
 
   <section class="rows door" aria-label="토스 앱"><TossMiniappLink /></section>
 

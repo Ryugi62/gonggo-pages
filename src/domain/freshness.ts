@@ -2,13 +2,17 @@
 import type { PublicListing } from './listing.ts';
 
 /** 열림 = 상시이거나 마감일 ≥ 오늘 */
+/** SPEC §36 AC-150 — 마감 시각: 00:00은 「시각 없음」(그날 23:59까지). 빌드·DAY_SCRIPT 속성·칩·목록이 이 한 함수를 쓴다 */
+export const deadlineTimeOf = (t: string | null | undefined): string | null => (t && t !== '00:00' ? t : null);
+
 export const isOpen = (l: Pick<PublicListing, 'deadline' | 'rolling'> & { deadlineTime?: string | null }, today: string, nowHM?: string): boolean => {
   if (l.rolling) return true;
   if (!l.deadline) return false;
   if (l.deadline > today) return true;
   if (l.deadline < today) return false;
   // 오늘 마감 — 시각이 있고 지금이 그 시각 이후면 닫힘(SPEC §35 AC-142, 00:00은 오늘 0시라 이미 지남)
-  return !(nowHM && l.deadlineTime && l.deadlineTime <= nowHM);
+  const tm = deadlineTimeOf(l.deadlineTime);
+  return !(nowHM && tm && tm <= nowHM);
 };
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -48,7 +52,8 @@ export function reconcileDeadlineTime<T extends PublicListing>(l: T): T {
 export function badgeState(deadline: string, today: string, large: boolean, time?: string | null, nowHM?: string): { n: number; label: string; closed: boolean; soon: boolean } {
   const at = (d: string) => Date.parse(`${d}T12:00:00Z`);
   let n = Math.round((at(deadline) - at(today)) / 86_400_000);
-  if (n === 0 && time && nowHM && time <= nowHM) n = -1;
+  const tm = deadlineTimeOf(time);
+  if (n === 0 && tm && nowHM && tm <= nowHM) n = -1;
   const label = n < 0 ? (large ? '마감됐어요' : '마감') : n === 0 ? 'D-day' : `D-${n}`;
   return { n, label, closed: n < 0, soon: n >= 0 && n <= 3 };
 }

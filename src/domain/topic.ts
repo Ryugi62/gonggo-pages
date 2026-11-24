@@ -43,3 +43,14 @@ export function isSameContest(a: Pick<PublicListing, 'name' | 'deadline'>, b: Pi
   for (const t of x) if (y.has(t)) both++;
   return Math.min(x.size, y.size) >= 3 && both / Math.min(x.size, y.size) >= 0.75;
 }
+
+/** SPEC §36 AC-157 — 목록에서만: 제목(공백·기호 무시)과 마감이 같은 공고는 한 줄(첫 것). 상세 주소는 그대로 */
+export function dedupeSameTitle<T extends { name: string; deadline: string | null }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  return items.filter((l) => {
+    const k = `${l.name.replace(/[\s\p{P}\p{S}]/gu, '').toLowerCase()}|${l.deadline ?? ''}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}

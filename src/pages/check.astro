@@ -56,7 +56,7 @@ import { listings } from '../adapters/site/data.ts';
       <div id="result-body">
       <section class="card" style="margin-top:0">
         <p class="sub" style="margin:0">낼 수 있는 공고</p>
-        <div class="big" id="n-ok">0개</div>
+        <div class="big" id="n-ok">0건</div>
         <p style="margin:6px 0 0" class="sub" id="n-rest"></p>
       </section>
       <section>
@@ -179,6 +179,7 @@ import { listings } from '../adapters/site/data.ts';
     $('progress').textContent = progressLabel(step);
     $('next').textContent = nextLabel(step);
     $('back').hidden = step === 1;
+    document.querySelector('.cta-bar')!.toggleAttribute('hidden', step === 3); // 결과에서는 「이전」 하나만(SPEC §36 AC-158)
     window.scrollTo(0, 0);
   }
 

@@ -167,5 +167,6 @@ export function dedupeClauses<T extends { kind: string; quote: string }>(clauses
 
 /** SPEC §35 AC-145 — 화면에 보일 만큼 실제로 찾은 조항이 있나(없으면 조항 줄·FAQ의 AI 질문을 숨긴다) */
 export function clausesFound(l: { clauses: { kind: string; quote: string }[]; eligibilityQuote: string | null; aiUse: string }): boolean {
-  return dedupeClauses(l.clauses, l.eligibilityQuote).length > 0 || l.aiUse === 'ALLOWED' || l.aiUse === 'FORBIDDEN';
+  const elig = l.eligibilityQuote ?? l.clauses.find((c) => c.kind === 'ELIGIBILITY')?.quote ?? null; // 인용이 없으면 자격 자리에 올린 ELIGIBILITY 조항은 조항 줄에서 뺀다(SPEC §36 AC-151)
+  return dedupeClauses(l.clauses, elig).length > 0 || l.aiUse === 'ALLOWED' || l.aiUse === 'FORBIDDEN';
 }

@@ -19,3 +19,18 @@ export function tidyQuote(q: string): string {
   if (body.length >= 20 && cut >= body.length * 0.4) return body.slice(0, cut + 1).trim();
   return body;
 }
+
+const MARK_BASE = '\\d{1,2}[).]\\s|[①-⑳]|[■□●○◆◇▶▪※•*]\\s?';
+
+/** SPEC §36 AC-151 — 자격 인용을 줄로(표시만): 번호·글머리 앞에서 나누고 `**`를 지운다. `- `는 목록처럼 2번 이상 나올 때만 마커로 본다 */
+export function quoteLines(q: string): string[] {
+  const t = cleanDisplay(q).replace(/\*\*/g, '').replace(/\r/g, '');
+  const dash = (t.match(/(^|\s)-\s/g) ?? []).length >= 2;
+  const re = new RegExp(`\\s+(?=(?:${MARK_BASE}${dash ? '|-\\s' : ''}))`);
+  return t.split('\n').flatMap((ln) => ln.split(re)).map((x) => x.trim()).filter(Boolean);
+}
+
+/** SPEC §36 AC-151 — 자격 문장: 원문 인용, 없으면 찾은 ELIGIBILITY 조항 문장, 둘 다 없으면 null */
+export function eligibilityText(l: { eligibilityQuote: string | null; clauses: { kind: string; quote: string }[] }): string | null {
+  return l.eligibilityQuote ?? l.clauses.find((c) => c.kind === 'ELIGIBILITY')?.quote ?? null;
+}

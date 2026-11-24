@@ -25,6 +25,7 @@ import Chevron from './Chevron.astro';
   <p id="sub-done" hidden role="status"><strong>구독 신청이 접수됐어요.</strong> 운영자가 다음에 공고를 정리할 때 마감이 가까운 공고를 골라 메일로 보낼게요. 끊고 싶으면 그 메일에 「수신 거부」라고 답장해 주세요.</p>
 </section>
 <style>
+  .rf input:focus-visible, .rc input:focus-visible, .sub-entry select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
   #sub-msg { scroll-margin-bottom: 104px; } /* 고정 하단 CTA에 안내가 가리지 않게(SPEC §35 AC-147) */
   .sub-entry [hidden] { display: none !important; }
   .sub-entry .btn.block { margin-top: 16px; }
@@ -50,10 +51,13 @@ import Chevron from './Chevron.astro';
   }
   const msg = (t: string, warn = false) => { $('sub-msg').textContent = t; $('sub-msg').classList.toggle('warn', warn); $('sub-msg').scrollIntoView({ block: 'nearest' }); };
 
+  // §36 AC-155 — 제목 줄은 그대로 두고 다시 누르면 접힌다. 폼이 열려 있는 동안 고정 CTA는 감춘다(채운 파란 버튼은 폼 것 하나)
   $('sub-open').addEventListener('click', () => {
-    $('sub-form').hidden = false;
-    $('sub-open').setAttribute('aria-expanded', 'true');
-    $('sub-open').hidden = true;
+    const open = $('sub-form').hidden;
+    $('sub-form').hidden = !open;
+    $('sub-open').setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('form-open', !!document.querySelector('[aria-expanded="true"][aria-controls$="-form"]'));
+    if (!open) return;
     track('CLICK');
     $<HTMLInputElement>('sub-email').focus();
   });

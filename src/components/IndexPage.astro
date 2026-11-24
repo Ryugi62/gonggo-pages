@@ -24,7 +24,8 @@ const jsonLd = [
   <nav class="crumb" aria-label="위치"><a href="/">홈</a></nav>
   <h1>{heading}</h1>
   <p class="sub"><span data-count="list">{items.length}</span>건 · 마감이 가까운 순서예요</p>
-  {chipTags.length > 0 && <ul class="chips" style="margin-top:16px" aria-label="대상으로 좁히기">{chipTags.map((t) => <li><a class="chip gray" href={`/t/${t.slug}/`} data-chip data-slug={t.slug} data-tag={t.name} aria-pressed="false">{t.name}</a></li>)}</ul>}
+  {chipTags.length > 0 && <ul class="chips" style="margin-top:16px" aria-label="대상으로 좁히기">{chipTags.map((t) => <li><a class="chip gray" href={`/t/${t.slug}/`} data-chip data-slug={t.slug} data-tag={t.name} aria-pressed="false">{t.name} {items.filter((l) => l.tags.includes(t.name)).length}</a></li>)}</ul>}
+  <div style="margin-top:24px" data-empty-filter hidden><p class="sub">고른 대상의 공고가 없어요.</p><button type="button" class="btn secondary" data-clear style="margin-top:12px">필터 풀고 <span data-total-open>{items.length}</span>건 보기</button></div>
   <p class="sub" style="margin-top:24px" data-empty="list" hidden={items.length > 0}>지금 접수 중인 공고가 없어요. <a href="/">접수 중인 공고 전체 보기</a></p>
   <section style="margin-top:0"><ListingList items={items} /></section>
   {chipTags.length > 0 && <script is:inline set:html={`window.addEventListener('DOMContentLoaded',function(){${CHIP_SCRIPT}});`}></script>}
