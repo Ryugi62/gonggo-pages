@@ -1,20 +1,23 @@
 ---
-// SPEC §31 — 비슷한 공고: 회색 카드가 아니라 구분선 목록 행(TDS ListRow) + 왼쪽 D-day 배지. 열린 공고만 넘겨받는다.
+// SPEC §31·§34 — 비슷한 공고·목록 행: 구분선 행(TDS ListRow) + D-day 배지. 행마다 마감일을 달아 날이 지나면 화면에서 걷는다(DAY_SCRIPT).
 import type { PublicListing } from '../domain/listing.ts';
-import { dDay, dDayLabel, formatDate } from '../domain/format.ts';
-import { generatedAt } from '../adapters/site/data.ts';
-interface Props { items: PublicListing[] }
-const { items } = Astro.props;
-const tone = (l: PublicListing) => (l.deadline ? (dDay(l.deadline, generatedAt) < 0 ? 'closed' : dDay(l.deadline, generatedAt) <= 3 ? 'soon' : '') : '');
+import { badgeState } from '../domain/freshness.ts';
+import { cleanDisplay } from '../domain/displayText.ts';
+import { formatDate } from '../domain/format.ts';
+import { today } from '../adapters/site/data.ts';
+interface Props { items: PublicListing[]; group?: string; cap?: number }
+const { items, group = 'rel', cap } = Astro.props;
 const meta = (l: PublicListing) => [l.category, l.deadline ? `${formatDate(l.deadline)} 마감` : '상시 모집', l.prize].filter(Boolean).join(' · ');
 ---
-<ul class="rel rows">
-  {items.map((l) => (
-    <li>
+<ul class="rel rows" data-rows={group}>
+  {items.map((l) => {
+    const b = l.deadline ? badgeState(l.deadline, today, false) : null;
+    return (
+    <li data-row-deadline={l.deadline ?? '9999-12-31'} data-group={group} data-cap={cap ? String(cap) : undefined}>
       <a class="row" href={`/g/${l.slug}/`}>
-        {l.deadline ? <span class={`bd ${tone(l)}`} data-deadline={l.deadline}>{dDayLabel(l.deadline, generatedAt)}</span> : <span class="bd">상시</span>}
-        <span class="rt"><b>{l.name}</b><span>{meta(l)}</span></span>
+        {b ? <span class={`bd ${b.closed ? 'closed' : b.soon ? 'soon' : ''}`} data-deadline={l.deadline}>{b.label}</span> : <span class="bd">상시</span>}
+        <span class="rt"><b>{cleanDisplay(l.name)}</b><span>{meta(l)}</span></span>
       </a>
     </li>
-  ))}
+  );})}
 </ul>

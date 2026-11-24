@@ -23,6 +23,11 @@ export const INDEXNOW_KEY = '7909e33069319f0eb1a00617178662c1';
 export const LISTINGS_PATH = 'data/listings.json';
 export const REPO_URL = 'https://github.com/Ryugi62/gonggo-pages';
 
+/** SPEC §34 AC-131 — 열림·D-n·건수의 기준일 = 빌드 날(KST). 시험은 GK_TODAY로 주입 */
+export function buildDay(env: Record<string, string | undefined> = (globalThis as any).process?.env ?? {}): string {
+  return env.GK_TODAY && /^\d{4}-\d{2}-\d{2}$/.test(env.GK_TODAY) ? env.GK_TODAY : todayKst();
+}
+
 export function todayKst(now = new Date()): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(now);
 }

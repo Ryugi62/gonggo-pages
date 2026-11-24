@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { countProVisits, countLandings, countSubSteps, countAppCardClicks, countAppCardBySurface } from '../src/application/visitCount.ts';
 import { verdict } from '../src/application/verdict.ts';
+import { isEdgeLog, edgeReadCommand } from '../src/application/edgeLogs.ts';
 import { CANONICAL_ORIGIN } from '../src/infrastructure/config.ts';
 
 const arg = (k: string) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : undefined; };
@@ -16,7 +17,11 @@ const read = (file: string | undefined, remote: string) =>
   file ? readFileSync(file, 'utf8') : execFileSync('ssh', [host, remote], { encoding: 'utf8', maxBuffer: 512 * 1024 * 1024 });
 
 const intent = read(arg('--intent'), 'cat /home/ubuntu/gonggo/logs/intent.log 2>/dev/null || true');
-const edge = read(arg('--edge'), 'docker exec edge-caddy sh -c "cat /data/logs/gonggo-access.log" 2>/dev/null || true');
+// 엣지 로그 전부(회전·.gz 포함) — 파일마다 따로 읽어 버퍼를 나눈다. 아이피는 출력하지 않는다.
+const edgeFiles = (): string[] => execFileSync('ssh', [host, 'docker exec edge-caddy ls /data/logs 2>/dev/null || true'], { encoding: 'utf8' }).split('\n').map((x) => x.trim()).filter(isEdgeLog);
+const edge = arg('--edge')
+  ? readFileSync(arg('--edge')!, 'utf8')
+  : edgeFiles().map((f) => execFileSync('ssh', [host, `docker exec edge-caddy sh -c "${edgeReadCommand(f)}" 2>/dev/null || true`], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 })).join('\n');
 const opts = { since, selfIps, host: new URL(CANONICAL_ORIGIN).host, origin: CANONICAL_ORIGIN };
 const pro = countProVisits(intent, opts);
 const land = countLandings(edge, opts);

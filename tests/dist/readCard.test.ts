@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { buildDay } from '../../src/infrastructure/config.ts';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 
 // SPEC §29·§30 — 빌드 산출물: 상세엔 읽는 법 한 줄 진입, 4칸은 /g/<slug>/read/ 별도 화면
@@ -58,12 +59,13 @@ describe('AC-100·106 토스 앱 링크 — 앱에 있는 공고는 딥링크, �
     }
   });
   it('읽는 법 화면의 하단 고정 CTA가 토스 앱 링크 1개', () => {
-    const l = live.find((x) => hasCard(x.category, x.name) && (x as any).deadline >= '2026-11-22')!;
+    const l = live.find((x) => hasCard(x.category, x.name) && (x as any).deadline >= buildDay())!;
     const h = readPage(l.slug);
     expect((h.match(/class="cta"/g) ?? []).length).toBe(1);
     const cta = h.match(/<a\b[^>]*class="cta"[^>]*>[^<]*/)![0];
-    expect(cta).toContain(URL_);
-    expect(cta).toContain('토스에서 공고콕 써보기');
+    expect(cta).toContain('원문 공고 보기'); // SPEC §34: read 하단 CTA = 원문, 문은 본문 행 1개
+    expect(minionAnchors(h).length).toBe(1);
+    expect(h).toContain('토스에서 공고콕 써보기');
   });
 });
 

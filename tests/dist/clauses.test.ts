@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
+import { buildDay } from '../../src/infrastructure/config.ts';
 import { readFileSync, existsSync } from 'node:fs';
 import { clausePreview, clauseCollections } from '../../src/domain/clausePreview.ts';
 import { findForbidden } from '../../src/domain/privacy.ts';
 
 // AC-70·71 (SPEC §19) — AWS 빌드 여부는 pro 링크로 판별
 const data = JSON.parse(readFileSync('data/listings.json', 'utf8'));
-const ls = (data.listings as any[]).filter((l) => l.rolling || l.deadline >= data.generatedAt); // 목록·모음은 열린 공고만(SPEC §31)
+const ls = (data.listings as any[]).filter((l) => l.rolling || l.deadline >= buildDay()); // 목록·모음은 열린 공고만(SPEC §31)
 const aws = existsSync('dist/pro/index.html');
 const page = (slug: string) => readFileSync(`dist/g/${slug}/index.html`, 'utf8');
 
@@ -40,7 +41,7 @@ describe('AC-71 모음 페이지', () => {
 // AC-73 (SPEC §20) 주간 마감 임박 요약 글
 import { weeklyDigest } from '../../src/application/weeklyDigest.ts';
 describe('AC-73 digest', () => {
-  const d = weeklyDigest(ls as any, data.generatedAt);
+  const d = weeklyDigest(ls as any, buildDay());
   it('항목 수·링크·sitemap·금지 토큰', () => {
     expect(d.length).toBeGreaterThan(0);
     const h = readFileSync(`dist/digest/${data.generatedAt}/index.html`, 'utf8');
@@ -55,7 +56,7 @@ describe('AC-73 digest', () => {
 // AC-81 (SPEC §22) AI 활용 허용 · 마감 임박 목록
 import { aiOkList } from '../../src/application/aiOkList.ts';
 describe('AC-81 ai-ok', () => {
-  const r = aiOkList(ls as any, data.generatedAt);
+  const r = aiOkList(ls as any, buildDay());
   it('항목 수·링크·인용·sitemap·금지 토큰·/pro 입구', () => {
     expect(r.length).toBeGreaterThan(0);
     const h = readFileSync(`dist/ai-ok/${data.generatedAt}/index.html`, 'utf8');
@@ -71,7 +72,7 @@ describe('AC-81 ai-ok', () => {
 // AC-84 (SPEC §23) 1인 참가 가능 · 11월 마감 목록
 import { soloList, SOLO_MIN } from '../../src/application/soloList.ts';
 describe('AC-84 solo', () => {
-  const r = soloList(ls as any, data.generatedAt);
+  const r = soloList(ls as any, buildDay());
   it('항목 수·링크·인용·sitemap·금지 토큰·/pro 입구', () => {
     expect(r.length).toBeGreaterThanOrEqual(SOLO_MIN);
     const h = readFileSync(`dist/solo/${data.generatedAt}/index.html`, 'utf8');

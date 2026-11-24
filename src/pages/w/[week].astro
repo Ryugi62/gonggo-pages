@@ -1,12 +1,12 @@
 ---
 import IndexPage from '../../components/IndexPage.astro';
-import { weeks, index } from '../../adapters/site/data.ts';
+import { allWeeks as weeks, index } from '../../adapters/site/data.ts';
 import { weekLabel } from '../../domain/format.ts';
 export function getStaticPaths() {
   return weeks.map((w) => ({ params: { week: w }, props: { w } }));
 }
 const { w } = Astro.props;
-const items = index.byWeek.get(w)!;
+const items = index.byWeek.get(w) ?? [];
 const label = weekLabel(w);
 ---
 <IndexPage heading={`${label} 마감 공고`} title={`${label} 마감 공모전·해커톤·지원사업 ${items.length}건 | 공고콕`}

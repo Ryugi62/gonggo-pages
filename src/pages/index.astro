@@ -3,27 +3,39 @@ import Layout from '../layouts/Layout.astro';
 import ListingList from '../components/ListingList.astro';
 import CalendarSubscribe from '../components/CalendarSubscribe.astro';
 import TossMiniappLink from '../components/TossMiniappLink.astro';
-import { index, listings, categories, tags, weeks, week, generatedAt } from '../adapters/site/data.ts';
+import Chevron from '../components/Chevron.astro';
+import { index, listings, categories, tags, weeks, week, today } from '../adapters/site/data.ts';
 import { weekLabel } from '../domain/format.ts';
 import { deadlineWeek } from '../application/buildSiteIndex.ts';
 import { SITE_NAME, IS_AWS } from '../infrastructure/config.ts';
 
-const thisWeek = deadlineWeek(generatedAt);
-const soon = index.sorted.filter((l) => l.deadline).slice(0, 10);
+const thisWeek = deadlineWeek(today);
+// 마감 임박 = 앞 10행만 보이게 하되, 오늘부터 7일 동안 날짜마다 12행씩 여유로 싣는다 — 빌드 뒤 날이 지나면 지난 행을 걷고 다음 날 행이 올라온다(DAY_SCRIPT data-cap, 하루에 37건이 끝나는 날도 있어 앞 40행만으로는 3일을 못 버틴다)
+const soonDays = new Set(Array.from({ length: 7 }, (_, i) => new Date(Date.parse(`${today}T12:00:00Z`) + i * 86_400_000).toISOString().slice(0, 10)));
+const perDay = new Map<string, number>();
+const soon = index.sorted.filter((l) => l.deadline && soonDays.has(l.deadline) && (perDay.set(l.deadline, (perDay.get(l.deadline) ?? 0) + 1), perDay.get(l.deadline)! <= 12));
+const hist: Record<string, number> = {};
+for (const l of listings) if (l.deadline) hist[l.deadline] = (hist[l.deadline] ?? 0) + 1;
 const title = `${SITE_NAME} — 공모전·해커톤·지원사업 자격·마감·상금 정리`;
 const description = `지금 접수 중인 공모전·해커톤·지원사업 ${listings.length}건의 자격 조건, 마감일, 상금을 공고 원문 그대로 정리했어요. 나이·학생·지역만 고르면 낼 수 있는 공고를 골라 드려요.`;
 const site = Astro.site!.href.replace(/\/$/, '');
 const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE_NAME, url: `${site}/`, inLanguage: 'ko-KR' }];
 ---
 <Layout title={title} description={description} path="/" jsonLd={jsonLd} bottomCta={{ href: '/check/', label: '내가 낼 수 있는 공고 찾기' }}>
-  <section class="card" style="margin-top:0">
+  <section style="margin-top:0">
     <p class="sub" style="margin:0">지금 접수 중인 공고</p>
-    <div class="big">{listings.length}건</div>
-    <p style="margin:6px 0 0">공모전·해커톤·지원사업의 <strong>자격·마감·상금</strong>을 원문 그대로 정리했어요.</p>
+    <div class="big"><span data-hist={JSON.stringify(hist)} data-total={String(listings.length)}>{String(listings.length).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>건</div>
   </section>
 
-  <section>
-    <a class="tile" href="/week/"><b>이번 주 낼 수 있는 창업경진대회·지원사업 {week.items.length} →</b><span>7일 안에 마감하는 창업 공고만, 마감 임박순으로 모았어요.</span></a>
+  <section aria-labelledby="soon-h" style="margin-top:16px">
+    <h2 id="soon-h">마감 임박</h2>
+    <ListingList items={soon} group="soon" cap={10} />
+  </section>
+
+  <TossMiniappLink />
+
+  <section class="rows" aria-label="이번 주">
+    <a class="row" href="/week/"><span class="rt"><b>이번 주 낼 수 있는 창업경진대회·지원사업 {week.items.length}</b><span>7일 안에 마감하는 창업 공고만 모았어요</span></span><Chevron /></a>
   </section>
 
   <section>
@@ -37,19 +49,18 @@ const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SI
   <CalendarSubscribe feed="all" />
 
   <section>
-    <h2>마감 임박</h2>
-    <ListingList items={soon} />
-  </section>
-
-  <TossMiniappLink variant="tile" />
-
-  <section>
     <h2>누구를 위한 공고인가요</h2>
     <ul class="chips">{tags.map((t) => <li><a class="chip" href={`/t/${t.slug}/`}>{t.name} {index.byTag.get(t.name)!.length}</a></li>)}</ul>
   </section>
 
   <section>
     <h2>마감 주별로 보기</h2>
-    <ul class="chips">{weeks.map((w) => <li><a class={`chip${w === thisWeek ? '' : ' gray'}`} href={`/w/${w}/`}>{w === thisWeek ? '이번 주' : weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
+    <ul class="chips">{weeks.slice(0, 4).map((w) => <li><a class={`chip${w === thisWeek ? '' : ' gray'}`} href={`/w/${w}/`}>{w === thisWeek ? '이번 주' : weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
+    {weeks.length > 4 && (
+      <details class="fold" style="margin-top:8px">
+        <summary>주별 더 보기<Chevron /></summary>
+        <ul class="chips" style="margin-top:8px">{weeks.slice(4).map((w) => <li><a class="chip gray" href={`/w/${w}/`}>{weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
+      </details>
+    )}
   </section>
 </Layout>

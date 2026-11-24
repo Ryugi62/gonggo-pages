@@ -1,22 +1,14 @@
 ---
-// SPEC §33 AC-126~128 — 문(앱으로 가는 링크 1개). 값은 appDoor() 한 곳, 공고별 딥링크 없음.
-// 클릭은 ping(Chrome·Safari)과 data-intent 비콘(그 밖 브라우저)이 같은 경로로 센다 — 집계가 한 사람·한 면·하루 1로 합친다.
+// SPEC §33·§34 AC-134 — 문(앱으로 가는 링크 1개): 홈·상세·읽는 법이 같은 행 부품. PC 안내는 행 바로 위(CSS 폭으로만 보임).
+// 값은 appDoor() 한 곳, 공고별 딥링크 없음. 클릭은 ping + data-intent가 같은 경로로 센다.
 import { appDoor } from '../domain/tossLink.ts';
 import Chevron from './Chevron.astro';
-interface Props { variant?: 'row' | 'tile' }
-const { variant = 'row' } = Astro.props;
 const d = appDoor();
 ---
-{variant === 'tile' ? (
-  <section>
-    <a class="tile" href={d.href} target="_blank" rel="noopener" ping={d.ping} data-intent={d.intent}><b>{d.label}</b><span>{d.sub}</span></a>
-    <p class="pc-note small">{d.pcNote}</p>
-  </section>
-) : (
-  <section class="rows door" aria-label="토스 앱">
-    <a class="row" href={d.href} target="_blank" rel="noopener" ping={d.ping} data-intent={d.intent}>
-      <span class="rt"><b>{d.label}</b><span>{d.sub}</span><span class="pc-note">{d.pcNote}</span></span>
-      <Chevron />
-    </a>
-  </section>
-)}
+<section class="rows door" aria-label="토스 앱">
+  <p class="pc-note small">{d.pcNote}</p>
+  <a class="row" href={d.href} target="_blank" rel="noopener" ping={d.ping} data-intent={d.intent}>
+    <span class="rt"><b>{d.label}</b><span>{d.sub}</span></span>
+    <Chevron />
+  </a>
+</section>

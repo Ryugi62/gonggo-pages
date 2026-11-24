@@ -37,3 +37,11 @@ export function reconcileDeadlineTime<T extends PublicListing>(l: T): T {
   const t = quoteDeadlineTime(l.eligibilityQuote, l.deadline);
   return t && t !== l.deadlineTime ? { ...l, deadlineTime: t } : l;
 }
+
+/** SPEC §34 AC-132 — 배지 상태. 큰 배지(lg)도 지난 날짜면 「마감됐어요」(예외 없음) */
+export function badgeState(deadline: string, today: string, large: boolean): { n: number; label: string; closed: boolean; soon: boolean } {
+  const at = (d: string) => Date.parse(`${d}T12:00:00Z`);
+  const n = Math.round((at(deadline) - at(today)) / 86_400_000);
+  const label = n < 0 ? (large ? '마감됐어요' : '마감') : n === 0 ? 'D-day' : `D-${n}`;
+  return { n, label, closed: n < 0, soon: n >= 0 && n <= 3 };
+}

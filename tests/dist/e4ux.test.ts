@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
+import { buildDay } from '../../src/infrastructure/config.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { findInternalJudgement } from '../../src/domain/privacy.ts';
 import { isAudition } from '../../src/domain/topic.ts';
 
 // SPEC §32 — 토스 UX 3회차 kill(평균 69.7 < 75) 발동: 상세 전면 교체(r1 대안) · 읽는 법 화면 · 목록 첫 화면 · 내부 메모 0
 const file = JSON.parse(readFileSync('data/listings.json', 'utf8')) as { generatedAt: string; listings: any[] };
-const today = file.generatedAt;
+const today = buildDay(); // SPEC §34
 const all = file.listings;
 const read = (p: string) => readFileSync(p, 'utf8');
 const detail = (s: string) => read(`dist/g/${s}/index.html`);
@@ -23,7 +24,7 @@ describe('공개 안전 — dist 전수(3,062 상세 + 읽는 법)에 자격·�
     let bad: string[] = [];
     for (const l of all) {
       const h = detail(l.slug);
-      const quotes = [...(h.match(/<blockquote>[\s\S]*?<\/blockquote>/g) ?? []), ...(h.match(/<q>[\s\S]*?<\/q>/g) ?? [])].join(' ');
+      const quotes = [...(h.match(/<blockquote[\s\S]*?<\/blockquote>/g) ?? []), ...(h.match(/<q>[\s\S]*?<\/q>/g) ?? [])].join(' ');
       if (findInternalJudgement(quotes).length || /과거 수상작 분석/.test(h)) bad.push(l.slug);
     }
     expect(bad).toEqual([]);
@@ -71,7 +72,7 @@ describe('상세 = 제목 · 마감 배지 1개 · 자격 원문 · 하단 CTA 1
       expect(h, l.slug).toContain(`<h1>${l.name.replace(/&/g, '&#38;')}`.slice(0, 8));
       expect(h, l.slug).toContain('application/ld+json');
       expect(h, l.slug).toContain('FAQPage');
-      if (l.eligibilityQuote) expect(h, l.slug).toContain('<blockquote>');
+      if (l.eligibilityQuote) expect(h, l.slug).toContain('<blockquote');
     }
     expect(readdirSync('dist/g').filter((s) => existsSync(`dist/g/${s}/index.html`)).length).toBe(all.length);
   });

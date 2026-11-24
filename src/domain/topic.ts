@@ -30,3 +30,16 @@ export function topicsOf(l: Pick<PublicListing, 'name'>): string[] {
 /** 오디션·캐스팅류 — 공모 4칸(니즈·평가 전략…)·Pro 채점이 맞지 않는 유형(11/22 검수: 아역 배우 등 56건) */
 const AUDITION_RE = /오디션|캐스팅|아역|배우\s*(?:모집|공개)|엑스트라|모델\s*(?:모집|공개|선발)|출연자\s*모집|시니어\s*모델|(?:가수|성우)\s*(?:공개\s*)?모집/;
 export const isAudition = (l: Pick<PublicListing, 'name'>): boolean => AUDITION_RE.test(l.name);
+
+const tokensOf = (name: string) =>
+  new Set((name.replace(/제?\s*\d+\s*(?:회|차|기|년도?)/g, ' ').match(/[가-힣A-Za-z]{2,}/g) ?? []).map((t) => t.toLowerCase()));
+
+/** SPEC §34 AC-135 — 같은 대회 판별: 마감일이 같고 작은 쪽 제목 낱말(3개 이상)의 75% 이상이 겹침(제N회·숫자 제외) */
+export function isSameContest(a: Pick<PublicListing, 'name' | 'deadline'>, b: Pick<PublicListing, 'name' | 'deadline'>): boolean {
+  if ((a.deadline ?? '') !== (b.deadline ?? '')) return false;
+  const x = tokensOf(a.name), y = tokensOf(b.name);
+  if (!x.size || !y.size) return false;
+  let both = 0;
+  for (const t of x) if (y.has(t)) both++;
+  return Math.min(x.size, y.size) >= 3 && both / Math.min(x.size, y.size) >= 0.75;
+}

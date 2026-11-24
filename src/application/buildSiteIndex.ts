@@ -1,6 +1,6 @@
 import type { Category, EligibilityTag } from '../domain/category.ts';
 import type { PublicListing } from '../domain/listing.ts';
-import { topicsOf } from '../domain/topic.ts';
+import { topicsOf, isSameContest } from '../domain/topic.ts';
 
 /** 마감일이 속한 주의 월요일(YYYY-MM-DD). 날짜만 다루므로 UTC 정오 기준 계산 */
 export function deadlineWeek(date: string): string {
@@ -57,7 +57,7 @@ export function buildSiteIndex(listings: PublicListing[]): SiteIndex {
     const mine = topicsOf(l);
     const shared = (x: PublicListing) => topicsOf(x).filter((t) => mine.includes(t)).length;
     const picks: PublicListing[] = [];
-    const add = (pool: PublicListing[]) => { for (const x of pool) if (picks.length < n && !picks.includes(x)) picks.push(x); };
+    const add = (pool: PublicListing[]) => { for (const x of pool) if (picks.length < n && !picks.includes(x) && !isSameContest(l, x) && !picks.some((p) => isSameContest(p, x))) picks.push(x); }; // §34 AC-135 같은 대회는 하나만
     const sameCat = byCategory.get(l.category) ?? [];
     if (mine.length) {
       const topical = near(sameCat).filter((x) => shared(x) > 0);

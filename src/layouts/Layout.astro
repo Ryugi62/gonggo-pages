@@ -2,6 +2,7 @@
 import { SITE_NAME, REPO_URL, IS_AWS } from '../infrastructure/config.ts';
 import { generatedAt } from '../adapters/site/data.ts';
 import LegalFooter from '../components/LegalFooter.astro';
+import { DAY_SCRIPT } from '../infrastructure/dayScript.ts';
 
 interface Props {
   title: string;
@@ -9,7 +10,7 @@ interface Props {
   path: string;
   jsonLd?: object[];
   noindex?: boolean;
-  bottomCta?: { href: string; label: string; external?: boolean; attrs?: Record<string, string | undefined> };
+  bottomCta?: { href: string; label: string; external?: boolean; note?: string; attrs?: Record<string, string | undefined> };
   /** canonical 호스트를 바꿀 때(Pro 4장 = AWS 주소, SPEC §12) */
   origin?: string;
   /** Vercel 분석 스크립트 — AWS 빌드엔 없다(정식 주소는 va → 같은 출처 /intent/ 비콘, SPEC §13 R4) */
@@ -67,6 +68,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
   </footer>
   {bottomCta && (
     <div class="cta-bar">
+      {bottomCta.note && <p class="pc-note small">{bottomCta.note}</p>}
       <a class="cta" href={bottomCta.href} {...(bottomCta.external ? { target: '_blank', rel: 'noopener' } : {})} {...(bottomCta.attrs ?? {})}>{bottomCta.label}</a>
     </div>
   )}
@@ -78,9 +80,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
   <script is:inline>
     document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-intent]');if(!a)return;try{window.va&&window.va('pageview',{route:'/intent/cal',path:a.getAttribute('data-intent')})}catch(x){}});
   </script>
-  <script is:inline>
-    (function(){var t=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date());var at=function(d){return Date.parse(d+'T12:00:00Z')};document.querySelectorAll('[data-deadline]').forEach(function(el){var n=Math.round((at(el.getAttribute('data-deadline'))-at(t))/864e5);if(!(el.classList.contains('lg')&&n<0))el.textContent=n<0?'마감':n===0?'D-day':'D-'+n;el.classList.toggle('closed',n<0);el.classList.toggle('soon',n>=0&&n<=3)})})();
-  </script>
+  <script is:inline set:html={DAY_SCRIPT}></script>
 </body>
 </html>
 <style is:global>
@@ -109,7 +109,11 @@ const ogImage = new URL('/og.png', Astro.site).href;
   .brand { font-weight: 800; font-size: 18px; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
   .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--blue); display: inline-block; }
   .top nav a { font-size: 15px; font-weight: 600; text-decoration: none; padding: 12px 0; display: inline-block; }
-  main { padding-top: 24px; padding-bottom: 32px; }
+  main.wrap { padding-top: 24px; padding-bottom: 32px; } /* §34 AC-133 — .wrap(클래스)이 main(태그) 여백을 0으로 덮던 것 */
+  .clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
+  .more-q { border: 0; background: transparent; color: var(--blue-text); font: inherit; font-size: 14px; font-weight: 600; min-height: 44px; padding: 0; cursor: pointer; }
+  .more-q[hidden] { display: none; }
+  details.fold > summary { color: var(--text); font-size: 16px; }
   h1 { font-size: 24px; line-height: 1.35; margin: 8px 0 8px; font-weight: 700; }
   h2 { font-size: 20px; margin: 0 0 12px; font-weight: 700; }
   section { margin-top: 32px; }
@@ -199,8 +203,8 @@ const ogImage = new URL('/og.png', Astro.site).href;
   /* 「맨 위로」가 뜨면 행 여백이 바뀌어 높이가 변한다 — 브라우저가 스크롤 위치를 보정하면 위로 올린 동작이 취소돼 버튼이 깜빡이므로(막다른 길, 11/24 walk) 보정을 끈다 */
   html, body { overflow-anchor: none; }
   /* SPEC §33 AC-127 — PC 폭에서만 보이는 안내(PC는 앱을 열 수 없다) */
-  .pc-note, .row .rt span.pc-note { display: none; }
-  @media (min-width: 960px) { .row .rt span.pc-note { display: block; } p.pc-note { display: block; margin: 8px 0 0; } }
+  .pc-note { display: none; }
+  @media (min-width: 960px) { p.pc-note { display: block; margin: 0 0 4px; } .cta-bar p.pc-note { max-width: 680px; margin: 0 auto 8px; text-align: center; } }
   .tile:active, .row:active, .item:active, .btn:active, .cta:active, .to-top:active, .chip:active { transform: scale(0.98); }
   .row:active .rt b { color: var(--blue-text); }
   @media (hover: hover) {

@@ -1,9 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import RelatedRows from '../../components/RelatedRows.astro';
-import { index, allListings as listings, generatedAt } from '../../adapters/site/data.ts';
+import { index, allListings as listings, generatedAt, today } from '../../adapters/site/data.ts';
 import { categorySlug, tagSlug } from '../../domain/category.ts';
 import { dDay, dDayLabel, formatDate } from '../../domain/format.ts';
+import { cleanDisplay, tidyQuote } from '../../domain/displayText.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import Chevron from '../../components/Chevron.astro';
 import TossMiniappLink from '../../components/TossMiniappLink.astro';
@@ -18,8 +19,8 @@ export function getStaticPaths() {
 }
 interface Props { l: PublicListing }
 const { l } = Astro.props;
-const closed = !!l.deadline && l.deadline < generatedAt; // 마감된 공고 — 첫 화면이 「마감됐어요 + 지금 열린 비슷한 공고」(SPEC §31, 마감 상세 63%가 막다른 길이던 문제)
-const anchor = new Date(Date.parse(`${generatedAt}T12:00:00Z`) + 14 * 86_400_000).toISOString().slice(0, 10);
+const closed = !!l.deadline && l.deadline < today; // 마감된 공고 — 첫 화면이 「마감됐어요 + 지금 열린 비슷한 공고」(SPEC §31, 마감 상세 63%가 막다른 길이던 문제)
+const anchor = new Date(Date.parse(`${today}T12:00:00Z`) + 14 * 86_400_000).toISOString().slice(0, 10);
 const related = index.related(l, closed ? 3 : 5, closed ? anchor : undefined); // 색인은 열린 공고만이라 마감 공고에도 열린 것만 나온다
 const readCard = isAudition(l) ? null : readCardOf(l.category); // 오디션·캐스팅류는 읽는 법 행 없음(SPEC §32) // SPEC §30 — 4칸은 /g/<slug>/read/ 별도 화면, 상세엔 한 줄 진입(장학은 4칸 데이터가 없어 진입 행 없음)
 const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
@@ -27,14 +28,14 @@ const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? `
 const title = searchTitle(l);
 const description = searchDescription(l);
 const faq = listingFaq(l);
-const dd = l.deadline ? dDay(l.deadline, generatedAt) : null;
+const dd = l.deadline ? dDay(l.deadline, today) : null;
 const heroTone = dd === null ? '' : dd < 0 ? 'closed' : dd <= 3 ? 'soon' : '';
 // 자격 인용과 같은 문장(말줄임만 다른 경우 포함)은 조항 판독에서 한 번 더 싣지 않는다
 const clauses = dedupeClauses(l.clauses, l.eligibilityQuote);
 const heroMeta = [l.organizer, l.prize].filter(Boolean).join(' · ');
 const catSlug = categorySlug(l.category);
 const openCat = index.byCategory.get(l.category)?.length ? `/c/${catSlug}/` : '/';
-const cta = closed ? { href: openCat, label: '지금 낼 수 있는 공고 보기' } : { href: l.url, label: '원문 공고 보기', external: true };
+const cta = closed ? { href: openCat, label: '지금 낼 수 있는 공고 보기' } : { href: l.url, label: '원문 공고 보기', external: true, attrs: { 'data-closed-href': openCat, 'data-closed-label': '지금 낼 수 있는 공고 보기' } };
 const path = `/g/${l.slug}/`;
 const site = Astro.site!.href.replace(/\/$/, '');
 const jsonLd = [
@@ -55,23 +56,21 @@ const jsonLd = [
 ---
 <Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={cta}>
   <nav class="crumb" aria-label="위치"><a href="/">홈</a> › <a href={`/c/${catSlug}/`}>{l.category}</a></nav>
-  <h1>{l.name}</h1>
+  <h1>{cleanDisplay(l.name)}</h1>
 
   <section class="hero-d" aria-label="마감">
     {l.deadline
-      ? <span class={`bd lg ${heroTone}`} data-deadline={l.deadline}>{closed ? '마감됐어요' : dDayLabel(l.deadline, generatedAt)}</span>
+      ? <span class={`bd lg ${heroTone}`} data-deadline={l.deadline}>{closed ? '마감됐어요' : dDayLabel(l.deadline, today)}</span>
       : <span class="bd lg">상시</span>}
     <p class="hd-t"><b>{deadlineText}{closed || !l.deadline ? '' : ' 마감'}</b>{heroMeta && <span>{heroMeta}</span>}</p>
   </section>
   {l.aiUse === 'FORBIDDEN' && <p class="badge no" style="margin-top:16px">AI 초안 사용 불가</p>}
   {l.aiUse === 'ALLOWED' && <p class="badge ok" style="margin-top:16px">원문에 AI 활용 가능 문장이 있어요</p>}
 
-  <TossMiniappLink />
-
   {closed && (
     <section aria-labelledby="rel-h">
       <h2 id="rel-h">지금 낼 수 있는 비슷한 공고</h2>
-      {related.length > 0 ? <RelatedRows items={related} /> : <p class="sub">지금 접수 중인 비슷한 공고가 없어요.</p>}
+      {related.length > 0 ? <RelatedRows items={related} group="rel" /> : <p class="sub">지금 접수 중인 비슷한 공고가 없어요.</p>}
     </section>
   )}
 
@@ -82,14 +81,16 @@ const jsonLd = [
     )}
     {l.eligibilityQuote ? (
       <>
-        <blockquote>{l.eligibilityQuote}</blockquote>
-        <p class="small" style="margin:8px 0 0">공고 원문의 자격 문장을 그대로 옮겼어요.</p>
+        <blockquote id="elig-q" class="clamp">{tidyQuote(l.eligibilityQuote)}</blockquote>
+        <button type="button" class="more-q" id="q-more" hidden>더 보기</button>
       </>
     ) : (
       <p class="sub" style="margin-top:12px">이 공고는 자격 문장을 따로 정리하지 못했어요. 원문 공고에서 확인해 주세요.</p>
     )}
     {closed && <p class="small" style="margin:8px 0 0"><a href={l.url} target="_blank" rel="noopener">끝난 원문 공고 보기</a></p>}
   </section>
+
+  <TossMiniappLink />
 
   {readCard && (
     <section class="rows" aria-label="공고 읽는 법">
@@ -103,7 +104,7 @@ const jsonLd = [
   {!closed && related.length > 0 && (
     <section aria-labelledby="rel-h">
       <h2 id="rel-h">비슷한 공고</h2>
-      <RelatedRows items={related} />
+      <RelatedRows items={related} group="rel" />
     </section>
   )}
 
@@ -121,6 +122,10 @@ const jsonLd = [
     <p class="sub" style="margin-top:16px">{generatedAt} 기준으로 공개된 공고 원문을 보고 마감·상금·자격 문장을 옮겨 정리했어요. <a href="/about/">정리 기준 자세히</a></p>
   </details>
 </Layout>
+<script is:inline>
+  // 자격 인용은 4줄로 접고, 넘칠 때만 「더 보기」를 보인다(SPEC §34 AC-134)
+  (function(){var q=document.getElementById('elig-q'),b=document.getElementById('q-more');if(!q||!b)return;if(q.scrollHeight>q.clientHeight+1)b.hidden=false;b.addEventListener('click',function(){q.classList.remove('clamp');b.hidden=true})})();
+</script>
 <script is:inline define:vars={{ slug: l.slug }}>
   // from=cal 재방문 — 기본 페이지뷰 뒤에 보낸다
   if(/[?&]from=cal(&|$)/.test(location.search))window.addEventListener('load',function(){setTimeout(function(){try{window.va&&window.va('pageview',{route:'/intent/cal',path:'/intent/cal/return/'+slug})}catch(e){}},1500)});

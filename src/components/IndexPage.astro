@@ -2,12 +2,14 @@
 import Layout from '../layouts/Layout.astro';
 import ListingList from './ListingList.astro';
 import CalendarSubscribe from './CalendarSubscribe.astro';
-import { hasFeed } from '../adapters/site/data.ts';
+import { hasFeed, tags as openTags, index } from '../adapters/site/data.ts';
 import type { PublicListing } from '../domain/listing.ts';
 import { SITE_NAME, IS_AWS } from '../infrastructure/config.ts';
 // SPEC §33 — 목록의 /pro 맥락 입구는 가격 숨김으로 없앴다
-interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[]; feed?: string }
-const { heading, title, description, path, lead, items, feed } = Astro.props;
+interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[]; feed?: string; chips?: boolean }
+const { heading, title, description, path, lead, items, feed, chips = false } = Astro.props;
+// §34 AC-136 — 결과 위 칩 ≤5(기존 /t/ 링크, 지금 열린 공고가 많은 순)
+const chipTags = chips ? [...openTags].sort((a, b) => (index.byTag.get(b.name)?.length ?? 0) - (index.byTag.get(a.name)?.length ?? 0)).slice(0, 5) : [];
 const site = Astro.site!.href.replace(/\/$/, '');
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -20,7 +22,9 @@ const jsonLd = [
 <Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={{ href: '/check/', label: '내가 낼 수 있는 공고 찾기' }}>
   <nav class="crumb" aria-label="위치"><a href="/">홈</a></nav>
   <h1>{heading}</h1>
-  <p class="sub">{items.length}건 · 마감이 가까운 순서예요</p>
+  <p class="sub"><span data-count="list">{items.length}</span>건 · 마감이 가까운 순서예요</p>
+  {chipTags.length > 0 && <ul class="chips" style="margin-top:16px" aria-label="대상으로 좁히기">{chipTags.map((t) => <li><a class="chip gray" href={`/t/${t.slug}/`}>{t.name}</a></li>)}</ul>}
+  <p class="sub" style="margin-top:24px" data-empty="list" hidden={items.length > 0}>지금 접수 중인 공고가 없어요. <a href="/">접수 중인 공고 전체 보기</a></p>
   <section style="margin-top:0"><ListingList items={items} /></section>
   {feed && hasFeed(feed) && <CalendarSubscribe feed={feed} />}
   <p class="sub" style="margin-top:32px">{lead}</p>

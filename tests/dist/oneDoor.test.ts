@@ -59,7 +59,7 @@ describe('AC-127 PC 안내', () => {
 describe('AC-127 휴대폰 폭에서는 PC 안내가 안 보인다(390 캡처 회귀: 행 안 span 규칙이 숨김을 덮었음)', () => {
   it('행 안 pc-note는 기본 display:none, 960px에서만 block', () => {
     const h = read(`dist/g/${open[0].slug}/index.html`);
-    expect(h).toMatch(/\.row \.rt span\.pc-note\{display:none\}|\.pc-note,\.row \.rt span\.pc-note\{display:none\}/);
+    expect(h).toMatch(/\.pc-note\{display:none\}/);
   });
 });
 

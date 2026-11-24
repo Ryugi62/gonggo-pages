@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { digest, generatedAt } from '../../adapters/site/data.ts';
+import { digest, generatedAt, today } from '../../adapters/site/data.ts';
 import { formatDate, dDayLabel } from '../../domain/format.ts';
 import SubscribeEntry from '../../components/SubscribeEntry.astro';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
@@ -18,12 +18,13 @@ const jsonLd = [{ '@context': 'https://schema.org', '@type': 'ItemList', numberO
 <Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={{ href: '/check/', label: '내가 낼 수 있는 공고 찾기' }}>
   <nav class="crumb" aria-label="위치"><a href="/">홈</a></nav>
   <h1>{heading}</h1>
+  {digest.length === 0 && <p class="sub" style="margin-top:16px">지금 접수 중인 공고가 없어요. <a href="/">접수 중인 공고 보기</a></p>}
   <p class="sub">{formatDate(generatedAt)} 기준, 열흘 안에 마감하고 상금이 있는 공고 중 대학생·청년이 낼 수 있는 것을 마감 순으로 골랐어요. 지원 전 원문 공고에서 자격과 마감을 꼭 다시 확인해 주세요.</p>
   <ol class="digest">
     {digest.map((l) => (
       <li style="margin:16px 0">
         <b><a href={`/g/${l.slug}/`}>{l.name}</a></b><br />
-        <span class="sub">{formatDate(l.deadline!)} 마감 ({dDayLabel(l.deadline, generatedAt)}) · {l.category} · {l.prize}</span><br />
+        <span class="sub">{formatDate(l.deadline!)} 마감 ({dDayLabel(l.deadline, today)}) · {l.category} · {l.prize}</span><br />
         <a href={l.url} rel="noopener nofollow" target="_blank">원문 공고 보기</a>
       </li>
     ))}

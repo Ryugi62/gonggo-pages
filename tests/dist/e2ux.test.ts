@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
+import { buildDay } from '../../src/infrastructure/config.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { isOpen, quoteDeadlineTime } from '../../src/domain/freshness.ts';
 
 // SPEC §31 — 11/22 2회차 검수(r1 61·r2 58·r3 57, 3/3 겹침) 고정: 마감 흐름·상세 정리·돌아가기·시각·동의 문구
 const file = JSON.parse(readFileSync('data/listings.json', 'utf8')) as { generatedAt: string; listings: any[] };
-const T = file.generatedAt;
+const T = buildDay(); // SPEC §34: 열림 판정 기준일 = 빌드 날
 const by = new Map(file.listings.map((l) => [l.slug, l]));
 const html = (s: string) => readFileSync(`dist/g/${s}/index.html`, 'utf8');
 const body = (h: string) => h.slice(h.indexOf('<body')).replace(/<style[\s\S]*?<\/style>/g, '').replace(/<script[\s\S]*?<\/script>/g, '');
@@ -16,8 +17,8 @@ const pick = (a: string[], n: number) => a.filter((_, i) => i % Math.max(1, Math
 describe('데이터 — dist 상세가 병합 목록 전부(소멸 0)이고 정리 기준일이 오늘', () => {
   it('상세 페이지 수 = 목록 수, 기준일 = generatedAt', () => {
     expect(slugs.length).toBe(file.listings.length);
-    expect(T > '2026-11-19').toBe(true);
-    expect(html(slugs[0])).toContain(`정리 기준일 ${T}`);
+    expect(file.generatedAt > '2026-11-19').toBe(true);
+    expect(html(slugs[0])).toContain(`정리 기준일 ${file.generatedAt}`);
   });
   it('목록·sitemap·llms는 열린 공고만 센다(마감 공고는 sitemap에 URL만)', () => {
     const idx = readFileSync('dist/index.html', 'utf8');

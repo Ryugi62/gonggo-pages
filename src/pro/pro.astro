@@ -9,11 +9,10 @@ const d = appDoor();
 const title = '공고콕, 토스 앱에서도 써 보세요 | 공고콕';
 const description = '공고 자격·마감·상금은 이 사이트에서 무료로 볼 수 있고, 마감 임박 공고와 AI 사용 규정은 토스 앱 공고콕에서 볼 수 있어요.';
 ---
-<Layout title={title} description={description} path="/pro/" origin={PRO_ORIGIN} analytics={false} legal noindex bottomCta={{ href: d.href, label: d.label, external: true, attrs: { ping: d.ping, 'data-intent': d.intent } }}>
+<Layout title={title} description={description} path="/pro/" origin={PRO_ORIGIN} analytics={false} legal noindex bottomCta={{ href: d.href, label: d.label, external: true, note: d.pcNote, attrs: { ping: d.ping, 'data-intent': d.intent } }}>
   <h1>공고콕, 토스 앱에서도 써 보세요</h1>
   <p class="sub" style="margin-top:8px">마감 임박 공고와 AI 사용 규정을 앱에서 한눈에 볼 수 있어요. 공고 자격·마감·상금은 이 사이트에서 계속 무료로 볼 수 있어요.</p>
   <section class="rows" aria-label="이어서 보기">
     <a class="row" href="/"><span class="rt"><b>지금 접수 중인 공고 보기</b><span>자격·마감·상금을 원문 그대로 정리했어요</span></span><svg class="go" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a>
   </section>
-  <p class="pc-note small">{d.pcNote}</p>
 </Layout>

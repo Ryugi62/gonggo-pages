@@ -161,6 +161,7 @@ export function surfaceOf(ref: string): Surface {
 function appCardRows(text: string, o: CountOptions): { key: string; surface: Surface }[] {
   const self = new Set(o.selfIps);
   const out: { key: string; surface: Surface }[] = [];
+  const tested = new Set<string>(); // §34 AC-140 — ping은 Referer가 비어 표식이 안 잡히므로 같은 (IP,UA,날짜)에 gk_test 줄이 있으면 그 사람·날 전부 뺀다
   for (const line of text.split('\n')) {
     const m = APP_CARD.exec(line.trim());
     if (!m) continue;
@@ -169,10 +170,12 @@ function appCardRows(text: string, o: CountOptions): { key: string; surface: Sur
     if (Number.isNaN(at.getTime())) continue;
     const day = kstDay(at);
     const ip = firstIp(xff);
-    if (status !== '204' || day < o.since || self.has(ip) || !isHumanUserAgent(ua) || TEST_MARK.test(ref)) continue;
-    out.push({ key: `${ip}|${ua}|${day}`, surface: surfaceOf(ref) });
+    if (status !== '204' || day < o.since || self.has(ip) || !isHumanUserAgent(ua)) continue;
+    const key = `${ip}|${ua}|${day}`;
+    if (TEST_MARK.test(ref)) tested.add(key);
+    out.push({ key, surface: surfaceOf(ref) });
   }
-  return out;
+  return out.filter((x) => !tested.has(x.key));
 }
 
 export function countAppCardClicks(text: string, o: CountOptions): number {

@@ -8,11 +8,12 @@ import ReadRequestEntry from '../../../components/ReadRequestEntry.astro';
 import SubscribeEntry from '../../../components/SubscribeEntry.astro';
 import TossMiniappLink from '../../../components/TossMiniappLink.astro';
 import Chevron from '../../../components/Chevron.astro';
-import { allListings as listings, index, generatedAt } from '../../../adapters/site/data.ts';
+import { allListings as listings, index, generatedAt, today } from '../../../adapters/site/data.ts';
 import { readCardOf } from '../../../adapters/site/readCards.ts';
 import { readCardTitle } from '../../../domain/readCard.ts';
 import { appDoor } from '../../../domain/tossLink.ts';
 import { formatDate } from '../../../domain/format.ts';
+import { cleanDisplay } from '../../../domain/displayText.ts';
 import { axisFacts } from '../../../domain/readFacts.ts';
 import { isAudition } from '../../../domain/topic.ts';
 import { categorySlug } from '../../../domain/category.ts';
@@ -27,17 +28,17 @@ interface Props { l: PublicListing }
 const { l } = Astro.props;
 const card = readCardOf(l.category)!;
 const title = readCardTitle(card.kind);
-const closed = !!l.deadline && l.deadline < generatedAt;
-const anchor = new Date(Date.parse(`${generatedAt}T12:00:00Z`) + 14 * 86_400_000).toISOString().slice(0, 10);
+const closed = !!l.deadline && l.deadline < today;
+const anchor = new Date(Date.parse(`${today}T12:00:00Z`) + 14 * 86_400_000).toISOString().slice(0, 10);
 const related = closed ? index.related(l, 3, anchor) : [];
 const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
-const facts = axisFacts(l, generatedAt);
+const facts = axisFacts(l, today);
 const site = Astro.site!.href.replace(/\/$/, '');
 const calEvent = closed ? null : deadlineEvent(l, site);
 const openCat = index.byCategory.get(l.category)?.length ? `/c/${categorySlug(l.category)}/` : '/';
 const cta = closed
   ? { href: openCat, label: '지금 낼 수 있는 공고 보기' }
-  : { href: appDoor().href, label: appDoor().label, external: true, attrs: { ping: appDoor().ping, 'data-intent': appDoor().intent } };
+  : { href: l.url, label: '원문 공고 보기', external: true, attrs: { 'data-closed-href': openCat, 'data-closed-label': '지금 낼 수 있는 공고 보기' } };
 ---
 <Layout title={`${title} — ${l.name}`} description={`${l.name}를 읽을 때 볼 4칸 — 니즈·평가 전략·맞춤 아이디어·완성도.`} path={`/g/${l.slug}/read/`} noindex bottomCta={cta}>
   <nav class="crumb back" aria-label="위치"><a href={`/g/${l.slug}/`} data-back>공고 상세로 돌아가기</a></nav>
@@ -45,17 +46,19 @@ const cta = closed
     <section class="rd-closed" aria-labelledby="rd-cl-h">
       <span class="bd lg closed">마감됐어요</span>
       <h2 id="rd-cl-h">지금 낼 수 있는 비슷한 공고</h2>
-      {related.length > 0 ? <RelatedRows items={related} /> : <p class="sub">지금 접수 중인 비슷한 공고가 없어요.</p>}
+      {related.length > 0 ? <RelatedRows items={related} group="rel" /> : <p class="sub">지금 접수 중인 비슷한 공고가 없어요.</p>}
     </section>
   )}
   <img class="hero" src="https://static.toss.im/3d-emojis/u1F4DD.png" alt="" width="40" height="40" decoding="async" />
   <h1>{title}</h1>
-  <p class="sub rd-sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{l.name}</a> · {deadlineText}{closed || !l.deadline ? '' : ' 마감'}{l.prize ? ` · ${l.prize}` : ''}</p>
+  <p class="sub rd-sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{cleanDisplay(l.name)}</a> · {deadlineText}{closed || !l.deadline ? '' : ' 마감'}{l.prize ? ` · ${l.prize}` : ''}</p>
 
   <ReadCard card={card} facts={facts} />
 
-  <section aria-labelledby="more-h">
-    <h2 id="more-h">더 해 볼 수 있어요</h2>
+  <TossMiniappLink />
+
+  <details class="fold" id="more" aria-labelledby="more-h">
+    <summary><span id="more-h">더 해 볼 수 있어요</span><Chevron /></summary>
     <div class="rows">
       {calEvent && (
         <>
@@ -66,9 +69,8 @@ const cta = closed
       {IS_AWS && <ReadRequestEntry />}
       {IS_AWS && <SubscribeEntry />}
       <a class="row" href="/check/"><span class="rt"><b>내 조건으로 낼 수 있는 공고 찾기</b><span>나이·학생·지역·사업자 여부만 고르면 돼요</span></span><Chevron /></a>
-      {closed && <TossMiniappLink />}
     </div>
-  </section>
+  </details>
 </Layout>
 <script is:inline>
   // 돌아가기 = 브라우저 뒤로(보던 위치 유지·왕복 고리 없음). 상세에서 온 게 아니면(직접 진입) 상세 링크 그대로.
