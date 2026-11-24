@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { appDoor, TOSS_MINIAPP_URL } from '../src/domain/tossLink.ts';
 import { countAppCardClicks, countAppCardBySurface, surfaceOf, countLandings } from '../src/application/visitCount.ts';
@@ -65,5 +66,10 @@ describe('AC-129 모바일 상세 보기', () => {
     const t = [caddy('1.1.1.1', '/g/a/', IPHONE), caddy('2.2.2.2', '/g/b/', CHROME), caddy('3.3.3.3', '/g/a/read/', IPHONE), caddy('4.4.4.4', '/', IPHONE)].join('\n');
     const r = countLandings(t, { since: '2026-11-01', selfIps: [] });
     expect(r.mobileDetailViews).toBe(1);
+  });
+  it('/pro 원천 — 문 두 개 문구, 토스 그래픽·가격 낱말 0', () => {
+    const src = readFileSync('src/pro/pro.astro', 'utf8');
+    expect(src).toContain('공고콕, 토스 앱에서도 써 보세요');
+    expect(src).not.toMatch(/static\.toss\.im|19,900|창립가/);
   });
 });

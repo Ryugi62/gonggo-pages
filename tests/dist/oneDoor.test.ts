@@ -108,4 +108,9 @@ describe('주소·메모 불변', () => {
     const gone = [...live].filter((u) => !now.has(u));
     expect(gone.length).toBe(0);
   });
+  it.skipIf(!existsSync('dist/pro/index.html'))('/pro/ — 웹 입구도 공고콕이라 「앱에서만 열린다」고 하지 않고, 토스 그래픽을 쓰지 않는다', () => {
+    const h = readFileSync('dist/pro/index.html', 'utf8');
+    expect(h).toContain('공고콕, 토스 앱에서도 써 보세요');
+    expect(h).not.toContain('static.toss.im');
+  });
 });
