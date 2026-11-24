@@ -2,7 +2,6 @@
 import IndexPage from '../../components/IndexPage.astro';
 import { week } from '../../adapters/site/data.ts';
 import { formatDate } from '../../domain/format.ts';
-import { proEntry } from '../../domain/proEntry.ts';
 import SubscribeEntry from '../../components/SubscribeEntry.astro';
 import { IS_AWS } from '../../infrastructure/config.ts';
 const heading = '이번 주 낼 수 있는 창업경진대회·지원사업';
@@ -10,7 +9,7 @@ const range = `${formatDate(week.from)} ~ ${formatDate(week.to)}`;
 ---
 <IndexPage heading={heading} title={`${heading} ${week.items.length}건 | 공고콕`}
   description={`${range} 마감 창업경진대회·지원사업 ${week.items.length}건. 자격·업력·AI 사용 조항을 원문 그대로 정리했어요.`}
-  path="/week/" lead={`${range}에 마감하는 창업 공고예요.${week.aiForbidden ? ` 이 중 ${week.aiForbidden}건은 AI 초안을 낼 수 없어요.` : ''}`} items={week.items} feed="founder-week" pro={proEntry('week')}>
+  path="/week/" lead={`${range}에 마감하는 창업 공고예요.${week.aiForbidden ? ` 이 중 ${week.aiForbidden}건은 AI 초안을 낼 수 없어요.` : ''}`} items={week.items} feed="founder-week">
   {IS_AWS && <div class="rows"><SubscribeEntry /></div>}
   <details>
     <summary>어떤 공고를 모았나요</summary>

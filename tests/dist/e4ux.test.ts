@@ -35,10 +35,10 @@ describe('공개 안전 — dist 전수(3,062 상세 + 읽는 법)에 자격·�
 
 describe('상세 = 제목 · 마감 배지 1개 · 자격 원문 · 하단 CTA 1개 · 읽는 법 행 1개 · 비슷한 공고', () => {
   const sample = [...pick(closed, 12), ...pick(open, 12)];
-  it('판독 요청·구독·Pro·조건 찾기·캘린더·토스·「더 해 볼 수 있어요」는 상세에 없다', () => {
+  it('판독 요청·구독·Pro·조건 찾기·캘린더·「더 해 볼 수 있어요」는 상세에 없다(토스 문 1개는 SPEC §33으로 oneDoor 시험)', () => {
     for (const l of sample) {
       const h = detail(l.slug);
-      for (const m of ['id="more-h"', 'data-read-entry', 'data-sub-entry', '/pro/?from=g', 'href="/check/"', 'minion.toss.im', '구글 캘린더에 넣기', 'id="cal-note"', '더 해 볼 수 있어요']) {
+      for (const m of ['id="more-h"', 'data-read-entry', 'data-sub-entry', '/pro/?from=g', 'href="/check/"', '구글 캘린더에 넣기', 'id="cal-note"', '더 해 볼 수 있어요']) {
         // 상단바의 「내가 낼 수 있나요?」 /check/ 링크 1개는 사이트 공통 메뉴
         if (m === 'href="/check/"') { expect((h.match(/href="\/check\/"/g) ?? []).length, `${l.slug} ${m}`).toBeLessThanOrEqual(1); continue; }
         expect(h, `${l.slug} ${m}`).not.toContain(m);

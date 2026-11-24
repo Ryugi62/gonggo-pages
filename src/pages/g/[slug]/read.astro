@@ -10,9 +10,8 @@ import TossMiniappLink from '../../../components/TossMiniappLink.astro';
 import Chevron from '../../../components/Chevron.astro';
 import { allListings as listings, index, generatedAt } from '../../../adapters/site/data.ts';
 import { readCardOf } from '../../../adapters/site/readCards.ts';
-import { appLinkOf } from '../../../adapters/site/appSlugs.ts';
-import { readCardTitle, APP_CARD_PING } from '../../../domain/readCard.ts';
-import { TOSS_MINIAPP_URL, TOSS_APP_COPY } from '../../../domain/tossLink.ts';
+import { readCardTitle } from '../../../domain/readCard.ts';
+import { appDoor } from '../../../domain/tossLink.ts';
 import { formatDate } from '../../../domain/format.ts';
 import { axisFacts } from '../../../domain/readFacts.ts';
 import { isAudition } from '../../../domain/topic.ts';
@@ -28,7 +27,6 @@ interface Props { l: PublicListing }
 const { l } = Astro.props;
 const card = readCardOf(l.category)!;
 const title = readCardTitle(card.kind);
-const deep = appLinkOf(l.slug);
 const closed = !!l.deadline && l.deadline < generatedAt;
 const anchor = new Date(Date.parse(`${generatedAt}T12:00:00Z`) + 14 * 86_400_000).toISOString().slice(0, 10);
 const related = closed ? index.related(l, 3, anchor) : [];
@@ -39,7 +37,7 @@ const calEvent = closed ? null : deadlineEvent(l, site);
 const openCat = index.byCategory.get(l.category)?.length ? `/c/${categorySlug(l.category)}/` : '/';
 const cta = closed
   ? { href: openCat, label: '지금 낼 수 있는 공고 보기' }
-  : { href: TOSS_MINIAPP_URL, label: deep ? TOSS_APP_COPY.specific : TOSS_APP_COPY.generic, external: true, attrs: { ping: APP_CARD_PING, 'data-intoss': deep ?? undefined } };
+  : { href: appDoor().href, label: appDoor().label, external: true, attrs: { ping: appDoor().ping, 'data-intent': appDoor().intent } };
 ---
 <Layout title={`${title} — ${l.name}`} description={`${l.name}를 읽을 때 볼 4칸 — 니즈·평가 전략·맞춤 아이디어·완성도.`} path={`/g/${l.slug}/read/`} noindex bottomCta={cta}>
   <nav class="crumb back" aria-label="위치"><a href={`/g/${l.slug}/`} data-back>공고 상세로 돌아가기</a></nav>
@@ -67,11 +65,8 @@ const cta = closed
       )}
       {IS_AWS && <ReadRequestEntry />}
       {IS_AWS && <SubscribeEntry />}
-      {IS_AWS && (
-        <a class="row" href="/pro/?from=g"><span class="rt"><b>이 공고 배점으로 내 계획서 채점받기 (Pro)</b><span>사전 신청은 돈이 나가지 않아요</span></span><Chevron /></a>
-      )}
       <a class="row" href="/check/"><span class="rt"><b>내 조건으로 낼 수 있는 공고 찾기</b><span>나이·학생·지역·사업자 여부만 고르면 돼요</span></span><Chevron /></a>
-      {closed && <TossMiniappLink slug={l.slug} />}
+      {closed && <TossMiniappLink />}
     </div>
   </section>
 </Layout>

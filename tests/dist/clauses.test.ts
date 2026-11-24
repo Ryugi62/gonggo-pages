@@ -48,7 +48,7 @@ describe('AC-73 digest', () => {
     for (const l of d) { expect(h).toContain(`/g/${l.slug}/`); expect(h).toContain('원문 공고 보기'); }
     expect(readFileSync('dist/sitemap.xml', 'utf8')).toContain(`/digest/${data.generatedAt}/`);
     expect(findForbidden(h.replace(/<[^>]+>/g, ' '))).toEqual([]);
-    expect((h.match(/href="\/pro\/\?from=week"/g) ?? []).length).toBe(aws ? 1 : 0);
+    expect((h.match(/href="\/pro\/\?from=week"/g) ?? []).length).toBe(0) // SPEC §33: /pro 입구 폐지;
   });
 });
 
@@ -64,7 +64,7 @@ describe('AC-81 ai-ok', () => {
     expect((h.match(/<q>/g) ?? []).length).toBe(r.length);
     expect(readFileSync('dist/sitemap.xml', 'utf8')).toContain(`/ai-ok/${data.generatedAt}/`);
     expect(findForbidden(h.replace(/<[^>]+>/g, ' '))).toEqual([]);
-    expect((h.match(/href="\/pro\/\?from=ai-ok"/g) ?? []).length).toBe(aws ? 1 : 0);
+    expect((h.match(/href="\/pro\/\?from=ai-ok"/g) ?? []).length).toBe(0) // SPEC §33: /pro 입구 폐지;
   });
 });
 
@@ -80,6 +80,6 @@ describe('AC-84 solo', () => {
     expect((h.match(/<q>/g) ?? []).length).toBe(r.length);
     expect(readFileSync('dist/sitemap.xml', 'utf8')).toContain(`/solo/${data.generatedAt}/`);
     expect(findForbidden(h.replace(/<[^>]+>/g, ' '))).toEqual([]);
-    expect((h.match(/href="\/pro\/\?from=solo"/g) ?? []).length).toBe(aws ? 1 : 0);
+    expect((h.match(/href="\/pro\/\?from=solo"/g) ?? []).length).toBe(0) // SPEC §33: /pro 입구 폐지;
   });
 });

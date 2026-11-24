@@ -76,10 +76,6 @@ const ogImage = new URL('/og.png', Astro.site).href;
     (function(){var b=document.querySelector('.to-top');if(!b)return;var set=function(v){b.hidden=!v;document.body.classList.toggle('tt-on',v)};var y0=window.scrollY,vh=window.innerHeight,u=0;['touchstart','touchmove','wheel','keydown','pointerdown'].forEach(function(n){window.addEventListener(n,function(){u=Date.now()},{passive:true})});window.addEventListener('scroll',function(){var y=window.scrollY;if(y<=vh||y>y0)set(false);else if(y<y0&&Date.now()-u<1500)set(true);y0=y},{passive:true});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});set(false)})})();
   </script>
   <script is:inline>
-    // 토스 앱 링크: 휴대폰에서는 공고별 딥링크(intoss://…)를 먼저 열고, 1.5초 안에 앱이 안 열리면 같은 탭에서 기본 링크로 간다. PC·딥링크 없는 공고는 기본 링크 그대로.
-    document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-intoss]');if(!a||!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent))return;e.preventDefault();var fb=a.href,t=setTimeout(function(){location.href=fb},1500);document.addEventListener('visibilitychange',function(){if(document.hidden)clearTimeout(t)},{once:true});try{navigator.sendBeacon(a.getAttribute('ping')||'/intent/app-card')}catch(x){}location.href=a.getAttribute('data-intoss')});
-  </script>
-  <script is:inline>
     document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-intent]');if(!a)return;try{window.va&&window.va('pageview',{route:'/intent/cal',path:a.getAttribute('data-intent')})}catch(x){}});
   </script>
   <script is:inline>
@@ -200,6 +196,9 @@ const ogImage = new URL('/og.png', Astro.site).href;
   .row { transition: background-color .15s ease, transform .1s ease, color .15s ease, padding-right .15s ease; }
   /* 「맨 위로」 버튼이 보일 때는 행 화살표가 버튼 밑으로 들어가지 않게 오른쪽을 비운다(11/22 3회차 검수) */
   body.tt-on .row { padding-right: 52px; }
+  /* SPEC §33 AC-127 — PC 폭에서만 보이는 안내(PC는 앱을 열 수 없다) */
+  .pc-note { display: none; }
+  @media (min-width: 960px) { span.pc-note { display: inline; } p.pc-note { display: block; margin: 8px 0 0; } }
   .tile:active, .row:active, .item:active, .btn:active, .cta:active, .to-top:active, .chip:active { transform: scale(0.98); }
   .row:active .rt b { color: var(--blue-text); }
   @media (hover: hover) {

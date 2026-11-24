@@ -47,15 +47,14 @@ describe('AC-99 상세 = 읽는 법 한 줄 진입, 4칸은 /read/', () => {
 describe('AC-100·106 토스 앱 링크 — 앱에 있는 공고는 딥링크, 없으면 앱 홈', () => {
   it('읽는 법 화면 minion 링크(폴백) 정확히 1개(상세엔 0개 — SPEC §32), 앱 번들에 있는 slug는 data-intoss 딥링크', () => {
     for (const l of live) {
-      expect(minionAnchors(page(l.slug)).length, l.slug).toBe(0);
+      expect(minionAnchors(page(l.slug)).length, l.slug).toBeLessThanOrEqual(1); // SPEC §33: 상세는 문 1개(열린 상세 100%는 oneDoor 시험)
       if (!hasCard(l.category, l.name)) continue;
       const a = minionAnchors(readPage(l.slug));
       expect(a.length, l.slug).toBe(1);
       expect(a[0]).toContain('target="_blank"');
       expect(a[0]).toContain('rel="noopener"');
       expect(a[0]).toContain('ping="/intent/app-card"');
-      if (appSlugs.has(l.slug)) expect(a[0], l.slug).toContain(`data-intoss="intoss://gonggokok/p/${l.slug}.html"`);
-      else expect(a[0], l.slug).not.toContain('data-intoss');
+      expect(a[0], l.slug).not.toContain('data-intoss'); // SPEC §33: 공고별 딥링크 끔
     }
   });
   it('읽는 법 화면의 하단 고정 CTA가 토스 앱 링크 1개', () => {
@@ -64,7 +63,7 @@ describe('AC-100·106 토스 앱 링크 — 앱에 있는 공고는 딥링크, �
     expect((h.match(/class="cta"/g) ?? []).length).toBe(1);
     const cta = h.match(/<a\b[^>]*class="cta"[^>]*>[^<]*/)![0];
     expect(cta).toContain(URL_);
-    expect(cta).toMatch(/토스 앱에서/);
+    expect(cta).toContain('토스에서 공고콕 써보기');
   });
 });
 

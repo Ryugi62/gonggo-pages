@@ -49,11 +49,11 @@ describe('SPEC §8 UI 수용기준 — 자동 검사 가능 항목', () => {
     expect(s.slice(card, card + 300)).toMatch(/class="bd lg/); // 회색 큰 글자 대신 Badge(11/22 검수)
     expect(css(s)).toMatch(/\.bd\{[^}]*border-radius:8px/);
   });
-  it('6 숫자 먼저(/pro): 가격 카드가 질문 목록보다 앞 — 첫 화면 안', () => {
+  it('6 /pro는 앱 안내 + 문 1개(SPEC §33, 가격 카드 폐지)', () => {
     if (!aws) return;
     const s = read(pages.pro);
-    expect(s.indexOf('data-arm="H1"')).toBeLessThan(s.indexOf('class="asks"'));
-    expect(css(s)).toMatch(/#pro(?:\[[^\]]+\])?\{padding-bottom:112px/);
+    expect(s).not.toContain('data-arm=');
+    expect(s).toContain('토스에서 공고콕 써보기');
   });
   it('7 근거는 접힘: 모든 <details>는 닫힘(open 속성 0)', () => {
     for (const f of Object.values(pages)) {

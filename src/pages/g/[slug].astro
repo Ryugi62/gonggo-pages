@@ -6,6 +6,7 @@ import { categorySlug, tagSlug } from '../../domain/category.ts';
 import { dDay, dDayLabel, formatDate } from '../../domain/format.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import Chevron from '../../components/Chevron.astro';
+import TossMiniappLink from '../../components/TossMiniappLink.astro';
 import { readCardOf } from '../../adapters/site/readCards.ts';
 import { isAudition } from '../../domain/topic.ts';
 import { SITE_NAME } from '../../infrastructure/config.ts';
@@ -64,6 +65,8 @@ const jsonLd = [
   </section>
   {l.aiUse === 'FORBIDDEN' && <p class="badge no" style="margin-top:16px">AI 초안 사용 불가</p>}
   {l.aiUse === 'ALLOWED' && <p class="badge ok" style="margin-top:16px">원문에 AI 활용 가능 문장이 있어요</p>}
+
+  <TossMiniappLink />
 
   {closed && (
     <section aria-labelledby="rel-h">

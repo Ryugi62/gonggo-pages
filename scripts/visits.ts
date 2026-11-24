@@ -3,7 +3,7 @@
 // 운영자 IP는 저장소에 두지 않는다 — privacy.local.json 의 "selfIps"(gitignore) 또는 환경 변수 GONGGO_SELF_IPS(쉼표).
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
-import { countProVisits, countLandings, countSubSteps, countAppCardClicks } from '../src/application/visitCount.ts';
+import { countProVisits, countLandings, countSubSteps, countAppCardClicks, countAppCardBySurface } from '../src/application/visitCount.ts';
 import { verdict } from '../src/application/verdict.ts';
 import { CANONICAL_ORIGIN } from '../src/infrastructure/config.ts';
 
@@ -25,8 +25,8 @@ console.log(`기준 ${since}~ (KST) · 운영자 IP 제외 ${selfIps.length}개`
 console.log(`/pro 사람 방문 ${pro.view} (H1 ${pro.byArm.H1} · H2 ${pro.byArm.H2}) · 가격 클릭 ${pro.price} · 결제 요청 ${pro.request} · 날짜별: ${fmt(pro.byDay)} · 입구별(from): ${fmt(pro.byFrom)}`);
 const sub = countSubSteps(intent, opts);
 console.log(`메일 구독(SPEC §25) 폼 펼침 ${sub.click} · 저장 완료 ${sub.request} (기준 ${since}~, 운영자 IP 제외)`);
-console.log(`앱 카드 클릭(SPEC §29 /intent/app-card) ${countAppCardClicks(intent, opts)} (기준 ${since}~, 운영자 IP 제외 · ping은 Firefox 기본 꺼짐 — Chrome·Safari·모바일 기준)`);
-console.log(`무료 페이지 사람 착지 ${land.visitors}명 · 페이지뷰 ${land.pageviews} · 유입원: ${fmt(land.bySource)} · 날짜별: ${fmt(land.byDay)}`);
+console.log(`문 클릭(SPEC §33 /intent/app-card) ${countAppCardClicks(intent, opts)} · 면별: ${fmt(countAppCardBySurface(intent, opts) as Record<string, number>)} (기준 ${since}~, 운영자 IP·헤드리스·gk_test 제외, ping+비콘은 한 사람·하루 1)`);
+console.log(`무료 페이지 사람 착지 ${land.visitors}명 · 페이지뷰 ${land.pageviews} · 모바일 상세 보기 ${land.mobileDetailViews}(12/09 판정: ≥50에 문 클릭 <3) · 유입원: ${fmt(land.bySource)} · 날짜별: ${fmt(land.byDay)}`);
 const search = ['google', 'naver', 'daum', 'bing', 'chatgpt'].reduce((n, k) => n + (land.bySource[k] ?? 0), 0);
 console.log(`검색 착지(google+naver+daum+bing+chatgpt) ${search} — 목표 10/21 ≥ 30 · /pro 목표 ≥ 5`);
 console.log(`14일 검증 판정(검증설계 §4) — ${verdict(pro, new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })).line}`);

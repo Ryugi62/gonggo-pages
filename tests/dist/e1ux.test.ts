@@ -23,7 +23,7 @@ describe('막힘 B — 상세엔 홍보·폼이 없고, 부가 도구는 읽는 
       const h = readFileSync(`dist/g/${s}/read/index.html`, 'utf8');
       const more = h.slice(h.indexOf('id="more-h"'));
       expect(h.indexOf('id="more-h"'), s).toBeGreaterThan(h.indexOf('class="rc-row"'));
-      expect((more.match(/class="row[ "]/g) ?? []).length, s).toBeGreaterThanOrEqual(aws ? 4 : 1);
+      expect((more.match(/class="row[ "]/g) ?? []).length, s).toBeGreaterThanOrEqual(aws ? 3 : 1) // SPEC §33: Pro 행 폐지로 4→3;
       expect((h.match(/가격이나 광고 안내는 넣지 않아요/g) ?? []).length, s).toBeLessThanOrEqual(1);
       for (const marker of ['data-read-entry', 'data-sub-entry', 'href="/pro/?from=g"']) { const i = h.indexOf(marker); if (i >= 0) expect(i, `${s} ${marker}`).toBeGreaterThan(h.indexOf('id="more-h"')); }
     }

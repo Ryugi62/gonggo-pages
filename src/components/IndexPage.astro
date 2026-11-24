@@ -4,11 +4,10 @@ import ListingList from './ListingList.astro';
 import CalendarSubscribe from './CalendarSubscribe.astro';
 import { hasFeed } from '../adapters/site/data.ts';
 import type { PublicListing } from '../domain/listing.ts';
-import type { ProEntry } from '../domain/proEntry.ts';
 import { SITE_NAME, IS_AWS } from '../infrastructure/config.ts';
-// pro = 목록 페이지 /pro 맥락 입구(SPEC §16) — AWS 빌드에서만(Vercel Hobby 상업 이용 금지, AC-25)
-interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[]; feed?: string; pro?: ProEntry }
-const { heading, title, description, path, lead, items, feed, pro } = Astro.props;
+// SPEC §33 — 목록의 /pro 맥락 입구는 가격 숨김으로 없앴다
+interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[]; feed?: string }
+const { heading, title, description, path, lead, items, feed } = Astro.props;
 const site = Astro.site!.href.replace(/\/$/, '');
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -23,7 +22,6 @@ const jsonLd = [
   <h1>{heading}</h1>
   <p class="sub">{items.length}건 · 마감이 가까운 순서예요</p>
   <section style="margin-top:0"><ListingList items={items} /></section>
-  {IS_AWS && pro && <section><a class="tile" href={pro.href}><b>{pro.title}</b><span>{pro.sub}</span></a></section>}
   {feed && hasFeed(feed) && <CalendarSubscribe feed={feed} />}
   <p class="sub" style="margin-top:32px">{lead}</p>
   <slot />

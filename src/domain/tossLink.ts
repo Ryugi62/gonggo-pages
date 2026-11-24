@@ -25,3 +25,19 @@ export function appDeepLink(slug: string): string | null {
 export function appSlugOf(slug: string, inApp: ReadonlySet<string>): string | null {
   return inApp.has(slug) ? appDeepLink(slug) : null;
 }
+
+/**
+ * SPEC §33 AC-126~128 — 문(appDoor): 앱으로 가는 링크 1개의 값 전부. 상세·읽는 법·홈·/pro가 이 함수 하나를 쓴다.
+ * href는 첫 화면 공식 링크뿐 — 공고별 딥링크는 어디서도 켜지 않는다.
+ */
+export const APP_DOOR_PING = '/intent/app-card';
+export function appDoor() {
+  return {
+    href: TOSS_MINIAPP_URL,
+    label: '토스에서 공고콕 써보기',
+    sub: '마감 임박 공고와 AI 사용 규정을 앱에서 봐요',
+    pcNote: '휴대폰의 토스 앱에서 열려요',
+    ping: APP_DOOR_PING,
+    intent: APP_DOOR_PING,
+  } as const;
+}

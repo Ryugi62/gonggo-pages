@@ -26,32 +26,14 @@ describe('AC-25 배포 대상별 /pro 생성', () => {
   }, 120_000);
 });
 
-describe.skipIf(!aws)('§12 /pro/ 산출물 (AWS)', () => {
+// SPEC §33 AC-130 — /pro/는 앱 안내 + 문 1개. 옛 가격·사전 신청·비교표 시험(AC-26~28·39~42·86·93·52)은 사용자 승인(11/24 16:08)으로 폐지, 가격 없음 시험은 oneDoor.test.ts
+describe.skipIf(!aws)('§33 /pro/ 산출물 (AWS)', () => {
   const pro = aws ? read('dist/pro/index.html') : '';
-  it('P2 ≤ 40KB · 외부 요청 0 · Vercel 분석 스크립트 없음 · canonical = AWS', () => {
+  it('≤ 40KB · 외부 스크립트 0 · canonical = AWS', () => {
     expect(statSync('dist/pro/index.html').size).toBeLessThanOrEqual(40 * 1024);
     expect(pro).not.toMatch(/<script[^>]+src="https?:/);
-    expect(pro).not.toMatch(/<link[^>]+rel="stylesheet"[^>]+href="https?:/);
-    expect(pro).not.toContain('/_vercel/insights');
     expect(pro).toContain(`<link rel="canonical" href="${PRO_ORIGIN}/pro/"`);
     expect(pro).toContain('name="viewport"');
-  });
-  it('AC-26 가격 카드 1장 H1 월 19,900원(사전 신청 10/26 — H2는 숨김 아니라 없음) · 첫 요소 = 큰 숫자', () => {
-    expect(pro).toMatch(/<section[^>]*data-arm="H1"[^>]*hidden[^>]*>\s*<div class="big[^"]*"[^>]*>월 19,900원<\/div>/);
-    expect(pro).not.toContain('data-arm="H2"');
-  });
-  it('스켈레톤·스텝의 hidden 이 display 규칙에 지지 않는다(390 캡처에서 스켈레톤이 남던 회귀)', () => {
-    expect(pro).toMatch(/#pro[^{}]*\[hidden\]\{display:none!important\}/);
-  });
-  it('AC-27 결제 0 고지·대필 아님 고지 · 카드 입력/결제 버튼 0', () => {
-    expect(pro).toContain('월 19,900원 Pro가 열리면 쓰겠다 — 사전 신청이에요 · 결제 약속이 아니고 지금은 돈이 나가지 않아요');
-    expect(pro).toContain('계획서는 본인이 씁니다 — 공고콕은 조항 판독·배점 채점·보완 제안만');
-    expect(pro).not.toMatch(/결제하기|카드\s*번호|autocomplete="cc-/);
-  });
-  it('AC-28 입력은 한 화면 한 질문: 이메일 스텝 1 · 체크 2개 스텝 1, 수집 입력은 이메일뿐', () => {
-    expect(pro).toMatch(/id="step-email"[\s\S]*type="email"/);
-    expect((pro.match(/<input[^>]+type="checkbox"/g) ?? []).length).toBe(2);
-    expect((pro.match(/<input[^>]+type="(?:text|email|tel|number)"/g) ?? []).length).toBe(1);
   });
   it('P5 4장 모두 사업자 정보 + 약관·환불·처리방침 링크', () => {
     for (const f of proFiles) {
@@ -60,116 +42,14 @@ describe.skipIf(!aws)('§12 /pro/ 산출물 (AWS)', () => {
       for (const h of ['/terms/', '/refund/', '/privacy/']) expect(s, `${f} ${h}`).toContain(`href="${h}"`);
     }
   });
-  it('AC-31 처리방침·환불·약관 필수 항목', () => {
+  it('AC-31 처리방침·환불·약관 필수 항목(내용 그대로)', () => {
     const pv = read('dist/privacy/index.html');
     for (const w of ['이메일', '접속 기록', '받은 날부터 30일', 'Amazon Web Services', '서울', '열람', '삭제']) expect(pv, w).toContain(w);
     const rf = read('dist/refund/index.html');
     for (const w of ['30일', '무조건', '지금은 돈이 나가지 않아요']) expect(rf, w).toContain(w);
-    expect(read('dist/terms/index.html')).toContain('계획서는 본인이 씁니다');
   });
   it('AC-25 sitemap엔 4장을 넣지 않는다', () => {
     const xml = read('dist/sitemap.xml');
     for (const p of PRO_PAGES) expect(xml).not.toContain(`${p}</loc>`);
-  });
-  it('읽는 법 화면 맨 아래 묶음에서 /pro/로 들어가는 입구(AWS 빌드만, SPEC §32 — 상세엔 없음)', () => {
-    const data = JSON.parse(read('data/listings.json'));
-    const open = data.listings.find((l: any) => l.deadline >= data.generatedAt && ['공모전', '해커톤', '지원사업', '대외활동'].includes(l.category) && !/오디션|캐스팅|아역/.test(l.name));
-    expect(read(`dist/g/${open.slug}/read/index.html`)).toContain('href="/pro/?from=g"');
-    expect(read(`dist/g/${data.listings[0].slug}/index.html`)).not.toContain('href="/pro/?from=g"');
-  });
-});
-
-describe.skipIf(!aws)('§14 /pro 첫 화면 v2 (AWS)', async () => {
-  const pro = aws ? read('dist/pro/index.html') : '';
-  const { CUSTOMER_VOICES } = await import('../../src/infrastructure/proCopy.ts');
-  const intro = pro.slice(pro.indexOf('id="step-intro"'), pro.indexOf('id="step-email"'));
-  const text = intro.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ');
-  it('AC-39 첫 요소 = 첫 고객 인용 blockquote + 출처·날짜·원문 링크, 나머지 인용도 출처와 함께', () => {
-    const firstBlock = intro.match(/<(h1|blockquote|section|p class="sub")[^>]*>/);
-    expect(firstBlock?.[1]).toBe('blockquote');
-    for (const v of CUSTOMER_VOICES) {
-      expect(intro, v.quote).toContain(v.quote);
-      expect(intro.includes(`href="${v.url}"`) || intro.includes(`href="${v.url.replaceAll('&', '&amp;')}"`), v.url).toBe(true);
-      expect(intro, v.date).toContain(v.date);
-      expect(intro, v.where).toContain(v.where);
-    }
-    expect(intro).toMatch(/<a [^>]*href="https:\/\/kin\.naver\.com[^"]*"[^>]*rel="noopener[^"]*"/);
-  });
-  it('AC-40 새 헤드라인, 옛 헤드라인 0', () => {
-    expect(pro).toMatch(/<h1[^>]*>「받을 수 있다」는 답마다, 근거가 된 공고 원문 문장을 붙여 드려요<\/h1>/);
-    expect(pro).not.toContain('계획서 하나로, 낼 수 있는 공고만 골라 그 배점표로 채점해 드려요');
-  });
-  it('AC-41 과장 낱말 0 · 「찾지 못했어요」 · 협약서·운영지침 경계', () => {
-    expect(text).not.toMatch(/모든 공고|100\s*%|완벽|정확히|합격 보장|대신 판단/);
-    expect(text).toContain('찾지 못했어요');
-    expect(pro).toContain('협약서·운영지침');
-  });
-  it('AC-42 첫 화면 버튼 = 「월 19,900원 Pro 열리면 쓰겠다 · 사전 신청」, 이후 스텝 문구 유지', () => {
-    expect(pro).toMatch(/<button[^>]*id="next"[^>]*>월 19,900원 Pro 열리면 쓰겠다 · 사전 신청<\/button>/);
-    // 스텝 문구 배열(번들은 템플릿 리터럴로 인라인) — 첫 칸도 새 문구, 나머지 유지
-    const bundle = pro + (pro.match(/src="(\/_astro\/pro[^"]+\.js)"/g) ?? []).map((m) => read('dist' + m.slice(5, -1))).join('');
-    expect(bundle).toMatch(/[`"']월 19,900원 Pro 열리면 쓰겠다 · 사전 신청[`"'],[`"']다음[`"'],[`"']사전 신청하기[`"'],[`"']공고 둘러보기[`"']/);
-  });
-});
-
-describe.skipIf(!aws)('§24 AC-86 /pro 첫 화면 v3 (AWS)', async () => {
-  const pro = aws ? read('dist/pro/index.html') : '';
-  const { PRO_SAMPLE, PRO_ACCURACY, PRO_COMPARE } = await import('../../src/infrastructure/proCopy.ts');
-  const intro = pro.slice(pro.indexOf('id="step-intro"'), pro.indexOf('id="step-email"'));
-  const text = intro.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ');
-  it('V1·V2·V3 순서: 가격 카드 → 샘플 → 정확도 → 비교', () => {
-    const i = [intro.indexOf('data-arm="H1"'), intro.indexOf('id="sample"'), intro.indexOf('id="accuracy"'), intro.indexOf('id="compare"')];
-    expect(i.every((n) => n > 0)).toBe(true);
-    expect([...i].sort((a, b) => a - b)).toEqual(i);
-  });
-  it('샘플 문구·인용·원문 링크·찾지 못했어요', () => {
-    for (const r of PRO_SAMPLE.rows) {
-      expect(text, r.q).toContain(r.q);
-      if (r.quote) expect(text, r.quote).toContain(r.quote);
-    }
-    expect(intro).toMatch(new RegExp(`id="sample"[\\s\\S]*href="${PRO_SAMPLE.url.replace(/[.?]/g, '\\$&')}"[^>]*rel="noopener`));
-    expect(text).toContain('찾지 못했어요');
-  });
-  it('정확도 1줄·비교 2열 문구', () => {
-    expect(text).toContain(PRO_ACCURACY);
-    for (const it of [...PRO_COMPARE.free.items, ...PRO_COMPARE.pro.items]) expect(text, it).toContain(it);
-    expect(intro).toMatch(/id="compare"[\s\S]*무료[\s\S]*Pro/);
-  });
-  it('AC-93 비교는 표: <table> 1개·열 머리 무료/Pro·행 ≥ 3·행마다 칸 3개', () => {
-    const cmp = intro.slice(intro.indexOf('id="compare"'));
-    const tbl = cmp.match(/<table[\s\S]*?<\/table>/)?.[0] ?? '';
-    expect(tbl).not.toBe('');
-    expect(intro.match(/<table/g)?.length).toBe(1);
-    expect(tbl).toMatch(/<th[^>]*scope="col"[^>]*>\s*무료/);
-    expect(tbl).toMatch(/<th[^>]*scope="col"[^>]*>\s*Pro/);
-    const rows = tbl.match(/<tbody[\s\S]*?<\/tbody>/)![0].match(/<tr[\s\S]*?<\/tr>/g)!;
-    expect(rows.length).toBeGreaterThanOrEqual(3);
-    for (const r of rows) expect((r.match(/<t[dh][\s>]/g) ?? []).length).toBe(3);
-  });
-  it('가격·환불 문구 불변 · 과장 낱말 0 · ≤ 40KB', () => {
-    expect(pro).toContain('월 19,900원 Pro가 열리면 쓰겠다 — 사전 신청이에요 · 결제 약속이 아니고 지금은 돈이 나가지 않아요');
-    expect(text).not.toMatch(/모든 공고|100\s*%|완벽|정확히|합격 보장|대신 판단/);
-    expect(Buffer.byteLength(pro)).toBeLessThanOrEqual(40 * 1024);
-  });
-});
-
-// §16 목록 페이지 /pro 맥락 입구(AC-52)
-describe('AC-52 홈·분류·주간 /pro 입구', () => {
-  const pages: [string, string][] = [
-    ['dist/index.html', 'home'],
-    ['dist/week/index.html', 'week'],
-    ...readdirSync('dist/c').map((c): [string, string] => [`dist/c/${c}/index.html`, 'c']),
-    ...readdirSync('dist/w').map((w): [string, string] => [`dist/w/${w}/index.html`, 'week']),
-  ];
-  it(aws ? 'AWS: 페이지마다 /pro/ 링크 정확히 1개(from 일치), 목록보다 앞' : '기본 빌드: /pro/ 링크 0', () => {
-    expect(pages.length).toBeGreaterThanOrEqual(7);
-    for (const [f, from] of pages) {
-      const s = read(f);
-      const links = s.match(/href="\/pro\/[^"]*"/g) ?? [];
-      if (!aws) { expect(links, f).toEqual([]); continue; }
-      expect(links, f).toEqual([`href="/pro/?from=${from}"`]);
-      const list = s.indexOf('class="list"');
-      if (list >= 0) expect(s.indexOf('href="/pro/'), f).toBeLessThan(list);
-    }
   });
 });

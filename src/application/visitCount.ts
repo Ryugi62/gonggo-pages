@@ -48,7 +48,7 @@ export function countProVisits(text: string, o: CountOptions): ProVisits {
   return r;
 }
 
-export interface Landings { visitors: number; pageviews: number; bySource: Record<string, number>; byDay: Record<string, number>; pages: Record<string, number> }
+export interface Landings { visitors: number; pageviews: number; mobileDetailViews: number; bySource: Record<string, number>; byDay: Record<string, number>; pages: Record<string, number> }
 
 const SOURCES: [string, RegExp][] = [
   ['google', /(^|\.)google\./],
@@ -77,6 +77,7 @@ export function countLandings(text: string, o: CountOptions): Landings {
   const host = o.host ?? 'gonggo.oaksoo.com';
   const self = new Set(o.selfIps);
   type Row = { ip: string; ua: string; day: string; uri: string; ref: string; ts: number };
+  const MOBILE = /iPhone|iPad|iPod|Android/;
   const rows: Row[] = [];
   const scanners = new Set<string>();
   const perDay = new Map<string, number>();
@@ -99,13 +100,14 @@ export function countLandings(text: string, o: CountOptions): Landings {
     perDay.set(k, (perDay.get(k) ?? 0) + 1);
     rows.push({ ip, ua, day, uri, ref: h['Referer']?.[0] ?? '', ts: d.ts });
   }
-  const r: Landings = { visitors: 0, pageviews: 0, bySource: {}, byDay: {}, pages: {} };
+  const r: Landings = { visitors: 0, pageviews: 0, mobileDetailViews: 0, bySource: {}, byDay: {}, pages: {} };
   const visitors = new Set<string>();
   for (const x of rows.sort((a, b) => a.ts - b.ts)) {
     if (scanners.has(x.ip) || (perDay.get(`${x.ip}|${x.day}`) ?? 0) > MAX_PAGES_PER_DAY) continue;
     r.pageviews++;
     const path = x.uri.split('?')[0];
     r.pages[path] = (r.pages[path] ?? 0) + 1;
+    if (MOBILE.test(x.ua) && /^\/g\/[^/]+\/?$/.test(path)) r.mobileDetailViews++; // SPEC §33 AC-129 — 12/09 판정 분모(휴대폰 상세 보기, 읽는 법 제외)
     const v = `${x.ip}|${x.ua}|${x.day}`;
     if (visitors.has(v)) continue;
     const src = sourceOf(x.uri, x.ref, host);
@@ -138,22 +140,54 @@ export function countSubSteps(text: string, o: CountOptions): SubVisits {
   return { click: seen.click.size, request: seen.request.size };
 }
 
-// SPEC §29 AC-104 — 상세 「앱에서 전체 카드」 클릭. <a ping>이 보내는 POST(브라우저에 따라 GET)를 센다. 같은 (IP, UA, KST 날짜)는 1명.
-// Firefox는 ping 기본 꺼짐 — 계측은 Chrome·Safari·모바일 기준.
+// SPEC §29 AC-104·§33 AC-128 — 문 클릭(/intent/app-card). <a ping>의 POST와 data-intent 비콘의 GET이 같은 클릭에서 둘 다 올 수 있어
+// (IP, UA, KST 날짜) 하나로 합친다 = 한 사람·하루 1. 운영자 IP·헤드리스·자동화 UA(isHumanUserAgent)·우리 시험 표식(Referer에 gk_test=1)은 뺀다.
 const APP_CARD = /^(\S+) (.+?) "(?:POST|GET) \/intent\/app-card HTTP\/[\d.]+" (\d{3}) "([^"]*)" "([^"]*)"$/;
-export function countAppCardClicks(text: string, o: CountOptions): number {
+export const TEST_MARK = /[?&]gk_test=1(?:&|$|#)/;
+
+export type Surface = 'detail' | 'read' | 'home' | 'pro' | 'other' | 'none';
+/** 클릭이 일어난 면 — Referer 경로로 나눈다(상세 /g/<slug>/ · 읽는 법 /g/<slug>/read/ · 홈 / · /pro/) */
+export function surfaceOf(ref: string): Surface {
+  if (!ref || ref === '-') return 'none';
+  let path: string;
+  try { path = new URL(ref).pathname; } catch { return 'none'; }
+  if (path === '/') return 'home';
+  if (/^\/pro\/?$/.test(path)) return 'pro';
+  if (/^\/g\/[^/]+\/read\/?$/.test(path)) return 'read';
+  if (/^\/g\/[^/]+\/?$/.test(path)) return 'detail';
+  return 'other';
+}
+
+function appCardRows(text: string, o: CountOptions): { key: string; surface: Surface }[] {
   const self = new Set(o.selfIps);
-  const seen = new Set<string>();
+  const out: { key: string; surface: Surface }[] = [];
   for (const line of text.split('\n')) {
     const m = APP_CARD.exec(line.trim());
     if (!m) continue;
-    const [, t, xff, status, , ua] = m;
+    const [, t, xff, status, ref, ua] = m;
     const at = new Date(t);
     if (Number.isNaN(at.getTime())) continue;
     const day = kstDay(at);
     const ip = firstIp(xff);
-    if (status !== '204' || day < o.since || self.has(ip) || !isHumanUserAgent(ua)) continue;
-    seen.add(`${ip}|${ua}|${day}`);
+    if (status !== '204' || day < o.since || self.has(ip) || !isHumanUserAgent(ua) || TEST_MARK.test(ref)) continue;
+    out.push({ key: `${ip}|${ua}|${day}`, surface: surfaceOf(ref) });
   }
-  return seen.size;
+  return out;
+}
+
+export function countAppCardClicks(text: string, o: CountOptions): number {
+  return new Set(appCardRows(text, o).map((r) => r.key)).size;
+}
+
+/** 면별 문 클릭 — (IP, UA, 날짜, 면) 하나로 합친다. 한 사람이 두 면에서 누르면 면마다 1(합계는 사람·하루 1) */
+export function countAppCardBySurface(text: string, o: CountOptions): Partial<Record<Surface, number>> {
+  const seen = new Set<string>();
+  const r: Partial<Record<Surface, number>> = {};
+  for (const x of appCardRows(text, o)) {
+    const k = `${x.key}|${x.surface}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    r[x.surface] = (r[x.surface] ?? 0) + 1;
+  }
+  return r;
 }
