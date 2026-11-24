@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-22",
+ "generatedAt": "2026-11-25",
  "listings": [
   {
    "slug": "2026-c9633e27",
@@ -34979,36 +34979,6 @@
    "aiUse": "UNSTATED"
   },
   {
-   "slug": "since-ai-hackathon-mlh-2027-ee2ecea7",
-   "name": "WHACK (Wellesley Hackathon) (MLH 2027 시즌)",
-   "category": "해커톤",
-   "kind": "해커톤",
-   "deadline": "2026-11-22",
-   "deadlineTime": null,
-   "rolling": false,
-   "url": "https://mlh.com/seasons/2027/events",
-   "organizer": null,
-   "prize": null,
-   "eligibilityQuote": null,
-   "tags": [],
-   "constraints": {
-    "minAge": null,
-    "maxAge": null,
-    "studentOnly": false,
-    "region": null,
-    "business": null,
-    "open": false
-   },
-   "clauses": [
-    {
-     "kind": "ONSITE",
-     "quote": "IN-PERSON · November 21–22, 2026 · Wellesley College",
-     "source": "https://mlh.com/seasons/2027/events"
-    }
-   ],
-   "aiUse": "UNSTATED"
-  },
-  {
    "slug": "2027-710149ca",
    "name": "[강동구 청년해냄센터] 2027년 정부 지원 사업 대비 성공 창업 스쿨 참가자 모집 공고",
    "category": "지원사업",
@@ -43702,6 +43672,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "trippups-ai-game-hackathon-2026-hack-on-elevenla-1653b88d",
+   "name": "TripPups AI Game Hackathon 2026 (HACK:ON·ElevenLabs 후원, 온라인 개인전)",
+   "category": "해커톤",
+   "kind": "해커톤",
+   "deadline": "2026-11-28",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.contestkorea.com/sub/view.php?int_gbn=1&Txt_bcode=030310001&str_no=202611160001",
+   "organizer": null,
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "vats-mobility-national-business-innovation-chall-e1ec1dc2",
    "name": "Vats Mobility – National Business & Innovation Challenge 2026",
    "category": "공모전",
@@ -44528,6 +44522,30 @@
    "rolling": false,
    "url": "https://unstop.com/quiz/general-quiz-pop-culture-sports-biz-gk-2026-ensemble-valhalla-2026-xavier-school-of-management-xlri-1745822",
    "organizer": "Xavier School of Management (XLRI)",
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
+   "slug": "since-ai-hackathon-mlh-2027-ee2ecea7",
+   "name": "HackSheffield11 (MLH 2027 시즌)",
+   "category": "해커톤",
+   "kind": "해커톤",
+   "deadline": "2026-11-29",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://mlh.com/seasons/2027/events",
+   "organizer": null,
    "prize": null,
    "eligibilityQuote": null,
    "tags": [],
@@ -48111,7 +48129,7 @@
    "url": "https://www.all-con.co.kr/view/contest/544398",
    "organizer": "BTF 푸른나무재단",
    "prize": null,
-   "eligibilityQuote": "○ 지원자격 - 모집대상: 만 13~24세 (2027.01.01 기준) - 참가비: 950만원(7주 전체 프로그램 포함: 사전/사후학습, 국적기 왕복 항공,",
+   "eligibilityQuote": "○ 지원자격 - 모집대상: 만 13~24세 (2027.01.01 기준) - 참가비: 950만원(7주 전체 프로그램 포함: 사전/사후학습, 국적기 왕복 항공",
    "tags": [
     "청년"
    ],
@@ -48123,7 +48141,13 @@
     "business": null,
     "open": false
    },
-   "clauses": [],
+   "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "○ 지원자격 - 모집대상: 만 13~24세 (2027.01.01 기준) - 참가비: 950만원(7주 전체 프로그램 포함: 사전/사후학습, 국적기 왕복 항공,",
+     "source": "https://www.all-con.co.kr/view/contest/544398"
+    }
+   ],
    "aiUse": "UNSTATED"
   },
   {
@@ -49405,7 +49429,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400113896",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~20 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~20 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -49438,7 +49462,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400213785",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 미취업자,(예비)창업자,단기근로자 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 미취업자,(예비)창업자,단기근로자",
    "tags": [
     "청년",
     "누구나"
@@ -59604,6 +59628,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "vibe-coders-jam-session-feat-base44-ai-builders-744651d5",
+   "name": "Vibe Coders Jam Session: feat. Base44 (AI Builders·GSC, 서울 오프라인 3시간)",
+   "category": "해커톤",
+   "kind": "해커톤",
+   "deadline": "2026-12-12",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://koreahackathons.com/events/vibe-coders-jam-session-feat-base44",
+   "organizer": null,
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2026-8a47906e",
    "name": "2026 청와대 사랑채 국민화합 체험형 문화프로그램",
    "category": "대외활동",
@@ -62599,6 +62647,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "hackstead-winterfest-devpost-430-d6780a02",
+   "name": "Hackstead: Winterfest (Devpost, 십대·학생 팀 대상, $430)",
+   "category": "해커톤",
+   "kind": "해커톤",
+   "deadline": "2026-12-20",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://hackstead.devpost.com/",
+   "organizer": null,
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "ovo-hack-48-de99203f",
    "name": "OVO Hack 48",
    "category": "해커톤",
@@ -64178,6 +64250,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "2026-eu-eu-2-500-1-2d8b3fc7",
+   "name": "2026 슈만 챌린지: 한-EU 파트너십 강화 정책아이디어 공모 (주한EU대표부, 총상금 2,500만원·1등 해외연수)",
+   "category": "공모전",
+   "kind": "공모",
+   "deadline": "2026-12-30",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://linkareer.com/activity/365034",
+   "organizer": null,
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "2027-b8b33cac",
    "name": "2027 창작지원 전시작가 공모",
    "category": "공모전",
@@ -65622,7 +65718,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400213757",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -68224,6 +68320,30 @@
      "source": "https://innovart2027.devpost.com/"
     }
    ],
+   "aiUse": "UNSTATED"
+  },
+  {
+   "slug": "nlnet-ngi-zero-5-5-2027-01-03-12-00-cet-f28810cf",
+   "name": "NLnet NGI Zero 오픈소스 보조금 (€5천~5만, 2027-01-03 12:00 CET 마감)",
+   "category": "지원사업",
+   "kind": "지원사업",
+   "deadline": "2027-01-03",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://nlnet.nl/propose/",
+   "organizer": null,
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
    "aiUse": "UNSTATED"
   },
   {
@@ -72960,6 +73080,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "xprize-accelerate-learning-6m-ai-moonshot-2-15-c-7f908928",
+   "name": "XPRIZE Accelerate Learning ($6M, AI 초등 읽기·셈 학습 — Moonshot 2/15·Core 3/15 등록)",
+   "category": "공모전",
+   "kind": "대회",
+   "deadline": "2027-02-15",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://www.xprize.org/prizes/accelerate-learning",
+   "organizer": null,
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "9-000-15-000-d046521e",
    "name": "아이돌 쇼츠 채널 운영자 모집(재택/건별 9,000~15,000원+α)",
    "category": "대외활동",
@@ -75218,6 +75362,30 @@
    "aiUse": "UNSTATED"
   },
   {
+   "slug": "vesuvius-challenge-ai-2-14m-grand-prize-2027-06-3a010338",
+   "name": "Vesuvius Challenge — 헤르쿨라네움 두루마리 AI 판독 (오픈 상금풀 $2.14M, Grand Prize 2027-06-25, 월간 상금)",
+   "category": "공모전",
+   "kind": "대회",
+   "deadline": "2027-06-25",
+   "deadlineTime": null,
+   "rolling": false,
+   "url": "https://scrollprize.org/prizes",
+   "organizer": null,
+   "prize": null,
+   "eligibilityQuote": null,
+   "tags": [],
+   "constraints": {
+    "minAge": null,
+    "maxAge": null,
+    "studentOnly": false,
+    "region": null,
+    "business": null,
+    "open": false
+   },
+   "clauses": [],
+   "aiUse": "UNSTATED"
+  },
+  {
    "slug": "phystech-2027-physical-activity-and-technology-h-3553d713",
    "name": "PhysTech 2027: Physical Activity and Technology Hack Day (Devpost)",
    "category": "해커톤",
@@ -77017,7 +77185,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400213758",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -79749,7 +79917,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261007005400213915",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 18~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 18~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -79791,7 +79959,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213837",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -79828,7 +79996,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213816",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 대학 재학,대졸 예정 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 대학 재학,대졸 예정 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -79841,6 +80009,11 @@
     "open": true
    },
    "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "연령 19~39 · 학력 대학 재학,대졸 예정 · 취업 제한없음 ·",
+     "source": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213816"
+    },
     {
      "kind": "ELIGIBILITY",
      "quote": "거주지역 세종특별자치시 세종특별자치시",
@@ -79967,7 +80140,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213824",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~30 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~30 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -80000,7 +80173,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213827",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -80125,7 +80298,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261007005400213917",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~29 · 학력 대학 재학,대졸 예정,대학 졸업 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~29 · 학력 대학 재학,대졸 예정,대학 졸업 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -80138,6 +80311,11 @@
     "open": true
    },
    "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "연령 19~29 · 학력 대학 재학,대졸 예정,대학 졸업 · 취업 제한없음 ·",
+     "source": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261007005400213917"
+    },
     {
      "kind": "ELIGIBILITY",
      "quote": "재학생 뿐만아니라 졸업 후 2년이내 청년까지 서비스 대상 확대, 일자리발굴·매칭기능강화 및 전문상담 추가 종합서비스 제공으로 청년 고용 지원 서비스 제공",
@@ -80162,7 +80340,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213817",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -80194,7 +80372,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261006005400113907",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -80275,7 +80453,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213813",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 대학 재학,대졸 예정,대학 졸업 · 취업 미취업자 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 대학 재학,대졸 예정,대학 졸업 · 취업 미취업자",
    "tags": [],
    "constraints": {
     "minAge": null,
@@ -80286,6 +80464,11 @@
     "open": false
    },
    "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "연령 19~39 · 학력 대학 재학,대졸 예정,대학 졸업 · 취업 미취업자 ·",
+     "source": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213813"
+    },
     {
      "kind": "ELIGIBILITY",
      "quote": "만 19세~만 39세",
@@ -80305,7 +80488,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213840",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 18~20 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 18~20 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -80417,7 +80600,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213818",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 대학 재학,대졸 예정,대학 졸업,석·박사,기타 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 대학 재학,대졸 예정,대학 졸업,석·박사,기타 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -80430,6 +80613,11 @@
     "open": true
    },
    "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "연령 19~39 · 학력 대학 재학,대졸 예정,대학 졸업,석·박사,기타 · 취업 제한없음 ·",
+     "source": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213818"
+    },
     {
      "kind": "ELIGIBILITY",
      "quote": "거주지역 세종특별자치시 세종특별자치시",
@@ -80449,7 +80637,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213828",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -80486,7 +80674,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213854",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -80519,7 +80707,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213856",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -80551,7 +80739,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213855",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -80794,7 +80982,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400213791",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 재직자,일용근로자,단기근로자 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 재직자,일용근로자,단기근로자",
    "tags": [
     "누구나"
    ],
@@ -80969,7 +81157,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213847",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -81001,7 +81189,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261007005400213916",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -81033,7 +81221,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261007005400213926",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 18~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 18~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -81066,7 +81254,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261007005400213925",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -81210,7 +81398,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213839",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -81247,7 +81435,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213829",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -81322,7 +81510,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213841",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 18~20 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 18~20 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -81359,7 +81547,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213893",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~24 · 학력 대학 재학,대졸 예정 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~24 · 학력 대학 재학,대졸 예정 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -81372,6 +81560,11 @@
     "open": true
    },
    "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "연령 19~24 · 학력 대학 재학,대졸 예정 · 취업 제한없음 ·",
+     "source": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213893"
+    },
     {
      "kind": "ELIGIBILITY",
      "quote": "만 19세~만 24세",
@@ -81471,7 +81664,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261007005400213922",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -81508,7 +81701,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213899",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -81629,7 +81822,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213846",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -81661,7 +81854,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213820",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 대학 재학,대졸 예정,대학 졸업 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 대학 재학,대졸 예정,대학 졸업 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -81674,6 +81867,11 @@
     "open": true
    },
    "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "연령 0~99999 · 학력 대학 재학,대졸 예정,대학 졸업 · 취업 제한없음 ·",
+     "source": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213820"
+    },
     {
      "kind": "ELIGIBILITY",
      "quote": "거주지역 세종특별자치시 세종특별자치시",
@@ -81725,7 +81923,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213835",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 재직자,자영업자,프리랜서,일용근로자,단기근로자,영농종사자 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 재직자,자영업자,프리랜서,일용근로자,단기근로자,영농종사자",
    "tags": [
     "누구나"
    ],
@@ -82045,7 +82243,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400113890",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 대학 재학 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 대학 재학 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -82058,6 +82256,11 @@
     "open": true
    },
    "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "연령 0~99999 · 학력 대학 재학 · 취업 제한없음 ·",
+     "source": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400113890"
+    },
     {
      "kind": "ELIGIBILITY",
      "quote": "거주지역 충청북도 청주시 상당구, 충청북도 청주시 서원구, 충청북도 청주시 흥덕구, 충청북도 청주시 청원구, 충청북도 충주시, 충청북도 제천시, 충청북도 보은군, 충청북도 옥천군, 충청북도 영동군, 충청북도 증평군, 충청북도 진천군, 충청북도 괴산군, 충청북도 음성군, 충청북도 단양군…",
@@ -82103,7 +82306,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213849",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -82167,7 +82370,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400213787",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~45 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~45 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -82238,7 +82441,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400213793",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 (예비)창업자 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 (예비)창업자",
    "tags": [
     "청년",
     "누구나"
@@ -82276,7 +82479,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213808",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 대학 재학,대졸 예정 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 대학 재학,대졸 예정 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -82290,6 +82493,11 @@
     "open": true
    },
    "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "연령 19~39 · 학력 대학 재학,대졸 예정 · 취업 제한없음 ·",
+     "source": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213808"
+    },
     {
      "kind": "ELIGIBILITY",
      "quote": "고려대학교 세종캠퍼스 재학생 및 지역 청년을 대상으로 진로 및 취업지원 프로그램 운영하여 청년의 취업역량 강화 및 청년고용 활성화 지원",
@@ -82314,7 +82522,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400213786",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 미취업자 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 미취업자",
    "tags": [
     "청년",
     "누구나"
@@ -82347,7 +82555,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400213790",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 재직자 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 재직자",
    "tags": [
     "청년",
     "누구나"
@@ -82451,7 +82659,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400213788",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~45 · 학력 제한없음 · 취업 영농종사자 ·",
+   "eligibilityQuote": "연령 19~45 · 학력 제한없음 · 취업 영농종사자",
    "tags": [
     "청년",
     "누구나"
@@ -82484,7 +82692,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261002005400213811",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~40 · 학력 제한없음 · 취업 영농종사자 ·",
+   "eligibilityQuote": "연령 19~40 · 학력 제한없음 · 취업 영농종사자",
    "tags": [
     "청년",
     "누구나"
@@ -82517,7 +82725,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213843",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~34 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~34 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -82555,7 +82763,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213851",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -82588,7 +82796,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213850",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -82696,7 +82904,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400113887",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~34 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~34 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -82729,7 +82937,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400113756",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 대학 재학,대졸 예정,대학 졸업,석·박사 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 대학 재학,대졸 예정,대학 졸업,석·박사 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -82742,7 +82950,13 @@
     "business": null,
     "open": true
    },
-   "clauses": [],
+   "clauses": [
+    {
+     "kind": "ELIGIBILITY",
+     "quote": "연령 0~99999 · 학력 대학 재학,대졸 예정,대학 졸업,석·박사 · 취업 제한없음 ·",
+     "source": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261001005400113756"
+    }
+   ],
    "aiUse": "UNSTATED"
   },
   {
@@ -82756,7 +82970,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213853",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -82783,7 +82997,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213842",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 15~24 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 15~24 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -82857,7 +83071,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261007005400213924",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -82927,7 +83141,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213895",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -82992,7 +83206,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213900",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],
@@ -83024,7 +83238,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213903",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -83148,7 +83362,7 @@
    "url": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20261004005400213898",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 19~39 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "청년",
     "누구나"
@@ -83280,7 +83494,7 @@
    "url": "https://www.prosports.or.kr/news/m01/main",
    "organizer": null,
    "prize": null,
-   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음 ·",
+   "eligibilityQuote": "연령 0~99999 · 학력 제한없음 · 취업 제한없음",
    "tags": [
     "누구나"
    ],

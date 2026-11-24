@@ -1,11 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { digest, generatedAt, today } from '../../adapters/site/data.ts';
+import { digest, generatedAt, datedPaths, today } from '../../adapters/site/data.ts';
 import { formatDate, dDayLabel } from '../../domain/format.ts';
 import SubscribeEntry from '../../components/SubscribeEntry.astro';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
 export function getStaticPaths() {
-  return [{ params: { date: generatedAt } }];
+  return datedPaths.map((date) => ({ params: { date } }));
 }
 const heading = `이번 주 마감 임박 대학생·청년 공고 ${digest.length}선`;
 const title = `${heading} (${formatDate(generatedAt)} 기준) | ${SITE_NAME}`;

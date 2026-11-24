@@ -53,7 +53,9 @@ describe('AC-11 sitemap', () => {
   const xml = readFileSync('dist/sitemap.xml', 'utf8');
   const urls = xml.match(/<loc>[^<]+<\/loc>/g) ?? [];
   it('URL 수 = HTML 수 - 404, ≥ 400', () => {
-    expect(urls.length).toBe(sitePages.length - 1);
+    // SPEC §38 AC-168 — 지난 날짜 쪽(3경로 × 날짜)은 canonical이 새 날짜라 사이트맵에 싣지 않는다
+    const kept = (JSON.parse(readFileSync('data/digest-dates.json', 'utf8')) as string[]).length * 3;
+    expect(urls.length).toBe(sitePages.length - 1 - kept);
     expect(urls.length).toBeGreaterThanOrEqual(400);
   });
   it('sitemap의 모든 경로에 HTML이 있다', () => {

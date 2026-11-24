@@ -1,10 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { solo, generatedAt, today } from '../../adapters/site/data.ts';
+import { solo, generatedAt, datedPaths, today } from '../../adapters/site/data.ts';
 import { formatDate, dDayLabel } from '../../domain/format.ts';
 import { SITE_NAME, IS_AWS } from '../../infrastructure/config.ts';
 export function getStaticPaths() {
-  return [{ params: { date: generatedAt } }];
+  return datedPaths.map((date) => ({ params: { date } }));
 }
 const heading = `11월에 마감하는, 혼자 낼 수 있는 공고 ${solo.length}건`;
 const title = `${heading} (${formatDate(generatedAt)} 기준) | ${SITE_NAME}`;

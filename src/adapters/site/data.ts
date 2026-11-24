@@ -1,5 +1,7 @@
 // 어댑터: 커밋된 공개 파일(data/listings.json) → 화면용 색인. 원천 jsonl은 읽지 않는다.
 import file from '../../../data/listings.json';
+import keptDates from '../../../data/digest-dates.json';
+import { publishedDates } from '../../application/publishedDates.ts';
 import { buildSiteIndex } from '../../application/buildSiteIndex.ts';
 import { founderWeek } from '../../application/founderWeek.ts';
 import { weeklyDigest } from '../../application/weeklyDigest.ts';
@@ -16,6 +18,8 @@ import { dedupeSameTitle } from '../../domain/topic.ts';
 
 /** 정리 기준일(글자·/digest/ /ai-ok/ /solo/ 경로) — 열림·D-n 판정은 today(빌드 날, SPEC §34 AC-131) */
 export const generatedAt: string = file.generatedAt;
+/** 날짜 경로 = 새 정리 기준일 + 이미 공개한 날짜(SPEC §38, canonical은 새 날짜) */
+export const datedPaths: string[] = [file.generatedAt, ...publishedDates(keptDates, null, file.generatedAt)];
 export const today: string = buildDay();
 /** 오늘 마감인 공고의 시각 판정(SPEC §35 AC-142) */
 export const nowHM: string = buildTime();

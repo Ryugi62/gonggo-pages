@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { buildDay, buildTime } from '../../src/infrastructure/config.ts';
-import { isOpen } from '../../src/domain/freshness.ts';
+import { isOpen, deadlineTimeOf } from '../../src/domain/freshness.ts';
 
 // SPEC §35 — dist 전수
 const T = buildDay(), NOW = buildTime();
@@ -43,7 +43,7 @@ describe('AC-142·143 마감 시각·원문 길', () => {
     expect(h.match(/<section class="rows" data-closed-show([^>]*)>/)![1]).not.toMatch(/\shidden/);
   });
   it('시각이 지난 오늘 마감은 빌드에서 마감 상세(마감됐어요)', () => {
-    const t = data.listings.find((l: any) => l.deadline === T && l.deadlineTime && l.deadlineTime <= NOW && existsSync(`dist/g/${l.slug}/index.html`));
+    const t = data.listings.find((l: any) => l.deadline === T && deadlineTimeOf(l.deadlineTime) && l.deadlineTime <= NOW && existsSync(`dist/g/${l.slug}/index.html`));
     if (!t) return;
     expect(read(`dist/g/${t.slug}/index.html`)).toMatch(/class="bd lg closed"[^>]*>마감됐어요</);
   });
