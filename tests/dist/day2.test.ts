@@ -28,10 +28,9 @@ describe('AC-131 기준일 = 빌드 날', () => {
     expect(soonRows.length).toBeGreaterThanOrEqual(40);
     expect(soonRows.length).toBeLessThanOrEqual(84);
     expect(new Set(soonRows.map((r) => r.match(/\d{4}-\d{2}-\d{2}/)![0])).size).toBeGreaterThanOrEqual(5); // 날이 지나도 다음 날 행이 올라온다
-    expect(h).toContain('data-cap="10"');
+    expect(h).toContain('data-cap="5"'); // §37: 앞 5행만
     expect(h).toMatch(/data-hist="[^"]+" data-total="\d+"/);
-    expect(h).toMatch(/<details class="fold"[^>]*>\s*<summary>주별 더 보기/);
-    expect((h.match(/href="\/w\/[\d-]+\/"/g) ?? []).length).toBeGreaterThan(4);
+    expect(read('dist/week/index.html')).toMatch(/<details class="fold"[^>]*>\s*<summary>마감 주별로 보기/); // §37: 주별 칩은 /week/ 접힘으로
   });
   it('빈 주·태그·분류 주소도 200 + 빈 상태 한 줄', () => {
     const live = new Set((readFileSync(process.env.GK_LIVE_SITEMAP ?? 'data/none', { flag: 'a+', encoding: 'utf8' }).match(/\/w\/[\d-]+\//g) ?? []));
@@ -96,9 +95,9 @@ describe('AC-134 상세 순서·AC-137 read 접힘·AC-135 중복', () => {
     expect(h).toContain('class="rows door"');
     expect(h).not.toMatch(/class="tile"[^>]*minion/);
   });
-  it('/pro: 하단 CTA가 문, PC 안내는 CTA 바로 위, 그래픽 없음', () => {
+  it('/pro: 하단 CTA가 문, PC 안내는 제목 아래(§37), 그래픽 없음', () => {
     const h = read('dist/pro/index.html');
-    expect(h).toMatch(/<div class="cta-bar[^"]*">\s*<p class="pc-note small">[^<]+<\/p>\s*<a class="cta"/);
+    expect(h).toMatch(/<div class="cta-bar">\s*<a class="cta"/);
     expect(h).not.toContain('static.toss.im');
   });
   it('목록(분류) 칩 ≤5 · 건수 data-count', () => {

@@ -27,7 +27,7 @@ describe('AC-61·63 체커 상태', () => {
   it('개수 문구', () => {
     const c = checkerCounts({ 맞음: [rows[0]], '확인 필요': [rows[2], rows[1]], '안 맞음': [] });
     expect(c.ok).toBe('1건');
-    expect(c.rest).toBe('확인이 필요한 공고 2건 · 조건이 안 맞는 공고 0건은 숨겼어요');
+    expect(c.rest).toBe('확인이 필요한 공고 2건'); // §37 AC-164: 숨김 문장 없음
   });
   it('빈 상태는 다음 행동 1개를 말한다', () => {
     expect(emptyCopy('맞음')).toBe('아직 맞는 공고가 없어요. 조건을 바꿔 다시 골라 보세요.');

@@ -14,7 +14,7 @@ import { readCardTitle } from '../../../domain/readCard.ts';
 import { appDoor } from '../../../domain/tossLink.ts';
 import { formatDate } from '../../../domain/format.ts';
 import { isOpen, deadlineDisplay } from '../../../domain/freshness.ts';
-import { cleanDisplay } from '../../../domain/displayText.ts';
+import { displayTitle } from '../../../domain/displayText.ts';
 import { axisFacts } from '../../../domain/readFacts.ts';
 import { isAudition } from '../../../domain/topic.ts';
 import { categorySlug } from '../../../domain/category.ts';
@@ -43,10 +43,10 @@ const cta = closed
   : { href: l.url, label: '원문 공고 보기', external: true, attrs: { 'data-closed-href': openCat, 'data-closed-label': '지금 낼 수 있는 공고 보기' } };
 ---
 <Layout title={`${title} — ${l.name}`} description={`${l.name}를 읽을 때 볼 4칸 — 니즈·평가 전략·맞춤 아이디어·완성도.`} path={`/g/${l.slug}/read/`} noindex bottomCta={cta}>
-  <nav class="crumb back" aria-label="위치"><a href={`/g/${l.slug}/`} data-back>공고 상세로 돌아가기</a></nav>
+  <nav class="crumb back" aria-label="위치"><a href={`/g/${l.slug}/`} data-back><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right:4px"><path d="M15 5l-7 7 7 7"/></svg>공고 상세로 돌아가기</a></nav>
   {closed && <span class="bd lg closed" style="margin-top:8px">마감됐어요</span>}
   <h1>{title}</h1>
-  <p class="sub rd-sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{cleanDisplay(l.name)}</a> · {deadlineText}{closed || !l.deadline ? '' : ' 마감'}{l.prize ? ` · ${l.prize}` : ''}</p>
+  <p class="sub rd-sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{displayTitle(l.name)}</a><span class="ql">{deadlineText}{l.deadline ? ' 마감' : ''}</span>{l.prize && <span class="ql">{l.prize}</span>}</p>
 
   <ReadCard card={card} facts={facts} />
 

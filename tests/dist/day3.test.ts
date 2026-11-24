@@ -29,7 +29,7 @@ describe('AC-142·143 마감 시각·원문 길', () => {
     expect(heroRaw).not.toContain('data-deadline-time'); // §36 AC-150: 00:00은 시각 없음 — 속성도 없다
     const hero = heroRaw.replace(/<[^>]+>/g, ' ');
     expect(hero).not.toContain('00:00');
-    expect(hero).toContain('마감 시각은 원문에서 확인');
+    expect(hero).not.toContain('마감 시각은 원문에서 확인'); // §37 AC-166: 안내 문구 뺌(87건만 붙어 어긋남)
   });
   it('모든 상세에 「끝난 원문 공고 보기」 행, 열린 상세는 숨김·마감 상세는 보임', () => {
     for (const l of sample.slice(0, 80)) {
@@ -82,9 +82,9 @@ describe('AC-144 칩 · AC-145 순서 · AC-146 약속 · AC-148 조사', () => 
     expect(door).toMatch(/<span class="pc-note"> · 휴대폰의 토스 앱에서 열려요<\/span>/);
     expect(h).not.toMatch(/<p class="pc-note small">휴대폰/);
   });
-  it('/pro: 앱에서 보는 것 3행, 「그대로」·「AI 사용 규정」 약속 없음', () => {
+  it('/pro: 「그대로」·「AI 사용 규정」 약속 없음, 앱 설명 3행은 뺌(§37 AC-162)', () => {
     const h = read('dist/pro/index.html');
-    expect((h.match(/class="row app-fact"/g) ?? []).length).toBe(3);
+    expect(h).not.toContain('app-fact');
     expect(h).not.toMatch(/원문 그대로|AI 사용 규정/);
   });
   it('읽는 법 화면에 토스 3D 이모지 없음(토스 밖 자산)', () => {
@@ -92,7 +92,7 @@ describe('AC-144 칩 · AC-145 순서 · AC-146 약속 · AC-148 조사', () => 
     expect(read(`dist/g/${s}/read/index.html`)).not.toContain('static.toss.im');
   });
   it('캘린더·메일 약속: 「알아서」·「주 1회」 단정 없음', () => {
-    const idx = read('dist/index.html');
+    const idx = read('dist/week/index.html'); // §37: 캘린더 구독은 홈에서 /week/로
     expect(idx).not.toContain('알아서 들어와요');
     expect(idx).toContain('새로 정리한 공고는 사이트를 갱신할 때');
     for (const f of readdirSync('dist/g').filter((x) => existsSync(`dist/g/${x}/read/index.html`)).slice(0, 5)) {

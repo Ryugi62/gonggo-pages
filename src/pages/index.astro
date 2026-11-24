@@ -1,10 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ListingList from '../components/ListingList.astro';
-import CalendarSubscribe from '../components/CalendarSubscribe.astro';
 import TossMiniappLink from '../components/TossMiniappLink.astro';
 import Chevron from '../components/Chevron.astro';
 import { index, listings, categories, tags, weeks, week, today } from '../adapters/site/data.ts';
+import { deadlineTimeOf } from '../domain/freshness.ts';
 import { weekLabel } from '../domain/format.ts';
 import { deadlineWeek } from '../application/buildSiteIndex.ts';
 import { SITE_NAME, IS_AWS } from '../infrastructure/config.ts';
@@ -15,7 +15,7 @@ const soonDays = new Set(Array.from({ length: 7 }, (_, i) => new Date(Date.parse
 const perDay = new Map<string, number>();
 const soon = index.sorted.filter((l) => l.deadline && soonDays.has(l.deadline) && (perDay.set(l.deadline, (perDay.get(l.deadline) ?? 0) + 1), perDay.get(l.deadline)! <= 12));
 const hist: Record<string, number> = {};
-for (const l of listings) if (l.deadline) hist[l.deadline] = (hist[l.deadline] ?? 0) + 1;
+for (const l of listings) if (l.deadline) { const k = `${l.deadline}${deadlineTimeOf(l.deadlineTime) ? ` ${deadlineTimeOf(l.deadlineTime)}` : ''}`; hist[k] = (hist[k] ?? 0) + 1; } // 날짜(+시각)별 수 — DAY_SCRIPT가 오늘 지난 만큼 뺀다
 const title = `${SITE_NAME} — 공모전·해커톤·지원사업 자격·마감·상금 정리`;
 const description = `지금 접수 중인 공모전·해커톤·지원사업 ${listings.length}건의 자격 조건, 마감일, 상금을 공고 원문 그대로 정리했어요. 나이·학생·지역만 고르면 낼 수 있는 공고를 골라 드려요.`;
 const site = Astro.site!.href.replace(/\/$/, '');
@@ -29,45 +29,26 @@ const jsonLd = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SI
 
   <section aria-labelledby="soon-h" style="margin-top:16px">
     <h2 id="soon-h">마감 임박</h2>
-    <ListingList items={soon} group="soon" cap={10} />
+    <ListingList items={soon} group="soon" cap={5} />
     <div class="rows"><a class="row" href={weeks.includes(thisWeek) ? `/w/${thisWeek}/` : '/week/'}><span class="rt"><b>마감 임박 전체 보기</b><span>이번 주 마감하는 공고를 마감순으로 봐요</span></span><Chevron /></a></div>
   </section>
 
   <section class="rows door" aria-label="토스 앱"><TossMiniappLink /></section>
 
-  <section class="rows" aria-label="이번 주">
-    <a class="row" href="/week/"><span class="rt"><b>이번 주 낼 수 있는 창업경진대회·지원사업 {week.items.length}</b><span>7일 안에 마감하는 창업 공고만 모았어요</span></span><Chevron /></a>
-  </section>
-
   <section>
     <h2>분류별로 보기</h2>
     <div class="grid2">
-      {categories.map((c) => <a class="tile" href={`/c/${c.slug}/`}><b>{c.name} {index.byCategory.get(c.name)!.length}</b><span>{c.blurb}</span></a>)}
-      {index.rolling.length > 0 && <a class="tile" href="/rolling/"><b>상시 모집 {index.rolling.length}</b><span>마감일 없이 수시로 받는 공고</span></a>}
+      {categories.map((c) => <a class="tile" href={`/c/${c.slug}/`}><b>{c.name}</b><span>{c.blurb}</span></a>)}
+      {index.rolling.length > 0 && <a class="tile" href="/rolling/"><b>상시 모집</b><span>마감일 없이 수시로 받는 공고</span></a>}
     </div>
   </section>
 
-  <CalendarSubscribe feed="all" />
-
   <section>
     <h2>누구를 위한 공고인가요</h2>
-    <ul class="chips">{tags.map((t) => <li><a class="chip" href={`/t/${t.slug}/`}>{t.name} {index.byTag.get(t.name)!.length}</a></li>)}</ul>
+    <ul class="chips">{tags.map((t) => <li><a class="chip" href={`/t/${t.slug}/`}>{t.name}</a></li>)}</ul>
   </section>
 
-  <section>
-    <h2>마감 주별로 보기</h2>
-    <ul class="chips">{weeks.slice(0, 4).map((w) => <li><a class={`chip${w === thisWeek ? '' : ' gray'}`} href={`/w/${w}/`}>{w === thisWeek ? '이번 주' : `${w.slice(0, 4)}년 ${weekLabel(w)}`} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
-    {weeks.length > 4 && (
-      <details class="fold" style="margin-top:8px">
-        <summary>주별 더 보기<Chevron /></summary>
-        <ul class="chips" style="margin-top:8px">{weeks.slice(4, 8).map((w) => <li><a class="chip gray" href={`/w/${w}/`}>{w.slice(0, 4)}년 {weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
-        {weeks.length > 8 && (
-          <details class="fold" style="margin-top:8px">
-            <summary>그 뒤 주 더 보기<Chevron /></summary>
-            <ul class="chips" style="margin-top:8px">{weeks.slice(8).map((w) => <li><a class="chip gray" href={`/w/${w}/`}>{w.slice(0, 4)}년 {weekLabel(w)} · {index.byWeek.get(w)!.length}</a></li>)}</ul>
-          </details>
-        )}
-      </details>
-    )}
+  <section class="rows">
+    <a class="row" href="/week/"><span class="rt"><b>주별로 보기 · 캘린더로 받기</b><span>이번 주 창업 공고와 마감 주별 목록이 있어요</span></span><Chevron /></a>
   </section>
 </Layout>

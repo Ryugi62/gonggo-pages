@@ -62,7 +62,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
     <div class="wrap">
       <p><strong>{SITE_NAME}은 공고 안내 페이지예요. 공고를 주최하거나 접수하지 않아요.</strong></p>
       <p>자격·마감·상금은 공개된 공고 원문을 요약·인용한 것이라 바뀌거나 틀릴 수 있어요. 지원 전에 반드시 원문 공고를 확인해 주세요. 원문과 다르면 원문이 맞아요.</p>
-      <p>정리 기준일 {generatedAt} · <a href="/about/">정리 기준</a> · <a href={`${REPO_URL}/issues`} rel="noopener">정정 요청</a></p>
+      <p>정리 기준일 {generatedAt} · <a href="/about/">정리 기준</a> · <a class="fix" href="/terms/#contact">정정 요청</a></p>
       {legal && <LegalFooter />}
     </div>
   </footer>
@@ -165,13 +165,14 @@ const ogImage = new URL('/og.png', Astro.site).href;
   .foot p { margin: 0 0 8px; }
   .foot strong { color: var(--sub); }
   .foot a { color: var(--muted); }
+  .foot a.fix { display: inline-flex; align-items: center; min-height: 44px; } /* 터치 44(§37 AC-163) */
   /* Badge(TDS) — D-day·마감 상태. 임박(≤3일)은 빨강, 마감은 흐린 회색 */
   .bd { display: inline-flex; justify-content: center; align-items: center; flex: none; min-width: 56px; padding: 4px 8px; border-radius: 8px; font-size: 13px; font-weight: 700; line-height: 1.4; background: var(--blue-weak); color: var(--blue-text); }
   .bd.soon { background: var(--no-bg); color: var(--no-fg); }
   .bd.closed { background: var(--card); color: var(--muted); }
-  .bd.lg { font-size: 15px; padding: 4px 12px; }
+  .bd.lg { font-size: 20px; line-height: 1.2; padding: 3px 12px; }
   /* 마감 요약 — 회색 상자 없이 배지 + 한 줄 */
-  .hero-d { margin-top: 16px; }
+  .hero-d { margin-top: 12px; }
   .hero-d .hd-t { margin: 8px 0 0; font-size: 17px; line-height: 1.5; }
   .hero-d .hd-t b { display: block; }
   .hero-d .hd-t span { display: block; font-size: 14px; color: var(--sub); }

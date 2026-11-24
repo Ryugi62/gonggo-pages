@@ -1,5 +1,4 @@
 ---
-import { dedupeSameTitle } from '../../domain/topic.ts';
 import IndexPage from '../../components/IndexPage.astro';
 import { tagHeading } from '../../domain/josa.ts';
 import { allTags as tags, index } from '../../adapters/site/data.ts';
@@ -7,7 +6,7 @@ export function getStaticPaths() {
   return tags.map((t) => ({ params: { tag: t.slug }, props: { t } }));
 }
 const { t } = Astro.props;
-const items = dedupeSameTitle(index.byTag.get(t.name) ?? []);
+const items = index.byTag.get(t.name) ?? [];
 ---
 <IndexPage heading={tagHeading(t.name)} title={`${t.name} 대상 공모전·해커톤·지원사업 ${items.length}건 | 공고콕`}
   description={`${t.blurb} ${items.length}건을 마감 임박순으로 모았어요. 자격 문장은 공고 원문 그대로예요.`}

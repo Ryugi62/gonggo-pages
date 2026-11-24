@@ -60,7 +60,7 @@ describe('SPEC §8 UI 수용기준 — 자동 검사 가능 항목', () => {
       const s = read(f);
       expect(s, f).not.toMatch(/<details[^>]*\sopen/);
     }
-    expect(read(pages.home)).toContain('<details'); // 상세는 못 찾은 조항 줄을 숨겨 details가 없을 수 있다(SPEC §35 AC-145)
+    expect(read('dist/week/index.html')).toContain('<details'); // 상세·홈은 못 찾은 조항 줄을 숨겨 details가 없을 수 있다(SPEC §35 AC-145)
   });
   it('9 색: 다크 대응 + 포커스 outline 제거 없음', () => {
     const c = css(read(pages.detail));

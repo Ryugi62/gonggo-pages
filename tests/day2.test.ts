@@ -46,7 +46,7 @@ describe('AC-135 같은 대회 중복', () => {
     ]);
     const r = idx.related(mk('self', '제6회 인천공항 여행 공모전'), 5).map((l) => l.slug);
     expect(r.filter((s) => s.startsWith('d')).length).toBe(0);
-    expect(r).toEqual(expect.arrayContaining(['o1', 'o2']));
+    expect(r).toEqual([]); // §37 AC-167: 같은 분야(주제)만 — 주제가 다른 공고로 채우지 않는다
   });
 });
 

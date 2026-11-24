@@ -5,7 +5,7 @@ import { index, allListings as listings, generatedAt, today, nowHM } from '../..
 import { categorySlug, tagSlug } from '../../domain/category.ts';
 import { dDay, dDayLabel, formatDate } from '../../domain/format.ts';
 import { isOpen, deadlineDisplay, deadlineTimeOf } from '../../domain/freshness.ts';
-import { cleanDisplay, tidyQuote, quoteLines, eligibilityText } from '../../domain/displayText.ts';
+import { displayTitle, tidyQuote, quoteLines, eligibilityText } from '../../domain/displayText.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import Chevron from '../../components/Chevron.astro';
 import TossMiniappLink from '../../components/TossMiniappLink.astro';
@@ -24,7 +24,7 @@ const closed = !!l.deadline && !isOpen(l, today, nowHM); // 마감된 공고 —
 const anchor = new Date(Date.parse(`${today}T12:00:00Z`) + 14 * 86_400_000).toISOString().slice(0, 10);
 const related = index.related(l, closed ? 3 : 5, closed ? anchor : undefined); // 색인은 열린 공고만이라 마감 공고에도 열린 것만 나온다
 const readCard = isAudition(l) ? null : readCardOf(l.category); // 오디션·캐스팅류는 읽는 법 행 없음(SPEC §32) // SPEC §30 — 4칸은 /g/<slug>/read/ 별도 화면, 상세엔 한 줄 진입(장학은 4칸 데이터가 없어 진입 행 없음)
-const dispTime = deadlineDisplay(l); // 00:00은 싣지 않는다(SPEC §35 AC-142)
+const dispTime = deadlineDisplay(l); // 00:00은 싣지 않는다(SPEC §35 AC-142, 안내 문구는 §37에서 뺌)
 const deadlineText = l.deadline ? `${formatDate(l.deadline)}${dispTime.time ? ` ${dispTime.time}` : ''}` : '상시 모집';
 const elig = eligibilityText(l); // 인용이 없으면 찾은 ELIGIBILITY 조항 문장(SPEC §36 AC-151)
 const hasClauseInfo = clausesFound(l); // 못 찾은 조항 줄은 숨긴다(SPEC §35 AC-145)
@@ -60,13 +60,13 @@ const jsonLd = [
 ---
 <Layout title={title} description={description} path={path} jsonLd={jsonLd} bottomCta={cta}>
   <nav class="crumb" aria-label="위치"><a href="/">홈</a> › <a href={`/c/${catSlug}/`}>{l.category}</a></nav>
-  <h1>{cleanDisplay(l.name)}</h1>
+  <h1>{displayTitle(l.name)}</h1>
 
   <section class="hero-d" aria-label="마감">
     {l.deadline
       ? <span class={`bd lg ${heroTone}`} data-deadline={l.deadline} data-deadline-time={deadlineTimeOf(l.deadlineTime) ?? undefined}>{closed ? '마감됐어요' : dDayLabel(l.deadline, today)}</span>
       : <span class="bd lg">상시</span>}
-    <p class="hd-t"><b>{deadlineText}{closed || !l.deadline ? '' : ' 마감'}</b>{dispTime.note && <span class="small">{dispTime.note}</span>}{heroMeta && <span>{heroMeta}</span>}</p>
+    <p class="hd-t"><b>{deadlineText}{l.deadline ? ' 마감' : ''}</b>{heroMeta && <span>{heroMeta}</span>}</p>
   </section>
   {l.aiUse === 'FORBIDDEN' && <p class="badge no" style="margin-top:16px">AI 초안 사용 불가</p>}
   {l.aiUse === 'ALLOWED' && <p class="badge ok" style="margin-top:16px">원문에 AI 활용 가능 문장이 있어요</p>}
@@ -78,20 +78,20 @@ const jsonLd = [
     </section>
   )}
 
+  {(elig || l.tags.length > 0) && (
   <section>
     <h2>누가 낼 수 있나요?</h2>
     {l.tags.length > 0 && (
       <ul class="chips">{l.tags.map((t) => <li><a class="chip" href={`/t/${tagSlug(t)}/`}>{t}</a></li>)}</ul>
     )}
-    {elig ? (
+    {elig && (
       <>
         <blockquote id="elig-q" class="clamp">{quoteLines(tidyQuote(elig)).map((ln) => <span class="ql">{ln}</span>)}</blockquote>
         <button type="button" class="more-q" id="q-more" hidden>더 보기</button>
       </>
-    ) : (
-      <p class="sub" style="margin-top:12px">원문에서 자격을 확인해 주세요</p>
     )}
   </section>
+  )}
 
   <section class="rows" data-closed-show hidden={!closed} aria-label="끝난 원문">
     <a class="row" href={l.url} target="_blank" rel="noopener"><span class="rt"><b>끝난 원문 공고 보기</b><span>마감된 공고도 원문은 그대로 볼 수 있어요</span></span><Chevron /></a>

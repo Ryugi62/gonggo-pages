@@ -12,6 +12,7 @@ import { deadlineWeek } from '../../application/buildSiteIndex.ts';
 import { clauseCollections, COLLECTION_PATHS } from '../../domain/clausePreview.ts';
 import type { PublicListing } from '../../domain/listing.ts';
 import { isOpen } from '../../domain/freshness.ts';
+import { dedupeSameTitle } from '../../domain/topic.ts';
 
 /** 정리 기준일(글자·/digest/ /ai-ok/ /solo/ 경로) — 열림·D-n 판정은 today(빌드 날, SPEC §34 AC-131) */
 export const generatedAt: string = file.generatedAt;
@@ -21,7 +22,8 @@ export const nowHM: string = buildTime();
 /** 지금까지 공개한 모든 공고 — /g/<slug>/ 상세 URL은 마감 뒤에도 소멸 0(SPEC §31) */
 export const allListings = file.listings as unknown as PublicListing[];
 /** 열린 공고(상시 또는 마감일 ≥ 정리 기준일) — 목록·색인·피드·비슷한 공고는 열린 것만 */
-export const listings = allListings.filter((l) => isOpen(l, today, nowHM));
+/** 공개 목록 = 열린 공고에서 제목·마감이 같은 것을 한 줄로 합친 것 — 홈 총수·분류·목록·자격 찾기·색인이 모두 이것 하나를 쓴다(SPEC §37 AC-159). 상세 주소(allListings)는 전부 남는다 */
+export const listings = dedupeSameTitle(allListings.filter((l) => isOpen(l, today, nowHM)));
 export const index = buildSiteIndex(listings);
 export const categories = CATEGORIES.filter((c) => index.byCategory.get(c.name)?.length);
 export const tags = TAGS.filter((t) => index.byTag.get(t.name)?.length);

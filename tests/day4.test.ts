@@ -47,7 +47,7 @@ describe('AC-157 목록 중복', () => {
 describe('AC-158 건수 글', () => {
   it('check 결과는 건으로', () => {
     const c = checkerCounts({ 맞음: [1], '확인 필요': [1, 2], '안 맞음': [] } as any);
-    expect(c.ok).toBe('1건'); expect(c.rest).toBe('확인이 필요한 공고 2건 · 조건이 안 맞는 공고 0건은 숨겼어요');
+    expect(c.ok).toBe('1건'); expect(c.rest).toBe('확인이 필요한 공고 2건'); // §37 AC-164로 숨김 문장 뺌
   });
 });
 

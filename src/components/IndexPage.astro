@@ -10,7 +10,7 @@ import { SITE_NAME, IS_AWS } from '../infrastructure/config.ts';
 interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[]; feed?: string; chips?: boolean }
 const { heading, title, description, path, lead, items, feed, chips = false } = Astro.props;
 // §34 AC-136 — 결과 위 칩 ≤5(기존 /t/ 링크, 지금 열린 공고가 많은 순)
-const chipTags = chips ? [...openTags].sort((a, b) => (index.byTag.get(b.name)?.length ?? 0) - (index.byTag.get(a.name)?.length ?? 0)).slice(0, 5) : [];
+const chipTags = chips ? [...openTags].filter((t) => items.some((l) => l.tags.includes(t.name))).sort((a, b) => items.filter((l) => l.tags.includes(b.name)).length - items.filter((l) => l.tags.includes(a.name)).length).slice(0, 5) : []; // 이 목록에 0건인 칩은 숨기고, 숫자는 싣지 않는다(낡을 수 있어서, §37 AC-159)
 const site = Astro.site!.href.replace(/\/$/, '');
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -24,7 +24,7 @@ const jsonLd = [
   <nav class="crumb" aria-label="위치"><a href="/">홈</a></nav>
   <h1>{heading}</h1>
   <p class="sub"><span data-count="list">{items.length}</span>건 · 마감이 가까운 순서예요</p>
-  {chipTags.length > 0 && <ul class="chips" style="margin-top:16px" aria-label="대상으로 좁히기">{chipTags.map((t) => <li><a class="chip gray" href={`/t/${t.slug}/`} data-chip data-slug={t.slug} data-tag={t.name} aria-pressed="false">{t.name} {items.filter((l) => l.tags.includes(t.name)).length}</a></li>)}</ul>}
+  {chipTags.length > 0 && <ul class="chips" style="margin-top:16px" aria-label="대상으로 좁히기">{chipTags.map((t) => <li><a class="chip gray" href={`/t/${t.slug}/`} data-chip data-slug={t.slug} data-tag={t.name} aria-pressed="false">{t.name}</a></li>)}</ul>}
   <div style="margin-top:24px" data-empty-filter hidden><p class="sub">고른 대상의 공고가 없어요.</p><button type="button" class="btn secondary" data-clear style="margin-top:12px">필터 풀고 <span data-total-open>{items.length}</span>건 보기</button></div>
   <p class="sub" style="margin-top:24px" data-empty="list" hidden={items.length > 0}>지금 접수 중인 공고가 없어요. <a href="/">접수 중인 공고 전체 보기</a></p>
   <section style="margin-top:0"><ListingList items={items} /></section>

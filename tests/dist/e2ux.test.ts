@@ -37,7 +37,7 @@ describe('막힘 ① 마감 공고 — 막다른 길 없음', () => {
       expect(h, s).toContain('마감됐어요');
       const sec = h.slice(h.indexOf('id="rel-h"'));
       const rows = [...sec.slice(0, sec.indexOf('</ul>') > 0 ? sec.indexOf('</ul>') : 3000).matchAll(/href="\/g\/([^/"]+)\/"/g)].map((m) => m[1]);
-      expect(rows.length, s).toBe(3);
+      expect(rows.length, s).toBeLessThanOrEqual(3); // §37 AC-167: 같은 분야만이라 모자라면 채우지 않는다
       for (const r of rows) expect(isOpen(by.get(r), T), `${s} → ${r}`).toBe(true);
     }
   });
@@ -102,7 +102,7 @@ describe('막힘 ② 상세 정리 — 중복 제거·회색 상자·행', () =>
     for (const s of pick(open.filter((x) => html(x).includes('/read/')), 40)) {
       const h = body(html(s));
       expect(h, s).not.toContain('class="lead"');
-      const i = [h.indexOf('<h1'), h.indexOf('class="hero-d"'), h.indexOf('누가 낼 수 있나요?'), h.indexOf('class="rows door"')]; // §35: 읽는 법 행은 문과 한 묶음
+      const i = [h.indexOf('<h1'), h.indexOf('class="hero-d"'), h.indexOf('누가 낼 수 있나요?'), h.indexOf('class="rows door"')].filter((v) => v >= 0); // §35 문+읽는 법 한 묶음, §37 자격 절은 없을 수 있다
       expect([...i].sort((a, b) => a - b), s).toEqual(i);
     }
   });

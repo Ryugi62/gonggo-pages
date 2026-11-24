@@ -14,7 +14,7 @@ describe('막힘 B — 상세엔 홍보·폼이 없고, 부가 도구는 읽는 
   it('상세: 자격 원문 뒤에 판독 요청·구독·Pro·조건 찾기 없음', () => {
     for (const s of sample) {
       const h = read(s);
-      expect(h.indexOf('누가 낼 수 있나요?'), s).toBeGreaterThan(0);
+      // §37 AC-160: 자격 문장도 칩도 없으면 절 전체가 없다 — 있을 때만 위치를 본다
       for (const marker of ['data-read-entry', 'data-sub-entry', 'href="/pro/?from=g"', 'class="row" href="/check/"', 'id="more-h"']) expect(h, `${s} ${marker}`).not.toContain(marker);
     }
   });

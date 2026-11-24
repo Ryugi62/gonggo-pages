@@ -3,7 +3,10 @@ import type { Constraints } from './eligibility.ts';
 import { dDayLabel } from './format.ts';
 import { matchListing, type MatchVerdict, type Profile } from './match.ts';
 
-export type CheckerRow = { s: string; n: string; c: string; d: string | null; p: string | null; k: Constraints };
+export type CheckerRow = { s: string; n: string; c: string; d: string | null; p: string | null; k: Constraints; t?: string };
+
+/** SPEC §37 AC-159 — 오늘 이미 지난 행(날짜가 지났거나 오늘인데 시각이 지남): 건수·목록에서 같은 판정으로 뺀다 */
+export const isPastRow = (r: Pick<CheckerRow, 'd' | 't'>, today: string, hm: string): boolean => !!r.d && (r.d < today || (r.d === today && !!r.t && r.t <= hm));
 export type Groups = Record<MatchVerdict, CheckerRow[]>;
 export type CheckerStep = 1 | 2 | 3;
 
@@ -24,10 +27,10 @@ export function visibleRows(g: Groups, view: MatchVerdict, today: string): Check
 
 export function checkerCounts(g: Groups) {
   return {
-    ok: `${g['맞음'].length}건`,
-    rest: `확인이 필요한 공고 ${g['확인 필요'].length}건 · 조건이 안 맞는 공고 ${g['안 맞음'].length}건은 숨겼어요`,
-    tabOk: `맞음 ${g['맞음'].length}`,
-    tabUnknown: `확인 필요 ${g['확인 필요'].length}`,
+    ok: `${fmt(g['맞음'].length)}건`,
+    rest: g['확인 필요'].length ? `확인이 필요한 공고 ${fmt(g['확인 필요'].length)}건` : '',
+    tabOk: `맞음 ${fmt(g['맞음'].length)}`,
+    tabUnknown: `확인 필요 ${fmt(g['확인 필요'].length)}`,
   };
 }
 
@@ -37,6 +40,7 @@ export function emptyCopy(view: MatchVerdict): string {
 
 export const nextStep = (s: CheckerStep): CheckerStep => (s === 1 ? 2 : s === 2 ? 3 : 1);
 export const prevStep = (s: CheckerStep): CheckerStep => (s === 3 ? 2 : 1);
+const fmt = (n: number): string => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 export const nextLabel = (s: CheckerStep): string => (s === 1 ? '다음' : s === 2 ? '결과 보기' : '다시 고르기');
 export const progressLabel = (s: CheckerStep): string => (s === 3 ? '결과' : `${s} / 2`);
 

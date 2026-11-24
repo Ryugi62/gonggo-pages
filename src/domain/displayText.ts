@@ -34,3 +34,13 @@ export function quoteLines(q: string): string[] {
 export function eligibilityText(l: { eligibilityQuote: string | null; clauses: { kind: string; quote: string }[] }): string | null {
   return l.eligibilityQuote ?? l.clauses.find((c) => c.kind === 'ELIGIBILITY')?.quote ?? null;
 }
+
+/** SPEC §37 AC-166 — 화면 표시용 제목: 꼬리 「 분야 : …」·머리 「(은혜준비)」류만 뗀다(title 태그·구조화 데이터·URL은 원래 이름 그대로). 통째로 지우지 않는다 */
+export function displayTitle(name: string): string {
+  let t = cleanDisplay(name).trim();
+  const cut = t.replace(/\s+분야\s*:.*$/, '').trim();
+  if (cut.length >= 4) t = cut;
+  const head = t.replace(/^\((?!주\)|유\)|사\)|재\))[^)]{1,12}\)\s+/, '').trim();
+  if (head.length >= 4) t = head;
+  return t;
+}

@@ -21,7 +21,7 @@ describe('UC-2 사이트 색인', () => {
   });
   it('관련 공고: 자기 자신 제외, 최대 6', () => {
     const idx = buildSiteIndex(listings);
-    const l = listings[0];
+    const l = listings.find((x) => listings.filter((y) => y.category === x.category).length > 3)!;
     const rel = idx.related(l);
     expect(rel.find((x) => x.slug === l.slug)).toBeUndefined();
     expect(rel.length).toBeLessThanOrEqual(6);
@@ -46,6 +46,6 @@ describe('관련 공고 순서', () => {
     const mk = (n: string, d: string) => ({ slug: n, name: n, category: '해커톤', kind: '해커톤', deadline: d, deadlineTime: null, rolling: false, url: 'https://x/' + n, organizer: null, prize: null, eligibilityQuote: null, tags: [], constraints: { minAge: null, maxAge: null, studentOnly: false, region: null, business: null, open: false } }) as any;
     const ls = [mk('a', '2026-10-03'), mk('b', '2027-04-20'), mk('c', '2027-04-25'), mk('d', '2028-03-27')];
     const idx = buildSiteIndex(ls);
-    expect(idx.related(ls[2]).map((x) => x.slug)).toEqual(['b', 'a', 'd']);
+    expect(idx.related(ls[2]).map((x) => x.slug)).toEqual(['a', 'b', 'd']); // §37 AC-167 마감 가까운 순
   });
 });

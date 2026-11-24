@@ -9,7 +9,7 @@ import { listings } from '../adapters/site/data.ts';
   <div id="checker" class="has-own-cta">
     <div class="topline">
       <p class="small" id="progress" aria-live="polite">1 / 2</p>
-      <button class="btn secondary back" id="back" type="button" hidden>이전</button>
+      <button class="back" id="back" type="button" hidden>이전</button>
     </div>
 
     <form id="step1" class="step" onsubmit="return false">
@@ -82,7 +82,7 @@ import { listings } from '../adapters/site/data.ts';
   .back { margin-bottom: 8px; }
   .topline { display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
   .topline p { margin: 0; }
-  .back { min-height: 44px; padding: 0 16px; }
+  .back { min-height: 44px; padding: 0 8px; border: 0; background: transparent; color: var(--sub); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; } /* 보조 글자 버튼(§37 AC-164) */
   .back[hidden] { display: none; }
   .step h1 { margin-bottom: 24px; }
   .field { display: block; border: 0; padding: 0; margin: 0 0 28px; }
@@ -93,20 +93,21 @@ import { listings } from '../adapters/site/data.ts';
   .seg label { position: relative; }
   .seg input { position: absolute; opacity: 0; inset: 0; }
   .seg span { display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 14px; background: var(--card); font-weight: 600; font-size: 15px; cursor: pointer; text-align: center; padding: 0 6px; }
-  .seg input:checked + span { background: var(--blue-weak); color: var(--blue-text); outline: 2px solid var(--blue); outline-offset: -2px; }
+  .seg input:checked + span { background: var(--btn); color: #fff; } /* 목록 칩(.chip.on)과 같은 채움 */
   .seg input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
 </style>
 <script>
   import { type Profile } from '../domain/match.ts';
   import { dDayLabel, formatDate } from '../domain/format.ts';
-  import { ERROR_COPY, checkerCounts, emptyCopy, groupRows, nextLabel, nextStep, prevStep, progressLabel, visibleRows, type CheckerRow, type CheckerStep, type Groups } from '../domain/checker.ts';
+  import { ERROR_COPY, isPastRow, checkerCounts, emptyCopy, groupRows, nextLabel, nextStep, prevStep, progressLabel, visibleRows, type CheckerRow, type CheckerStep, type Groups } from '../domain/checker.ts';
 
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   let step: CheckerStep = 1;
   let rows: CheckerRow[] | null = null;
   let groups: Groups = { 맞음: [], '확인 필요': [], '안 맞음': [] };
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
-  const load = () => fetch('/checker.json').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }).then((j: CheckerRow[]) => (rows = j));
+  const hm = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date());
+  const load = () => fetch('/checker.json').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }).then((j: CheckerRow[]) => (rows = j.filter((r) => !isPastRow(r, today, hm))));
   let loading: Promise<CheckerRow[]> = load();
   loading.catch(() => {});
 

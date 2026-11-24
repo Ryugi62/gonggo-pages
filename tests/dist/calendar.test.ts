@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { dedupeSameTitle } from '../../src/domain/topic.ts';
 import { buildDay, buildTime } from '../../src/infrastructure/config.ts';
 import { isOpen as isOpenAt } from '../../src/domain/freshness.ts';
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
@@ -38,7 +39,7 @@ describe('C1 상세 페이지 캘린더 추가', () => {
 });
 
 describe('C2 구독 피드', () => {
-  const feeds = buildCalendarFeeds(listings.filter((l) => isOpenAt(l as any, buildDay(), buildTime())), buildDay(), feedOpts);
+  const feeds = buildCalendarFeeds(dedupeSameTitle(listings.filter((l) => isOpenAt(l as any, buildDay(), buildTime()))) as any, buildDay(), feedOpts); // §37: 공개 목록은 중복 한 줄
   it('피드마다 VEVENT 수 = 목록 공고 수, ≤1MB', () => {
     expect(feeds.length).toBeGreaterThanOrEqual(5);
     for (const f of feeds) {
@@ -48,7 +49,7 @@ describe('C2 구독 피드', () => {
     }
   });
   it('홈·분류·태그·이번 주에 구독 상자', () => {
-    expect(readFileSync('dist/index.html', 'utf8')).toContain('/intent/cal/sub/all');
+    expect(readFileSync('dist/week/index.html', 'utf8')).toContain('/intent/cal/sub/all'); // §37 AC-161: 전체 구독은 홈이 아니라 /week/ 접힘
     for (const f of feeds.filter((x) => x.slug !== 'all')) {
       const p = f.slug === 'founder-week' ? 'dist/week/index.html' : existsSync(`dist/c/${f.slug}/index.html`) ? `dist/c/${f.slug}/index.html` : `dist/t/${f.slug}/index.html`;
       const page = readFileSync(p, 'utf8');

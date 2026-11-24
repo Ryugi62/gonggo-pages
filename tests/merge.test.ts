@@ -77,10 +77,10 @@ describe('AC-113 비슷한 공고는 열린 색인에서 n개', () => {
 });
 
 describe('AC-113 마감 공고의 비슷한 공고는 기준일(오늘+14일) 가까운 열린 공고', () => {
-  it('anchor를 주면 anchor에 가까운 순', () => {
+  it('§37 AC-167: 마감 가까운 순(anchor는 더 이상 쓰지 않는다)', () => {
     const open = [mk('o1', '2026-11-22'), mk('o2', '2026-11-23'), mk('o3', '2026-12-05'), mk('o4', '2026-12-06'), mk('o5', '2027-03-01')];
     const r = buildSiteIndex(open).related(mk('c', '2026-11-02'), 2, '2026-12-06');
-    expect(r.map((x) => x.slug)).toEqual(['o4', 'o3']);
+    expect(r.map((x) => x.slug)).toEqual(['o1', 'o2']);
   });
 });
 

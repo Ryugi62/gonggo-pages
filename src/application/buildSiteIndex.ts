@@ -43,29 +43,18 @@ export function buildSiteIndex(listings: PublicListing[]): SiteIndex {
   const rolling = sorted.filter((l) => l.rolling);
 
   const time = (x: PublicListing) => (x.deadline ? Date.parse(`${x.deadline}T12:00:00Z`) : Number.POSITIVE_INFINITY);
-  /** 같은 세부 분야 → 같은 분류 → 같은 태그 → 전체 순으로 n개(기본 6, 같은 칸 안에서는 마감일이 가까운 순). 색인에 열린 공고만 넣으면 열린 것만 나온다 */
-  /** anchor = 기준 날짜(YYYY-MM-DD). 마감된 공고는 오늘+며칠을 줘서 「오늘 끝나는」 공고만 나오지 않게 한다 */
-  const related = (l: PublicListing, n = 6, anchor?: string): PublicListing[] => {
-    const t0 = anchor ? Date.parse(`${anchor}T12:00:00Z`) : time(l);
-    const near = (pool: PublicListing[]) =>
-      pool
-        .filter((x) => x.slug !== l.slug)
-        .map((x) => ({ x, gap: Math.abs(time(x) - t0) || 0 }))
-        .sort((a, b) => (Number.isFinite(a.gap) ? a.gap : 9e15) - (Number.isFinite(b.gap) ? b.gap : 9e15))
-        .map((p) => p.x);
-    // 순서: ① 같은 유형 + 같은 세부 분야(주제어 겹침 많은 순, 마감 가까운 순) ② 같은 유형 ③ 같은 자격 태그 ④ 전체
+  /** SPEC §37 AC-167 — 비슷한 공고 = 같은 분류(주제어가 있으면 겹치는 것)만, 마감 가까운 순(상시는 뒤). 같은 대회는 하나만. 안 맞으면 채우지 않고 비운다 */
+  const related = (l: PublicListing, n = 6, _anchor?: string): PublicListing[] => {
     const mine = topicsOf(l);
     const shared = (x: PublicListing) => topicsOf(x).filter((t) => mine.includes(t)).length;
+    let pool = (byCategory.get(l.category) ?? []).filter((x) => x.slug !== l.slug);
+    if (mine.length) { const t = pool.filter((x) => shared(x) > 0); if (t.length) pool = t; }
     const picks: PublicListing[] = [];
-    const add = (pool: PublicListing[]) => { for (const x of pool) if (picks.length < n && !picks.includes(x) && !isSameContest(l, x) && !picks.some((p) => isSameContest(p, x))) picks.push(x); }; // §34 AC-135 같은 대회는 하나만
-    const sameCat = byCategory.get(l.category) ?? [];
-    if (mine.length) {
-      const topical = near(sameCat).filter((x) => shared(x) > 0);
-      add(topical.map((x, i) => ({ x, i })).sort((a, b) => shared(b.x) - shared(a.x) || a.i - b.i).map((p) => p.x));
+    for (const x of [...pool].sort((a, b) => time(a) - time(b))) {
+      if (picks.length >= n) break;
+      if (isSameContest(l, x) || picks.some((p) => isSameContest(p, x))) continue; // §34 AC-135 같은 대회는 하나만
+      picks.push(x);
     }
-    add(near(sameCat));
-    for (const t of l.tags) add(near(byTag.get(t) ?? []));
-    add(near(sorted));
     return picks;
   };
 

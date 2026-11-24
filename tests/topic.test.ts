@@ -37,10 +37,10 @@ describe('related — 표본 3건 대조', () => {
     expect(r.slice(0, 2).sort()).toEqual(['cook2', 'cook3']);
   });
   it('오디션 → 오디션끼리 먼저', () => { expect(idx.related(mk('aud0', '청소년 연극 오디션', '2026-11-25'), 2).map((l) => l.slug)).toContain('aud1'); });
-  it('같은 주제가 모자라면 같은 유형 열린 공고로 채운다(5건)', () => {
+  it('§37 AC-167: 같은 주제만 — 모자라도 다른 주제로 채우지 않는다', () => {
     const r = idx.related(mk('poem0', '시 낭송 대회', '2026-11-25'), 5);
-    expect(r.length).toBe(5);
-    expect(r[0].slug).toBe('poem');
+    expect(r.map((l) => l.slug)).toContain('poem');
+    expect(r.length).toBeLessThanOrEqual(5);
   });
 });
 
