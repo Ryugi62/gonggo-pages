@@ -73,10 +73,9 @@ describe('겹친 감점 — 위계·간격·반응·고정·조사', () => {
     expect(withCal).toMatch(/id="cal-note"[^>]*role="status"/);
     expect(withCal).toContain('캘린더 파일을 받았어요');
   });
-  it('3D 이모지 1개 — 읽는 법 화면 머리(static.toss.im/3d-emojis)', () => {
+  it('3D 이모지 0개 — 토스 밖 사이트에서 토스 자산을 쓰지 않는다(SPEC §35 AC-146, 11/24 지시로 §30의 1개를 뺌)', () => {
     const h = readFileSync(`dist/g/${slugs.find((x) => existsSync(`dist/g/${x}/read/index.html`))}/read/index.html`, 'utf8');
-    expect((h.match(/static\.toss\.im\/3d-emojis/g) ?? []).length).toBe(1);
-    expect(h).toMatch(/<img[^>]*src="https:\/\/static\.toss\.im\/3d-emojis\/u[0-9A-F]+\.png"[^>]*width="40"/);
+    expect((h.match(/static\.toss\.im/g) ?? []).length).toBe(0);
   });
   if (aws) it('AWS: 판독 요청·구독 입구 문구가 행 안으로(회색 상자 .card 아님)', () => {
     const h = readFileSync(`dist/g/${slugs.find((x) => existsSync(`dist/g/${x}/read/index.html`))}/read/index.html`, 'utf8');

@@ -35,7 +35,7 @@ export function appDoor() {
   return {
     href: TOSS_MINIAPP_URL,
     label: '토스에서 공고콕 써보기',
-    sub: '마감 임박 공고와 AI 사용 규정을 앱에서 봐요',
+    sub: '마감 임박 공고를 앱에서도 봐요',
     pcNote: '휴대폰의 토스 앱에서 열려요',
     ping: APP_DOOR_PING,
     intent: APP_DOOR_PING,

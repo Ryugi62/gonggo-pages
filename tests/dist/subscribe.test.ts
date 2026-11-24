@@ -20,7 +20,7 @@ describe('AC-90 구독 입구', () => {
       if (!aws) continue;
       const e = entry(h);
       expect((e.match(/<(input|select) /g) ?? []).length, p).toBe(3);
-      for (const w of ['이메일', '주 1회', '2027-11-02', '거부']) expect(e, `${p} ${w}`).toContain(w);
+      for (const w of ['이메일', '운영자가 공고를 정리할 때', '2027-11-02', '거부']) expect(e, `${p} ${w}`).toContain(w);
       expect(e, p).not.toMatch(/19,900|49,000|카드|결제하기/);
     }
   });

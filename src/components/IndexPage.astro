@@ -4,6 +4,7 @@ import ListingList from './ListingList.astro';
 import CalendarSubscribe from './CalendarSubscribe.astro';
 import { hasFeed, tags as openTags, index } from '../adapters/site/data.ts';
 import type { PublicListing } from '../domain/listing.ts';
+import { CHIP_SCRIPT } from '../infrastructure/chipScript.ts';
 import { SITE_NAME, IS_AWS } from '../infrastructure/config.ts';
 // SPEC §33 — 목록의 /pro 맥락 입구는 가격 숨김으로 없앴다
 interface Props { heading: string; title: string; description: string; path: string; lead: string; items: PublicListing[]; feed?: string; chips?: boolean }
@@ -23,9 +24,10 @@ const jsonLd = [
   <nav class="crumb" aria-label="위치"><a href="/">홈</a></nav>
   <h1>{heading}</h1>
   <p class="sub"><span data-count="list">{items.length}</span>건 · 마감이 가까운 순서예요</p>
-  {chipTags.length > 0 && <ul class="chips" style="margin-top:16px" aria-label="대상으로 좁히기">{chipTags.map((t) => <li><a class="chip gray" href={`/t/${t.slug}/`}>{t.name}</a></li>)}</ul>}
+  {chipTags.length > 0 && <ul class="chips" style="margin-top:16px" aria-label="대상으로 좁히기">{chipTags.map((t) => <li><a class="chip gray" href={`/t/${t.slug}/`} data-chip data-slug={t.slug} data-tag={t.name} aria-pressed="false">{t.name}</a></li>)}</ul>}
   <p class="sub" style="margin-top:24px" data-empty="list" hidden={items.length > 0}>지금 접수 중인 공고가 없어요. <a href="/">접수 중인 공고 전체 보기</a></p>
   <section style="margin-top:0"><ListingList items={items} /></section>
+  {chipTags.length > 0 && <script is:inline set:html={`window.addEventListener('DOMContentLoaded',function(){${CHIP_SCRIPT}});`}></script>}
   {feed && hasFeed(feed) && <CalendarSubscribe feed={feed} />}
   <p class="sub" style="margin-top:32px">{lead}</p>
   <slot />

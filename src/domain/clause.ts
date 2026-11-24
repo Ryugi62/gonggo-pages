@@ -164,3 +164,8 @@ export function dedupeClauses<T extends { kind: string; quote: string }>(clauses
     return !(q.startsWith(eq.slice(0, 40)) || eq.startsWith(q.slice(0, 40)));
   });
 }
+
+/** SPEC §35 AC-145 — 화면에 보일 만큼 실제로 찾은 조항이 있나(없으면 조항 줄·FAQ의 AI 질문을 숨긴다) */
+export function clausesFound(l: { clauses: { kind: string; quote: string }[]; eligibilityQuote: string | null; aiUse: string }): boolean {
+  return dedupeClauses(l.clauses, l.eligibilityQuote).length > 0 || l.aiUse === 'ALLOWED' || l.aiUse === 'FORBIDDEN';
+}

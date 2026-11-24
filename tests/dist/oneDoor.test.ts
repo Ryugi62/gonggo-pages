@@ -64,8 +64,8 @@ describe('AC-127 휴대폰 폭에서는 PC 안내가 안 보인다(390 캡처 �
 });
 
 describe('맨 위로 안정(11/24 walk: 홈에서 행 여백 변화→스크롤 보정→버튼 깜빡임)', () => {
-  it('스크롤 보정을 끈다(overflow-anchor:none)', () => {
-    expect(read('dist/index.html')).toMatch(/overflow-anchor:\s*none/);
+  it('보정을 끈 규칙(overflow-anchor:none)도 원인(행 폭 변화)과 함께 없다(SPEC §35 AC-141)', () => {
+    expect(read('dist/index.html')).not.toMatch(/overflow-anchor:\s*none/);
   });
 });
 

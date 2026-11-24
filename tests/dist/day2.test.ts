@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { buildDay } from '../../src/infrastructure/config.ts';
+import { buildDay, buildTime } from '../../src/infrastructure/config.ts';
+import { isOpen as isOpenAt } from '../../src/domain/freshness.ts';
 
 // SPEC §34 — dist 전수(기준일 = 빌드 날)
 const T = buildDay();
 const read = (f: string) => readFileSync(f, 'utf8');
 const data = JSON.parse(read('data/listings.json'));
-const open = data.listings.filter((l: any) => l.rolling || !l.deadline || l.deadline >= T);
+const open = data.listings.filter((l: any) => isOpenAt(l, T, buildTime()));
 const rowDays = (h: string) => [...h.matchAll(/data-row-deadline="([^"]+)"/g)].map((m) => m[1]);
 
 describe('AC-131 기준일 = 빌드 날', () => {
@@ -78,9 +79,9 @@ describe('AC-134 상세 순서·AC-137 read 접힘·AC-135 중복', () => {
       expect(h, l.slug).toContain('id="elig-q"');
     }
   });
-  it('문 행 PC 안내는 행 바로 위', () => {
+  it('문 행 PC 안내는 앱 줄 부제 안(§35)', () => {
     const h = read(`dist/g/${open[0].slug}/index.html`);
-    expect(h).toMatch(/<p class="pc-note small">휴대폰의 토스 앱에서 열려요<\/p>\s*<a class="row"/);
+    expect(h).toMatch(/<span class="pc-note"> · 휴대폰의 토스 앱에서 열려요<\/span>/); // §35: 앱 줄 부제 안
   });
   it('read: 더 해 볼 수 있어요는 접힘(details), 안의 구독·조항 요청 id 그대로', () => {
     const f = readdirSync('dist/g').find((s) => existsSync(`dist/g/${s}/read/index.html`) && open.some((l: any) => l.slug === s))!;

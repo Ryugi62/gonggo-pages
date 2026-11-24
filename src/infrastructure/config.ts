@@ -28,6 +28,12 @@ export function buildDay(env: Record<string, string | undefined> = (globalThis a
   return env.GK_TODAY && /^\d{4}-\d{2}-\d{2}$/.test(env.GK_TODAY) ? env.GK_TODAY : todayKst();
 }
 
+/** SPEC §35 AC-142 — 오늘 마감인 공고의 시각 판정에 쓰는 지금(KST HH:MM). 시험은 GK_NOW로 주입 */
+export function buildTime(env: Record<string, string | undefined> = (globalThis as any).process?.env ?? {}): string {
+  if (env.GK_NOW && /^\d{2}:\d{2}$/.test(env.GK_NOW)) return env.GK_NOW;
+  return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date());
+}
+
 export function todayKst(now = new Date()): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(now);
 }

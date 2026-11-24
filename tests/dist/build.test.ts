@@ -3,8 +3,9 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { findForbidden } from '../../src/domain/privacy.ts';
 import { OPERATOR, PRO_PAGES, INDEXNOW_KEY } from '../../src/infrastructure/config.ts';
-import { searchTitle, listingFaq } from '../../src/domain/searchLanding.ts';
+import { searchTitle, listingFaq, CLAUSE_QUESTION } from '../../src/domain/searchLanding.ts';
 import { leadSummary } from '../../src/domain/aiCitation.ts';
+import { clausesFound } from '../../src/domain/clause.ts';
 
 // 빌드 산출물 검사 (npm run build 뒤 실행)
 const walk = (d: string): string[] =>
@@ -98,13 +99,13 @@ describe('Pro §5 조항 판독 블록', () => {
     expect(page.indexOf('AI 초안 사용 불가')).toBeLessThan(page.indexOf('누가 낼 수 있나요?', page.indexOf('<body')));
   });
   it('§5-2 AI 문장 없는 공고: 단정하지 않는 문구, 「허용」 표시 없음', () => {
-    const l = data.listings.find((x: any) => x.aiUse === 'UNSTATED' && x.clauses.length > 0);
+    const l = data.listings.find((x: any) => x.aiUse === 'UNSTATED' && clausesFound(x)); // §35: 못 찾은 조항 줄은 숨김
     const page = pageOf(l.slug);
     expect(page).toContain('원문에서 AI 사용 규정을 찾지 못했으니 지원 전 원문을 확인해 주세요.');
     expect(page).not.toContain('AI 사용 허용');
   });
   it('§5-8 판독 블록 아래 원문 링크와 「원문이 맞아요」 면책', () => {
-    const l = data.listings.find((x: any) => x.clauses.length > 0);
+    const l = data.listings.find((x: any) => clausesFound(x)); // §35: 못 찾은 조항 줄은 숨김
     const page = pageOf(l.slug);
     expect(page).toContain('조항 판독');
     expect(page).toContain('원문과 다르면 원문이 맞아요');
@@ -139,9 +140,11 @@ describe('AC-47 검색 착지 — 고객 말 제목·FAQ(SPEC §15)', () => {
       expect(unesc(t), l.slug).toBe(searchTitle(l));
       const lds = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
       const faqs = lds.filter((j) => j['@type'] === 'FAQPage');
-      expect(faqs.length, l.slug).toBe(1);
+      const want0 = listingFaq(l).filter((f) => clausesFound(l) || f.q !== CLAUSE_QUESTION.AI_USE); // §35: 화면에 없는 질문은 구조화 데이터에도 없다
+      expect(faqs.length, l.slug).toBe(want0.length ? 1 : 0);
+      if (!want0.length) continue;
       const body = unesc(page.slice(page.indexOf('<body')).replace(/<[^>]+>/g, ''));
-      const want = listingFaq(l);
+      const want = want0;
       expect(faqs[0].mainEntity.map((q: any) => q.name)).toEqual(want.map((f) => f.q));
       for (const f of want) expect(body, `${l.slug} ${f.q}`).toContain(f.q);
     }
@@ -161,9 +164,11 @@ describe('AC-55·56·57 AI 검색 인용 장치(SPEC §17)', () => {
     for (const l of ls) {
       const page = readFileSync(`dist/g/${l.slug}/index.html`, 'utf8');
       expect(page, l.slug).not.toContain('class="lead"');
-      const faq = JSON.parse([...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((x) => x[1]).find((x) => x.includes('FAQPage'))!);
-      const names = faq.mainEntity.map((q: any) => q.name);
-      expect(names, l.slug).toContain('AI(챗GPT)로 쓴 내용을 내도 되나요?');
+      const raw = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((x) => x[1]).find((x) => x.includes('FAQPage'));
+      // §35: 찾은 조항이 있을 때만 AI 질문을 싣는다(화면에 없는 질문은 구조화 데이터에도 없다)
+      if (!clausesFound(l) && !l.eligibilityQuote) { expect(raw, l.slug).toBeUndefined(); continue; }
+      const names = JSON.parse(raw!).mainEntity.map((q: any) => q.name);
+      if (clausesFound(l)) expect(names, l.slug).toContain('AI(챗GPT)로 쓴 내용을 내도 되나요?'); else expect(names, l.slug).not.toContain('AI(챗GPT)로 쓴 내용을 내도 되나요?');
       if (l.eligibilityQuote) expect(names).toContain('누가 낼 수 있나요?');
       if (l.clauses.some((c: any) => c.kind === 'DUPLICATE_AWARD')) expect(names).toContain('다른 대회에서 상 받은 작품도 낼 수 있나요?');
     }

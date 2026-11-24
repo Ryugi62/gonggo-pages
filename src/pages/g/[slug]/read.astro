@@ -8,11 +8,12 @@ import ReadRequestEntry from '../../../components/ReadRequestEntry.astro';
 import SubscribeEntry from '../../../components/SubscribeEntry.astro';
 import TossMiniappLink from '../../../components/TossMiniappLink.astro';
 import Chevron from '../../../components/Chevron.astro';
-import { allListings as listings, index, generatedAt, today } from '../../../adapters/site/data.ts';
+import { allListings as listings, index, generatedAt, today, nowHM } from '../../../adapters/site/data.ts';
 import { readCardOf } from '../../../adapters/site/readCards.ts';
 import { readCardTitle } from '../../../domain/readCard.ts';
 import { appDoor } from '../../../domain/tossLink.ts';
 import { formatDate } from '../../../domain/format.ts';
+import { isOpen, deadlineDisplay } from '../../../domain/freshness.ts';
 import { cleanDisplay } from '../../../domain/displayText.ts';
 import { axisFacts } from '../../../domain/readFacts.ts';
 import { isAudition } from '../../../domain/topic.ts';
@@ -28,10 +29,11 @@ interface Props { l: PublicListing }
 const { l } = Astro.props;
 const card = readCardOf(l.category)!;
 const title = readCardTitle(card.kind);
-const closed = !!l.deadline && l.deadline < today;
+const closed = !!l.deadline && !isOpen(l, today, nowHM);
 const anchor = new Date(Date.parse(`${today}T12:00:00Z`) + 14 * 86_400_000).toISOString().slice(0, 10);
 const related = closed ? index.related(l, 3, anchor) : [];
-const deadlineText = l.deadline ? `${formatDate(l.deadline)}${l.deadlineTime ? ` ${l.deadlineTime}` : ''}` : '상시 모집';
+const dispTime = deadlineDisplay(l);
+const deadlineText = l.deadline ? `${formatDate(l.deadline)}${dispTime.time ? ` ${dispTime.time}` : ''}` : '상시 모집';
 const facts = axisFacts(l, today);
 const site = Astro.site!.href.replace(/\/$/, '');
 const calEvent = closed ? null : deadlineEvent(l, site);
@@ -49,13 +51,12 @@ const cta = closed
       {related.length > 0 ? <RelatedRows items={related} group="rel" /> : <p class="sub">지금 접수 중인 비슷한 공고가 없어요.</p>}
     </section>
   )}
-  <img class="hero" src="https://static.toss.im/3d-emojis/u1F4DD.png" alt="" width="40" height="40" decoding="async" />
   <h1>{title}</h1>
   <p class="sub rd-sub" style="margin-top:8px"><a href={`/g/${l.slug}/`}>{cleanDisplay(l.name)}</a> · {deadlineText}{closed || !l.deadline ? '' : ' 마감'}{l.prize ? ` · ${l.prize}` : ''}</p>
 
   <ReadCard card={card} facts={facts} />
 
-  <TossMiniappLink />
+  <section class="rows door" aria-label="토스 앱"><TossMiniappLink /></section>
 
   <details class="fold" id="more" aria-labelledby="more-h">
     <summary><span id="more-h">더 해 볼 수 있어요</span><Chevron /></summary>
@@ -79,7 +80,6 @@ const cta = closed
   (function(){var n=document.getElementById('cal-note');if(!n)return;document.querySelectorAll('a[href$=".ics"]').forEach(function(a){a.addEventListener('click',function(){n.textContent='캘린더 파일을 받았어요. 열면 마감 일정이 들어가요.'})})})();
 </script>
 <style is:global>
-  .hero { display: block; margin: 24px 0 0; }
   .rd-sub a { color: var(--text); font-weight: 600; text-decoration: none; }
   .crumb.back a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
   .rd-closed { margin-top: 8px; }

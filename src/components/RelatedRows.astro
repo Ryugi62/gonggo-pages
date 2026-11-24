@@ -4,18 +4,18 @@ import type { PublicListing } from '../domain/listing.ts';
 import { badgeState } from '../domain/freshness.ts';
 import { cleanDisplay } from '../domain/displayText.ts';
 import { formatDate } from '../domain/format.ts';
-import { today } from '../adapters/site/data.ts';
+import { today, nowHM } from '../adapters/site/data.ts';
 interface Props { items: PublicListing[]; group?: string; cap?: number }
 const { items, group = 'rel', cap } = Astro.props;
 const meta = (l: PublicListing) => [l.category, l.deadline ? `${formatDate(l.deadline)} 마감` : '상시 모집', l.prize].filter(Boolean).join(' · ');
 ---
 <ul class="rel rows" data-rows={group}>
   {items.map((l) => {
-    const b = l.deadline ? badgeState(l.deadline, today, false) : null;
+    const b = l.deadline ? badgeState(l.deadline, today, false, l.deadlineTime, nowHM) : null;
     return (
-    <li data-row-deadline={l.deadline ?? '9999-12-31'} data-group={group} data-cap={cap ? String(cap) : undefined}>
+    <li data-row-deadline={l.deadline ?? '9999-12-31'} data-group={group} data-cap={cap ? String(cap) : undefined} data-row-time={l.deadlineTime ?? undefined} data-tags={l.tags.join(',')}>
       <a class="row" href={`/g/${l.slug}/`}>
-        {b ? <span class={`bd ${b.closed ? 'closed' : b.soon ? 'soon' : ''}`} data-deadline={l.deadline}>{b.label}</span> : <span class="bd">상시</span>}
+        {b ? <span class={`bd ${b.closed ? 'closed' : b.soon ? 'soon' : ''}`} data-deadline={l.deadline} data-deadline-time={l.deadlineTime ?? undefined}>{b.label}</span> : <span class="bd">상시</span>}
         <span class="rt"><b>{cleanDisplay(l.name)}</b><span>{meta(l)}</span></span>
       </a>
     </li>

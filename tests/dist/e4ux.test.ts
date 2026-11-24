@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDay } from '../../src/infrastructure/config.ts';
+import { buildDay, buildTime } from '../../src/infrastructure/config.ts';
+import { isOpen as isOpenAt } from '../../src/domain/freshness.ts';
+import { clausesFound } from '../../src/domain/clause.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { findInternalJudgement } from '../../src/domain/privacy.ts';
 import { isAudition } from '../../src/domain/topic.ts';
@@ -13,8 +15,8 @@ const detail = (s: string) => read(`dist/g/${s}/index.html`);
 const readPage = (s: string) => read(`dist/g/${s}/read/index.html`);
 const strip = (h: string) => h.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '');
 const text = (h: string) => strip(h).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-const closed = all.filter((l) => l.deadline && l.deadline < today);
-const open = all.filter((l) => l.rolling || (l.deadline && l.deadline >= today));
+const closed = all.filter((l) => l.deadline && !isOpenAt(l, today, buildTime())); // §35: 오늘 마감인데 시각이 지난 공고도 마감
+const open = all.filter((l) => isOpenAt(l, today, buildTime()) && (l.rolling || l.deadline));
 const withRead = open.filter((l) => l.category !== '장학' && !isAudition(l));
 const pick = <T,>(a: T[], n: number) => a.filter((_, i) => i % Math.max(1, Math.floor(a.length / n)) === 0).slice(0, n);
 const aws = process.env.DEPLOY_TARGET === 'aws';
@@ -71,7 +73,7 @@ describe('상세 = 제목 · 마감 배지 1개 · 자격 원문 · 하단 CTA 1
       const h = detail(l.slug);
       expect(h, l.slug).toContain(`<h1>${l.name.replace(/&/g, '&#38;')}`.slice(0, 8));
       expect(h, l.slug).toContain('application/ld+json');
-      expect(h, l.slug).toContain('FAQPage');
+      if (clausesFound(l) || l.eligibilityQuote) expect(h, l.slug).toContain('FAQPage'); // §35: 화면에 보이는 질문이 있을 때만
       if (l.eligibilityQuote) expect(h, l.slug).toContain('<blockquote');
     }
     expect(readdirSync('dist/g').filter((s) => existsSync(`dist/g/${s}/index.html`)).length).toBe(all.length);
@@ -87,7 +89,7 @@ describe('상세 = 제목 · 마감 배지 1개 · 자격 원문 · 하단 CTA 1
 });
 
 describe('읽는 법 화면 — 마감 표시·빈칸 0·칸별 행·글자 3단·부가 도구 한 묶음', () => {
-  const cl = pick(withRead.length ? all.filter((l) => l.category !== '장학' && !isAudition(l) && l.deadline && l.deadline < today) : [], 8);
+  const cl = pick(withRead.length ? all.filter((l) => l.category !== '장학' && !isAudition(l) && l.deadline && !isOpenAt(l, today, buildTime())) : [], 8);
   const op = pick(withRead, 10);
   it('마감 공고: 맨 위 「마감됐어요」 1번 + 열린 비슷한 공고 링크 3개, 준비 권유 문장 없음', () => {
     expect(cl.length).toBeGreaterThan(0);
@@ -122,8 +124,8 @@ describe('읽는 법 화면 — 마감 표시·빈칸 0·칸별 행·글자 3단
   it('토스 링크는 화면에 정확히 1개(열림=하단 버튼, 마감=묶음 행)', () => {
     for (const l of [...cl, ...op]) expect((readPage(l.slug).match(/href="https:\/\/minion\.toss\.im\/L5iKJAEk"/g) ?? []).length, l.slug).toBe(1);
   });
-  it('「맨 위로」가 행을 가리지 않게 — 버튼이 보일 때 행 오른쪽 여백이 늘어난다(CSS 규칙 존재)', () => {
-    expect((readPage(op[0].slug).match(/<style[^>]*>[\s\S]*?<\/style>/g) ?? []).join('\n')).toMatch(/tt-on[^{]*\.row[^{]*\{[^}]*padding-right/);
+  it('「맨 위로」는 행 폭을 바꾸지 않는다 — tt-on 여백 규칙 없음(SPEC §35 AC-141, 목록이 튀던 원인이라 §32의 52px 규칙을 뺌)', () => {
+    expect((readPage(op[0].slug).match(/<style[^>]*>[\s\S]*?<\/style>/g) ?? []).join('\n')).not.toMatch(/tt-on/);
   });
 });
 

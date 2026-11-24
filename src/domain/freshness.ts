@@ -2,8 +2,14 @@
 import type { PublicListing } from './listing.ts';
 
 /** 열림 = 상시이거나 마감일 ≥ 오늘 */
-export const isOpen = (l: Pick<PublicListing, 'deadline' | 'rolling'>, today: string): boolean =>
-  l.rolling || (!!l.deadline && l.deadline >= today);
+export const isOpen = (l: Pick<PublicListing, 'deadline' | 'rolling'> & { deadlineTime?: string | null }, today: string, nowHM?: string): boolean => {
+  if (l.rolling) return true;
+  if (!l.deadline) return false;
+  if (l.deadline > today) return true;
+  if (l.deadline < today) return false;
+  // 오늘 마감 — 시각이 있고 지금이 그 시각 이후면 닫힘(SPEC §35 AC-142, 00:00은 오늘 0시라 이미 지남)
+  return !(nowHM && l.deadlineTime && l.deadlineTime <= nowHM);
+};
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -38,10 +44,17 @@ export function reconcileDeadlineTime<T extends PublicListing>(l: T): T {
   return t && t !== l.deadlineTime ? { ...l, deadlineTime: t } : l;
 }
 
-/** SPEC §34 AC-132 — 배지 상태. 큰 배지(lg)도 지난 날짜면 「마감됐어요」(예외 없음) */
-export function badgeState(deadline: string, today: string, large: boolean): { n: number; label: string; closed: boolean; soon: boolean } {
+/** SPEC §34 AC-132·§35 AC-142 — 배지 상태. 큰 배지(lg)도 지난 날짜면 「마감됐어요」, 오늘 마감인데 시각이 지났어도 마감 */
+export function badgeState(deadline: string, today: string, large: boolean, time?: string | null, nowHM?: string): { n: number; label: string; closed: boolean; soon: boolean } {
   const at = (d: string) => Date.parse(`${d}T12:00:00Z`);
-  const n = Math.round((at(deadline) - at(today)) / 86_400_000);
+  let n = Math.round((at(deadline) - at(today)) / 86_400_000);
+  if (n === 0 && time && nowHM && time <= nowHM) n = -1;
   const label = n < 0 ? (large ? '마감됐어요' : '마감') : n === 0 ? 'D-day' : `D-${n}`;
   return { n, label, closed: n < 0, soon: n >= 0 && n <= 3 };
+}
+
+/** SPEC §35 AC-142 — 마감 시각 표시: 00:00은 싣지 않고 원문 확인 안내만(전날 밤 끝일 수 있어 하루 늦게 읽힌다) */
+export function deadlineDisplay(l: Pick<PublicListing, 'deadline' | 'deadlineTime'>): { time: string | null; note: string | null } {
+  if (!l.deadline || !l.deadlineTime) return { time: null, note: null };
+  return l.deadlineTime === '00:00' ? { time: null, note: '마감 시각은 원문에서 확인' } : { time: l.deadlineTime, note: null };
 }

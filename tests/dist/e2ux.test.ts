@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDay } from '../../src/infrastructure/config.ts';
+import { buildDay, buildTime } from '../../src/infrastructure/config.ts';
+import { isOpen as isOpenAt } from '../../src/domain/freshness.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { isOpen, quoteDeadlineTime } from '../../src/domain/freshness.ts';
 
@@ -10,8 +11,8 @@ const by = new Map(file.listings.map((l) => [l.slug, l]));
 const html = (s: string) => readFileSync(`dist/g/${s}/index.html`, 'utf8');
 const body = (h: string) => h.slice(h.indexOf('<body')).replace(/<style[\s\S]*?<\/style>/g, '').replace(/<script[\s\S]*?<\/script>/g, '');
 const slugs = readdirSync('dist/g').filter((s) => existsSync(`dist/g/${s}/index.html`)).sort();
-const closed = slugs.filter((s) => by.get(s)?.deadline && by.get(s).deadline < T);
-const open = slugs.filter((s) => by.get(s) && isOpen(by.get(s), T));
+const closed = slugs.filter((s) => by.get(s)?.deadline && !isOpenAt(by.get(s), T, buildTime()));
+const open = slugs.filter((s) => by.get(s) && isOpen(by.get(s), T, buildTime()));
 const pick = (a: string[], n: number) => a.filter((_, i) => i % Math.max(1, Math.floor(a.length / n)) === 0).slice(0, n);
 
 describe('데이터 — dist 상세가 병합 목록 전부(소멸 0)이고 정리 기준일이 오늘', () => {
@@ -58,8 +59,8 @@ describe('막힘 ① 마감 공고 — 막다른 길 없음', () => {
       const h = html(s);
       const rel = h.indexOf('id="rel-h"');
       expect(rel, s).toBeGreaterThan(0);
-      if (h.includes('/read/')) expect(h.indexOf('aria-label="공고 읽는 법"'), s).toBeGreaterThan(rel);
-      expect(h.indexOf('id="clauses"'), s).toBeGreaterThan(rel);
+      if (h.includes('/read/')) expect(h.indexOf('class="rows door"'), s).toBeGreaterThan(rel); // §35: 문+읽는 법 한 묶음
+      if (h.includes('id="clauses"')) expect(h.indexOf('id="clauses"'), s).toBeGreaterThan(rel);
     }
   });
   it('열린 상세: 주 버튼은 원문 공고 보기, 비슷한 공고는 열린 것만', () => {
@@ -101,7 +102,7 @@ describe('막힘 ② 상세 정리 — 중복 제거·회색 상자·행', () =>
     for (const s of pick(open.filter((x) => html(x).includes('/read/')), 40)) {
       const h = body(html(s));
       expect(h, s).not.toContain('class="lead"');
-      const i = [h.indexOf('<h1'), h.indexOf('class="hero-d"'), h.indexOf('누가 낼 수 있나요?'), h.indexOf('aria-label="공고 읽는 법"')];
+      const i = [h.indexOf('<h1'), h.indexOf('class="hero-d"'), h.indexOf('누가 낼 수 있나요?'), h.indexOf('class="rows door"')]; // §35: 읽는 법 행은 문과 한 묶음
       expect([...i].sort((a, b) => a - b), s).toEqual(i);
     }
   });

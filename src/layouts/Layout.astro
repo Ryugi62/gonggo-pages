@@ -75,7 +75,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
   <button type="button" class="to-top" aria-label="맨 위로" hidden><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
   <script is:inline>
     // 사용자가 직접 올린 스크롤(터치·휠·키·마우스)에만 나타난다 — 탭 하이라이트·복원 같은 프로그램 스크롤엔 안 나온다(11/22 검수)
-    (function(){var b=document.querySelector('.to-top');if(!b)return;var set=function(v){b.hidden=!v;document.body.classList.toggle('tt-on',v)};var y0=window.scrollY,vh=window.innerHeight,u=0;['touchstart','touchmove','wheel','keydown','pointerdown'].forEach(function(n){window.addEventListener(n,function(){u=Date.now()},{passive:true})});window.addEventListener('scroll',function(){var y=window.scrollY;if(y<=vh||y>y0)set(false);else if(y<y0&&Date.now()-u<1500)set(true);y0=y},{passive:true});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});set(false)})})();
+    (function(){var b=document.querySelector('.to-top');if(!b)return;var set=function(v){b.hidden=!v;};var y0=window.scrollY,vh=window.innerHeight,u=0;['touchstart','touchmove','wheel','keydown','pointerdown'].forEach(function(n){window.addEventListener(n,function(){u=Date.now()},{passive:true})});window.addEventListener('scroll',function(){var y=window.scrollY;if(y<=vh||y>y0)set(false);else if(y<y0&&Date.now()-u<1500)set(true);y0=y},{passive:true});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});set(false)})})();
   </script>
   <script is:inline>
     document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-intent]');if(!a)return;try{window.va&&window.va('pageview',{route:'/intent/cal',path:a.getAttribute('data-intent')})}catch(x){}});
@@ -197,14 +197,13 @@ const ogImage = new URL('/og.png', Astro.site).href;
   /* 반응: 호버는 마우스 기기에서만, 눌림은 모든 기기 */
   .tile, .row, .item, .btn, .cta, .to-top, .chip { transition: background-color .15s ease, transform .1s ease, color .15s ease; -webkit-tap-highlight-color: transparent; }
   .row .go { transition: transform .15s ease; }
-  .row { transition: background-color .15s ease, transform .1s ease, color .15s ease, padding-right .15s ease; }
-  /* 「맨 위로」 버튼이 보일 때는 행 화살표가 버튼 밑으로 들어가지 않게 오른쪽을 비운다(11/22 3회차 검수) */
-  body.tt-on .row { padding-right: 52px; }
-  /* 「맨 위로」가 뜨면 행 여백이 바뀌어 높이가 변한다 — 브라우저가 스크롤 위치를 보정하면 위로 올린 동작이 취소돼 버튼이 깜빡이므로(막다른 길, 11/24 walk) 보정을 끈다 */
-  html, body { overflow-anchor: none; }
+  /* §35 AC-141 — 「맨 위로」는 글 위에 떠 있을 뿐 행 폭을 바꾸지 않는다(폭이 바뀌면 716줄이 다시 줄바꿈돼 위로 올릴 때 목록이 튀었다) */
+  li[data-off] { display: none; }
+  .chip.on { background: var(--btn); color: #fff; }
   /* SPEC §33 AC-127 — PC 폭에서만 보이는 안내(PC는 앱을 열 수 없다) */
   .pc-note { display: none; }
-  @media (min-width: 960px) { p.pc-note { display: block; margin: 0 0 4px; } .cta-bar p.pc-note { max-width: 680px; margin: 0 auto 8px; text-align: center; } }
+  .row .rt span.pc-note { display: none; }
+  @media (min-width: 960px) { .row .rt span.pc-note { display: inline; } p.pc-note { display: block; margin: 0 0 4px; } .cta-bar p.pc-note { max-width: 680px; margin: 0 auto 8px; text-align: center; } }
   .tile:active, .row:active, .item:active, .btn:active, .cta:active, .to-top:active, .chip:active { transform: scale(0.98); }
   .row:active .rt b { color: var(--blue-text); }
   @media (hover: hover) {

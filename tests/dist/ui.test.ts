@@ -60,7 +60,7 @@ describe('SPEC §8 UI 수용기준 — 자동 검사 가능 항목', () => {
       const s = read(f);
       expect(s, f).not.toMatch(/<details[^>]*\sopen/);
     }
-    expect(read(pages.detail)).toContain('<details');
+    expect(read(pages.home)).toContain('<details'); // 상세는 못 찾은 조항 줄을 숨겨 details가 없을 수 있다(SPEC §35 AC-145)
   });
   it('9 색: 다크 대응 + 포커스 outline 제거 없음', () => {
     const c = css(read(pages.detail));
@@ -87,7 +87,7 @@ describe('SPEC §18 감사 2차 — dist 전수', () => {
     expect(bad).toEqual([]);
   });
   it('AC-62 btn primary 0 (홈·목록·상세·체커)', () => {
-    const bad = htmls.filter((f) => !f.includes('/404') && /class="btn primary/.test(readFileSync(f, 'utf8')));
+    const bad = htmls.filter((f) => !f.includes('/404') && /class="btn primary(?! block" id="(?:read|sub)-send")/.test(readFileSync(f, 'utf8'))); // 읽는 법 폼 제출 버튼 2개는 주 색(SPEC §35 AC-147)
     expect(bad).toEqual([]);
   });
   it('AC-61 체커: 오류·빈 상태·뒤로 문안이 번들에 있다', () => {

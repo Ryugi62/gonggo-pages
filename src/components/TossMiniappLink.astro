@@ -1,14 +1,11 @@
 ---
-// SPEC §33·§34 AC-134 — 문(앱으로 가는 링크 1개): 홈·상세·읽는 법이 같은 행 부품. PC 안내는 행 바로 위(CSS 폭으로만 보임).
-// 값은 appDoor() 한 곳, 공고별 딥링크 없음. 클릭은 ping + data-intent가 같은 경로로 센다.
+// SPEC §33·§35 AC-145 — 문(앱으로 가는 링크 1개): 행 하나. 호출하는 쪽이 `<section class="rows door">`로 감싸 읽는 법 행과 한 묶음으로 둔다.
+// PC 안내는 부제 안(CSS 폭으로만 보임). 값은 appDoor() 한 곳, 공고별 딥링크 없음. 클릭은 ping + data-intent가 같은 경로로 센다.
 import { appDoor } from '../domain/tossLink.ts';
 import Chevron from './Chevron.astro';
 const d = appDoor();
 ---
-<section class="rows door" aria-label="토스 앱">
-  <p class="pc-note small">{d.pcNote}</p>
-  <a class="row" href={d.href} target="_blank" rel="noopener" ping={d.ping} data-intent={d.intent}>
-    <span class="rt"><b>{d.label}</b><span>{d.sub}</span></span>
-    <Chevron />
-  </a>
-</section>
+<a class="row" href={d.href} target="_blank" rel="noopener" ping={d.ping} data-intent={d.intent}>
+  <span class="rt"><b>{d.label}</b><span>{d.sub}<span class="pc-note"> · {d.pcNote}</span></span></span>
+  <Chevron />
+</a>

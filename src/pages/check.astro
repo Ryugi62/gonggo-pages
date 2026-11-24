@@ -65,7 +65,7 @@ import { listings } from '../adapters/site/data.ts';
           <label><input type="radio" name="view" value="확인 필요" /><span id="tab-unk">확인 필요</span></label>
         </div>
         <p id="empty" class="sub" hidden style="margin-top:16px" aria-live="polite"></p>
-        <ul class="list" id="out" style="margin-top:16px"></ul>
+        <ul class="rel rows" id="out" style="margin-top:16px"></ul>
       </section>
       <details>
         <summary>어떻게 골랐나요</summary>
@@ -78,6 +78,8 @@ import { listings } from '../adapters/site/data.ts';
 </Layout>
 <style>
   #checker { padding-bottom: 80px; }
+  :global(body:has(.cta-bar)) { padding-bottom: 92px; } /* PC 푸터 링크가 고정 CTA에 가리지 않게(SPEC §35 AC-149) */
+  .back { margin-bottom: 8px; }
   .topline { display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
   .topline p { margin: 0; }
   .back { min-height: 44px; padding: 0 16px; }
@@ -96,7 +98,7 @@ import { listings } from '../adapters/site/data.ts';
 </style>
 <script>
   import { type Profile } from '../domain/match.ts';
-  import { dDayLabel } from '../domain/format.ts';
+  import { dDayLabel, formatDate } from '../domain/format.ts';
   import { ERROR_COPY, checkerCounts, emptyCopy, groupRows, nextLabel, nextStep, prevStep, progressLabel, visibleRows, type CheckerRow, type CheckerStep, type Groups } from '../domain/checker.ts';
 
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -129,18 +131,19 @@ import { listings } from '../adapters/site/data.ts';
     for (const r of list) {
       const li = document.createElement('li');
       const a = document.createElement('a');
-      a.className = 'item';
+      a.className = 'row';
       a.href = `/g/${r.s}/`;
+      // 목록 행과 같은 부품: 배지 + 제목 + 보조(분류·마감일·상금) — SPEC §35 AC-149
       const d = document.createElement('span');
-      d.className = 'dd';
-      d.textContent = dDayLabel(r.d, today);
+      const dl = dDayLabel(r.d, today);
+      d.className = `bd${dl === '마감' ? ' closed' : /^D-[0-3]$|^D-day$/.test(dl) ? ' soon' : ''}`;
+      d.textContent = dl;
       const box = document.createElement('span');
-      const t = document.createElement('span');
-      t.className = 't';
+      box.className = 'rt';
+      const t = document.createElement('b');
       t.textContent = r.n;
       const m = document.createElement('span');
-      m.className = 'm';
-      m.textContent = [r.c, r.p].filter(Boolean).join(' · ');
+      m.textContent = [r.c, r.d ? `${formatDate(r.d)} 마감` : '상시 모집', r.p].filter(Boolean).join(' · ');
       box.append(t, m);
       a.append(d, box);
       li.append(a);

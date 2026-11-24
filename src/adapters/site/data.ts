@@ -6,7 +6,7 @@ import { weeklyDigest } from '../../application/weeklyDigest.ts';
 import { aiOkList } from '../../application/aiOkList.ts';
 import { soloList, SOLO_MIN } from '../../application/soloList.ts';
 import { buildCalendarFeeds } from '../../application/calendarFeeds.ts';
-import { FEED_ORIGIN, SITE_URL, buildDay } from '../../infrastructure/config.ts';
+import { FEED_ORIGIN, SITE_URL, buildDay, buildTime } from '../../infrastructure/config.ts';
 import { CATEGORIES, TAGS } from '../../domain/category.ts';
 import { deadlineWeek } from '../../application/buildSiteIndex.ts';
 import { clauseCollections, COLLECTION_PATHS } from '../../domain/clausePreview.ts';
@@ -16,10 +16,12 @@ import { isOpen } from '../../domain/freshness.ts';
 /** 정리 기준일(글자·/digest/ /ai-ok/ /solo/ 경로) — 열림·D-n 판정은 today(빌드 날, SPEC §34 AC-131) */
 export const generatedAt: string = file.generatedAt;
 export const today: string = buildDay();
+/** 오늘 마감인 공고의 시각 판정(SPEC §35 AC-142) */
+export const nowHM: string = buildTime();
 /** 지금까지 공개한 모든 공고 — /g/<slug>/ 상세 URL은 마감 뒤에도 소멸 0(SPEC §31) */
 export const allListings = file.listings as unknown as PublicListing[];
 /** 열린 공고(상시 또는 마감일 ≥ 정리 기준일) — 목록·색인·피드·비슷한 공고는 열린 것만 */
-export const listings = allListings.filter((l) => isOpen(l, today));
+export const listings = allListings.filter((l) => isOpen(l, today, nowHM));
 export const index = buildSiteIndex(listings);
 export const categories = CATEGORIES.filter((c) => index.byCategory.get(c.name)?.length);
 export const tags = TAGS.filter((t) => index.byTag.get(t.name)?.length);

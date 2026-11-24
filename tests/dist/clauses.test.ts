@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDay } from '../../src/infrastructure/config.ts';
+import { buildDay, buildTime } from '../../src/infrastructure/config.ts';
+import { isOpen as isOpenAt } from '../../src/domain/freshness.ts';
 import { readFileSync, existsSync } from 'node:fs';
 import { clausePreview, clauseCollections } from '../../src/domain/clausePreview.ts';
 import { findForbidden } from '../../src/domain/privacy.ts';
 
 // AC-70·71 (SPEC §19) — AWS 빌드 여부는 pro 링크로 판별
 const data = JSON.parse(readFileSync('data/listings.json', 'utf8'));
-const ls = (data.listings as any[]).filter((l) => l.rolling || l.deadline >= buildDay()); // 목록·모음은 열린 공고만(SPEC §31)
+const ls = (data.listings as any[]).filter((l) => isOpenAt(l, buildDay(), buildTime())); // 목록·모음은 열린 공고만(SPEC §31)
 const aws = existsSync('dist/pro/index.html');
 const page = (slug: string) => readFileSync(`dist/g/${slug}/index.html`, 'utf8');
 

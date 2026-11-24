@@ -7,7 +7,7 @@ const url = feedUrl(feed);
 ---
 <section class="card" aria-labelledby={`cal-sub-${feed}`}>
   <b id={`cal-sub-${feed}`}>이 목록 마감을 내 캘린더로 받기</b>
-  <p class="small" style="margin:6px 0 12px">한 번 구독하면 새 공고 마감이 캘린더에 알아서 들어와요. 일정마다 자격·조항 정리 링크가 붙어요.</p>
+  <p class="small" style="margin:6px 0 12px">구독하면 지금 정리된 공고의 마감이 캘린더에 들어와요. 새로 정리한 공고는 사이트를 갱신할 때 같은 주소로 반영돼요. 일정마다 자격·조항 정리 링크가 붙어요.</p>
   <div class="grid2">
     <a class="btn secondary block" href={googleSubscribeUrl(url)} target="_blank" rel="noopener" data-intent={`/intent/cal/sub/${feed}`}>구글 캘린더</a>
     <a class="btn secondary block" href={webcalUrl(url)} data-intent={`/intent/cal/sub/${feed}`}>애플·아웃룩</a>
