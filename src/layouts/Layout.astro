@@ -196,9 +196,11 @@ const ogImage = new URL('/og.png', Astro.site).href;
   .row { transition: background-color .15s ease, transform .1s ease, color .15s ease, padding-right .15s ease; }
   /* 「맨 위로」 버튼이 보일 때는 행 화살표가 버튼 밑으로 들어가지 않게 오른쪽을 비운다(11/22 3회차 검수) */
   body.tt-on .row { padding-right: 52px; }
+  /* 「맨 위로」가 뜨면 행 여백이 바뀌어 높이가 변한다 — 브라우저가 스크롤 위치를 보정하면 위로 올린 동작이 취소돼 버튼이 깜빡이므로(막다른 길, 11/24 walk) 보정을 끈다 */
+  html, body { overflow-anchor: none; }
   /* SPEC §33 AC-127 — PC 폭에서만 보이는 안내(PC는 앱을 열 수 없다) */
-  .pc-note { display: none; }
-  @media (min-width: 960px) { span.pc-note { display: inline; } p.pc-note { display: block; margin: 8px 0 0; } }
+  .pc-note, .row .rt span.pc-note { display: none; }
+  @media (min-width: 960px) { .row .rt span.pc-note { display: block; } p.pc-note { display: block; margin: 8px 0 0; } }
   .tile:active, .row:active, .item:active, .btn:active, .cta:active, .to-top:active, .chip:active { transform: scale(0.98); }
   .row:active .rt b { color: var(--blue-text); }
   @media (hover: hover) {

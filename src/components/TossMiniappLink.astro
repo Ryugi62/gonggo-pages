@@ -15,7 +15,7 @@ const d = appDoor();
 ) : (
   <section class="rows door" aria-label="토스 앱">
     <a class="row" href={d.href} target="_blank" rel="noopener" ping={d.ping} data-intent={d.intent}>
-      <span class="rt"><b>{d.label}</b><span>{d.sub}<span class="pc-note"> · {d.pcNote}</span></span></span>
+      <span class="rt"><b>{d.label}</b><span>{d.sub}</span><span class="pc-note">{d.pcNote}</span></span>
       <Chevron />
     </a>
   </section>

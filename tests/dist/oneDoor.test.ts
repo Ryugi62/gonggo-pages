@@ -56,6 +56,19 @@ describe('AC-127 PC 안내', () => {
   });
 });
 
+describe('AC-127 휴대폰 폭에서는 PC 안내가 안 보인다(390 캡처 회귀: 행 안 span 규칙이 숨김을 덮었음)', () => {
+  it('행 안 pc-note는 기본 display:none, 960px에서만 block', () => {
+    const h = read(`dist/g/${open[0].slug}/index.html`);
+    expect(h).toMatch(/\.row \.rt span\.pc-note\{display:none\}|\.pc-note,\.row \.rt span\.pc-note\{display:none\}/);
+  });
+});
+
+describe('맨 위로 안정(11/24 walk: 홈에서 행 여백 변화→스크롤 보정→버튼 깜빡임)', () => {
+  it('스크롤 보정을 끈다(overflow-anchor:none)', () => {
+    expect(read('dist/index.html')).toMatch(/overflow-anchor:\s*none/);
+  });
+});
+
 describe('AC-130 가격 숨김', () => {
   it('3장(약관·환불·처리방침) 밖 dist 전체에 가격·창립가·사전 신청 0', () => {
     for (const f of text) {
