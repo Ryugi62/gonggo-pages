@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
+import { isFillAnswer } from '../domain/fillExtract.ts';
 
 export interface FillRow { url: string; quote: string; site: string; fetchedAt: string }
 
@@ -9,7 +10,7 @@ export function readFill(path: string): Map<string, string> {
   for (const l of readFileSync(path, 'utf8').split('\n')) {
     if (!l.trim()) continue;
     const r = JSON.parse(l) as FillRow;
-    if (r.url && r.quote) m.set(r.url, r.quote);
+    if (r.url && r.quote && isFillAnswer(r.site, r.quote)) m.set(r.url, r.quote);
   }
   return m;
 }

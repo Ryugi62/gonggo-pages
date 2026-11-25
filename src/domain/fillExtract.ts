@@ -57,3 +57,13 @@ export function extractFillQuote(site: FillSite, html: string): string | null {
   const q = BY_SITE[site](html);
   return q && q.length >= 2 ? q : null;
 }
+
+/** 다른 곳을 가리키기만 하거나 값이 없다고 말하는 줄 — 자격의 답이 아니다(SPEC §39 AC-170) */
+const NOT_ANSWER = /(?:아래|다음)(?:의|에|에서|과)?\s*[^.]{0,14}(?:요건|사항|해당|자격|조건|중소기업자|같)|명시되어\s*있지\s*않|(?:요강|공고문?|홈페이지|누리집|본문)\s*(?:을|를)?\s*(?:확인|참조|참고)|따라\s*변동/;
+/** thinkcontest 대상 칸의 정해진 낱말 — 이 밖의 글자는 해석기가 못 읽는 덧붙은 조건(AC-171) */
+const TC_WORDS = /동 연령대 청소년|제한 없음|어린이|초등학생|중학생|고등학생|대학생|대학원생|일반인/g;
+
+export function isFillAnswer(site: string, quote: string): boolean {
+  if (NOT_ANSWER.test(quote)) return false;
+  return site !== 'thinkcontest' || quote.replace(TC_WORDS, '').trim() === '';
+}
