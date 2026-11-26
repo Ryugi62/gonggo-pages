@@ -20,6 +20,8 @@ const open = all.filter((l) => isOpenAt(l, today, buildTime()) && (l.rolling || 
 const withRead = open.filter((l) => l.category !== '장학' && !isAudition(l));
 const pick = <T,>(a: T[], n: number) => a.filter((_, i) => i % Math.max(1, Math.floor(a.length / n)) === 0).slice(0, n);
 const aws = process.env.DEPLOY_TARGET === 'aws';
+// Astro 본문 이스케이프와 같은 표(& < > " ') — 「<2026…>」·「"…"」로 시작하는 제목도 대조(11/27 새 데이터에서 드러남)
+const astroEsc = (s: string) => s.replace(/&/g, '&#38;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
 describe('공개 안전 — dist 전수(3,062 상세 + 읽는 법)에 자격·조항 인용의 내부 판단 낱말 0', () => {
   it('상세 전수: 자격 인용 칸(blockquote)·조항 인용(q)에 내부 낱말 0, 「분석 결과 & 제안」 0', () => {
@@ -71,7 +73,7 @@ describe('상세 = 제목 · 마감 배지 1개 · 자격 원문 · 하단 CTA 1
   it('URL·제목·자격 본문·구조화 데이터 유지(소멸 0)', () => {
     for (const l of pick(all, 40)) {
       const h = detail(l.slug);
-      expect(h, l.slug).toContain(`<h1>${l.name.replace(/&/g, '&#38;')}`.slice(0, 8));
+      expect(h, l.slug).toContain(`<h1>${astroEsc(l.name)}`.slice(0, 8));
       expect(h, l.slug).toContain('application/ld+json');
       if (clausesFound(l) || l.eligibilityQuote) expect(h, l.slug).toContain('FAQPage'); // §35: 화면에 보이는 질문이 있을 때만
       if (l.eligibilityQuote) expect(h, l.slug).toContain('<blockquote');
