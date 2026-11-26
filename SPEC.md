@@ -530,3 +530,13 @@ src/infrastructure/ 설정(SITE_URL, 경로)·composition root(scripts/export.ts
 - AC-172: 거름은 `readFill` 한 곳(옛 줄·새 줄 모두). 원본 `data/fill.jsonl`은 지우지 않는다.
 **비목표**: 새 사이트 · 자격 해석기(eligibility.ts) 변경 · 배포.
 **되돌리는 법**: `git revert`.
+
+## 40. 보강 인용 unstop 추가 — 공개 API의 자격 칸 (v1.22, 2026-11-27)
+**목적**: 열린 공고 자격 빈칸 1위가 unstop(11/27 열린 빈칸 205건)인데 §27은 「앱 셸·자유 본문」이라 비목표로 뺐다. 11/27 실측: 상세 화면이 읽는 공개 API `https://unstop.com/api/public/competition/<id>`가 JSON으로 자격 칸(`data.competition.filters[]` 중 `type:"eligible"`의 `name`, 예 「Undergraduate」「School Students」「All」)을 준다 — 자유 본문 대신 이 정해진 칸만 쓴다. 표본 10/10에 칸 있음. 화면 변경 0.
+**용어**: 받기 주소 `fillFetchUrl(site, url)`(unstop은 url 끝 숫자 id → API 주소, 나머지 4곳은 url 그대로) · unstop 자격 칸 = eligible filter.
+**숫자 성공 조건**: 열린 unstop 빈칸 205건 중 채움 ≥ 150 · 인용은 받은 JSON의 칸 값만(표본 20/20 칸 값과 같음) · 공개 상세 소멸 0 · 시험 전부.
+- AC-173: Given unstop url(`…-1793392`) When `fillSiteOf`·`fillFetchUrl` Then `unstop`·`https://unstop.com/api/public/competition/1793392`. 끝 숫자가 없으면 `fillFetchUrl`은 null. 4곳은 url 그대로.
+- AC-174: Given API JSON 글자 When `extractFillQuote('unstop', json)` Then eligible 칸 이름을 원래 순서로 「, 」로 이은 앞에 `Eligibility: `를 붙인다(중복 이름 1번). 칸이 없거나 JSON이 깨지면 null. 자유 본문(`details`)은 읽지 않는다.
+- AC-175: 도메인 추출기는 글자 → 문자열|null(I/O 모름, §27 AC-96 그대로). 거름은 `readFill` 한 곳(§39 AC-172 그대로).
+**비목표**: unstop 자유 본문 · allforyoung · 자격 해석기(eligibility.ts) 변경 · 화면 변경 · 배포(검수 3인 또는 사용자 허락이 열쇠, §39와 같음).
+**되돌리는 법**: `git revert` · `data/fill.jsonl`에서 `site:"unstop"` 줄 제거.

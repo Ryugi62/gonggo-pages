@@ -6,7 +6,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { exportPublicListings } from '../src/application/exportPublicListings.ts';
 import { readSourceRows } from '../src/adapters/jsonlSourceReader.ts';
-import { extractFillQuote, fillSiteOf } from '../src/domain/fillExtract.ts';
+import { extractFillQuote, fillFetchUrl, fillSiteOf } from '../src/domain/fillExtract.ts';
 import { sanitizeQuote } from '../src/domain/extract.ts';
 import { todayKst } from '../src/infrastructure/config.ts';
 
@@ -16,14 +16,15 @@ const CACHE = '.cache/fill';
 const source = process.env.OPPS_PATH ?? join(homedir(), 'jarvis/_system/data/opportunities.jsonl');
 const today = process.env.TODAY ?? todayKst();
 const limit = Number(process.env.LIMIT ?? '100000');
+const onlySites = process.env.SITES ? new Set(process.env.SITES.split(',')) : null;
 
 mkdirSync(CACHE, { recursive: true });
 const done = new Set<string>();
 if (existsSync(FILL)) for (const l of readFileSync(FILL, 'utf8').split('\n')) if (l.trim()) done.add(JSON.parse(l).url);
 
-// 대상 = 보강 없이 내보냈을 때 자격 인용이 없는 공개 행 중 4곳
+// 대상 = 보강 없이 내보냈을 때 자격 인용이 없는 공개 행 중 5곳(SPEC §27·§40). SITES=unstop처럼 좁힐 수 있다
 const targets = exportPublicListings(readSourceRows(source), today).listings
-  .filter((l) => !l.eligibilityQuote && fillSiteOf(l.url) && !done.has(l.url))
+  .filter((l) => !l.eligibilityQuote && fillSiteOf(l.url) && !done.has(l.url) && (!onlySites || onlySites.has(fillSiteOf(l.url)!)))
   .slice(0, limit);
 console.log(`대상 ${targets.length}건`);
 
@@ -37,12 +38,14 @@ for (const t of targets) {
   s.target++;
   const cacheFile = join(CACHE, `${createHash('sha1').update(t.url).digest('hex')}.html`);
   let html: string | null = existsSync(cacheFile) ? readFileSync(cacheFile, 'utf8') : null;
+  const fetchUrl = fillFetchUrl(site, t.url);
+  if (html == null && !fetchUrl) { s.fail++; continue; }
   if (html == null) {
     const wait = 1100 - (Date.now() - (lastAt[site] ?? 0));
     if (wait > 0) await sleep(wait);
     lastAt[site] = Date.now();
     try {
-      const res = await fetch(t.url, { headers: { 'user-agent': UA, 'accept-language': 'ko,en;q=0.8' }, redirect: 'follow', signal: AbortSignal.timeout(20000) });
+      const res = await fetch(fetchUrl!, { headers: { 'user-agent': UA, 'accept-language': 'ko,en;q=0.8', ...(site === 'unstop' ? { accept: 'application/json' } : {}) }, redirect: 'follow', signal: AbortSignal.timeout(20000) });
       if (!res.ok) { s.fail++; continue; }
       html = await res.text();
       writeFileSync(cacheFile, html);

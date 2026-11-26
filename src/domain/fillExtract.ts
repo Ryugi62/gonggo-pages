@@ -1,13 +1,20 @@
 // SPEC §27 — 원문 마크업(글자)에서 자격 문장 인용 1개를 결정적으로 뽑는다. I/O·DOM 라이브러리를 모른다.
 import { decodeEntities } from './extract.ts';
 
-export type FillSite = 'contestkorea' | 'thinkcontest' | 'linkareer' | 'bizinfo';
-export const FILL_SITES: readonly FillSite[] = ['contestkorea', 'thinkcontest', 'linkareer', 'bizinfo'];
+export type FillSite = 'contestkorea' | 'thinkcontest' | 'linkareer' | 'bizinfo' | 'unstop';
+export const FILL_SITES: readonly FillSite[] = ['contestkorea', 'thinkcontest', 'linkareer', 'bizinfo', 'unstop'];
 
 export function fillSiteOf(url: string): FillSite | null {
   const host = url.match(/^https?:\/\/([^/?#]+)/)?.[1]?.toLowerCase() ?? '';
   for (const s of FILL_SITES) if (host === `${s}.com` || host === `www.${s}.com` || host === `www.${s}.go.kr`) return s;
   return null;
+}
+
+/** 원문을 받을 주소 — unstop은 상세 화면이 읽는 공개 API(SPEC §40 AC-173), 나머지는 url 그대로 */
+export function fillFetchUrl(site: FillSite, url: string): string | null {
+  if (site !== 'unstop') return url;
+  const id = url.replace(/[?#].*$/, '').replace(/\/$/, '').match(/-(\d+)$/)?.[1];
+  return id ? `https://unstop.com/api/public/competition/${id}` : null;
 }
 
 /** 태그를 걷고 엔티티를 풀어 한 줄 글자로 */
@@ -50,7 +57,20 @@ function bizinfo(html: string): string | null {
   return null;
 }
 
-const BY_SITE: Record<FillSite, (html: string) => string | null> = { contestkorea, thinkcontest, linkareer, bizinfo };
+/** unstop API JSON의 eligible 칸 이름만(자유 본문 details는 안 읽음, AC-174) */
+function unstop(json: string): string | null {
+  let filters: unknown;
+  try { filters = (JSON.parse(json) as { data?: { competition?: { filters?: unknown } } })?.data?.competition?.filters; } catch { return null; }
+  if (!Array.isArray(filters)) return null;
+  const names: string[] = [];
+  for (const f of filters as { type?: unknown; name?: unknown }[]) {
+    const n = typeof f?.name === 'string' ? f.name.trim() : '';
+    if (f?.type === 'eligible' && n && !names.includes(n)) names.push(n);
+  }
+  return names.length ? `Eligibility: ${names.join(', ')}` : null;
+}
+
+const BY_SITE: Record<FillSite, (html: string) => string | null> = { contestkorea, thinkcontest, linkareer, bizinfo, unstop };
 
 /** 입력 = 마크업 글자, 출력 = 자격 인용 후보(공개 관문은 sanitizeQuote가 맡는다) 또는 null */
 export function extractFillQuote(site: FillSite, html: string): string | null {

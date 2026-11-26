@@ -22,7 +22,7 @@ describe('AC-94 사이트별 보강 인용 추출', () => {
     expect(fillSiteOf('https://www.thinkcontest.com/a')).toBe('thinkcontest');
     expect(fillSiteOf('https://linkareer.com/activity/1')).toBe('linkareer');
     expect(fillSiteOf('https://www.bizinfo.go.kr/x')).toBe('bizinfo');
-    expect(fillSiteOf('https://unstop.com/x')).toBeNull();
+    expect(fillSiteOf('https://allforyoung.com/x')).toBeNull();
   });
   it('contestkorea: 참가자격 h2 다음 p', () => expect(extractFillQuote('contestkorea', CK)).toBe('전국민 누구나 (임직원 포함)'));
   it('contestkorea: 참가대상·신청자격(공통) 제목도 자격 칸', () => {
