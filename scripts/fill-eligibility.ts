@@ -22,7 +22,7 @@ mkdirSync(CACHE, { recursive: true });
 const done = new Set<string>();
 if (existsSync(FILL)) for (const l of readFileSync(FILL, 'utf8').split('\n')) if (l.trim()) done.add(JSON.parse(l).url);
 
-// 대상 = 보강 없이 내보냈을 때 자격 인용이 없는 공개 행 중 5곳(SPEC §27·§40). SITES=unstop처럼 좁힐 수 있다
+// 대상 = 보강 없이 내보냈을 때 자격 인용이 없는 공개 행 중 6곳(SPEC §27·§40·§41). SITES=unstop처럼 좁힐 수 있다
 const targets = exportPublicListings(readSourceRows(source), today).listings
   .filter((l) => !l.eligibilityQuote && fillSiteOf(l.url) && !done.has(l.url) && (!onlySites || onlySites.has(fillSiteOf(l.url)!)))
   .slice(0, limit);

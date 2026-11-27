@@ -1,8 +1,8 @@
 // SPEC §27 — 원문 마크업(글자)에서 자격 문장 인용 1개를 결정적으로 뽑는다. I/O·DOM 라이브러리를 모른다.
 import { decodeEntities } from './extract.ts';
 
-export type FillSite = 'contestkorea' | 'thinkcontest' | 'linkareer' | 'bizinfo' | 'unstop';
-export const FILL_SITES: readonly FillSite[] = ['contestkorea', 'thinkcontest', 'linkareer', 'bizinfo', 'unstop'];
+export type FillSite = 'contestkorea' | 'thinkcontest' | 'linkareer' | 'bizinfo' | 'unstop' | 'wevity';
+export const FILL_SITES: readonly FillSite[] = ['contestkorea', 'thinkcontest', 'linkareer', 'bizinfo', 'unstop', 'wevity'];
 
 export function fillSiteOf(url: string): FillSite | null {
   const host = url.match(/^https?:\/\/([^/?#]+)/)?.[1]?.toLowerCase() ?? '';
@@ -70,7 +70,13 @@ function unstop(json: string): string | null {
   return names.length ? `Eligibility: ${names.join(', ')}` : null;
 }
 
-const BY_SITE: Record<FillSite, (html: string) => string | null> = { contestkorea, thinkcontest, linkareer, bizinfo, unstop };
+/** wevity 상세의 「응모대상」 칸 — 왼쪽 분류 메뉴(h4.cat-tit)는 안 읽는다(SPEC §41 AC-177) */
+function wevity(html: string): string | null {
+  const m = html.match(/<span class="tit">\s*응모\s*대상\s*<\/span>([\s\S]*?)<\/li>/);
+  return m ? textOf(m[1]) : null;
+}
+
+const BY_SITE: Record<FillSite, (html: string) => string | null> = { contestkorea, thinkcontest, linkareer, bizinfo, unstop, wevity };
 
 /** 입력 = 마크업 글자, 출력 = 자격 인용 후보(공개 관문은 sanitizeQuote가 맡는다) 또는 null */
 export function extractFillQuote(site: FillSite, html: string): string | null {
@@ -83,7 +89,16 @@ const NOT_ANSWER = /(?:아래|다음)(?:의|에|에서|과)?\s*[^.]{0,14}(?:요�
 /** thinkcontest 대상 칸의 정해진 낱말 — 이 밖의 글자는 해석기가 못 읽는 덧붙은 조건(AC-171) */
 const TC_WORDS = /동 연령대 청소년|제한 없음|어린이|초등학생|중학생|고등학생|대학생|대학원생|일반인/g;
 
+/** wevity 응모대상 칸의 정해진 낱말(사이트 분류 목록) — 쉼표로만 잇는다, 「기타」 하나만은 답이 아님(AC-178) */
+const WEVITY_WORDS = new Set(['제한없음', '일반인', '대학생', '청소년', '어린이', '기타']);
+
+function isWevityAnswer(quote: string): boolean {
+  const words = quote.split(',').map((w) => w.trim());
+  return words.every((w) => WEVITY_WORDS.has(w)) && words.some((w) => w !== '기타');
+}
+
 export function isFillAnswer(site: string, quote: string): boolean {
   if (NOT_ANSWER.test(quote)) return false;
+  if (site === 'wevity') return isWevityAnswer(quote);
   return site !== 'thinkcontest' || quote.replace(TC_WORDS, '').trim() === '';
 }
